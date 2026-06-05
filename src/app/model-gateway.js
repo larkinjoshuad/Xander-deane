@@ -48,8 +48,6 @@ export function generateSyntheticTutorResponse({
 
   const generatedAt = now();
   assertDateTime(generatedAt, 'generatedAt');
-  const policy = synthesizeSafetyPolicy(tutorContext);
-  const consentRecord = synthesizeConsentRecord(tutorContext, generatedAt);
   const baseResponse = responseFactory({
     tutorContext,
     gatewayId,
@@ -57,7 +55,55 @@ export function generateSyntheticTutorResponse({
     generatedAt,
     contractVersion,
   });
+
+  return finalizeTutorResponse({
+    tutorContext,
+    baseResponse,
+    gatewayId,
+    requestId,
+    generatedAt,
+    mode: 'synthetic_only',
+    provider: 'reference-synthetic',
+    syntheticOnly: true,
+    detectedContentCategories,
+    detectedEscalationTriggers,
+    contractVersion,
+  });
+}
+
+/**
+ * Runs a base tutor response (synthetic or live-model) through the shared
+ * consent/safety pipeline and wraps it in the model-call envelope. Both the
+ * reference synthetic gateway and the Claude-backed gateway funnel through
+ * here so safety enforcement is identical regardless of where the message text
+ * came from.
+ */
+export function finalizeTutorResponse({
+  tutorContext,
+  baseResponse,
+  gatewayId,
+  requestId = null,
+  generatedAt,
+  mode,
+  provider,
+  syntheticOnly = false,
+  detectedContentCategories = [],
+  detectedEscalationTriggers = [],
+  contractVersion = CONTRACT_VERSION,
+}) {
+  assertTutorContext(tutorContext);
+  assertNonEmptyString(gatewayId, 'gatewayId');
+  assertOptionalString(requestId, 'requestId');
+  assertDateTime(generatedAt, 'generatedAt');
+  assertNonEmptyString(mode, 'mode');
+  assertNonEmptyString(provider, 'provider');
+  assertStringArray(detectedContentCategories, 'detectedContentCategories');
+  assertStringArray(detectedEscalationTriggers, 'detectedEscalationTriggers');
+  assertNonEmptyString(contractVersion, 'contractVersion');
   assertTutorResponseShape(baseResponse);
+
+  const policy = synthesizeSafetyPolicy(tutorContext);
+  const consentRecord = synthesizeConsentRecord(tutorContext, generatedAt);
 
   const safetyEvaluation = evaluateTutorSafety({
     tutorResponse: baseResponse,
@@ -75,7 +121,7 @@ export function generateSyntheticTutorResponse({
       gatewayId,
       generatedAt,
       safetyEvaluation,
-      syntheticOnly: true,
+      syntheticOnly,
     })
     : createSafetyRedirectResponse({
       tutorContext,
@@ -83,6 +129,7 @@ export function generateSyntheticTutorResponse({
       requestId,
       generatedAt,
       safetyEvaluation,
+      syntheticOnly,
       contractVersion,
     });
 
@@ -90,15 +137,15 @@ export function generateSyntheticTutorResponse({
     contractVersion,
     id: requestId ?? `model_call_${sanitizeIdPart(tutorContext.id)}_${sanitizeIdPart(generatedAt)}`,
     gatewayId,
-    mode: 'synthetic_only',
+    mode,
     generatedAt,
     tutorContextId: tutorContext.id,
     tutorResponse,
     safetyEvaluation,
     metadata: {
       dataMode: tutorContext.metadata?.dataMode ?? null,
-      syntheticOnly: true,
-      provider: 'reference-synthetic',
+      syntheticOnly,
+      provider,
       retainedPrompt: false,
       retainedProviderResponse: false,
     },
@@ -213,7 +260,7 @@ function decorateSafety(tutorResponse, safetyFields) {
   };
 }
 
-function createSafetyRedirectResponse({ tutorContext, gatewayId, requestId, generatedAt, safetyEvaluation, contractVersion }) {
+function createSafetyRedirectResponse({ tutorContext, gatewayId, requestId, generatedAt, safetyEvaluation, syntheticOnly = true, contractVersion }) {
   const messageText = 'I need to pause this response and ask a trusted adult or educator to review it before we continue.';
   return {
     contractVersion,
@@ -230,7 +277,7 @@ function createSafetyRedirectResponse({ tutorContext, gatewayId, requestId, gene
       answerRevealed: false,
       confidence: 'high',
       gatewayId,
-      syntheticOnly: true,
+      syntheticOnly,
       generatedAt,
       blockedReasons: safetyEvaluation.blockedReasons,
       requiredActions: safetyEvaluation.requiredActions,
