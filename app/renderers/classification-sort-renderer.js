@@ -59,13 +59,27 @@ function createGroupGrid({ snapshot, selectedItemId, session, onSessionChange })
     const card = document.createElement('article');
     card.className = 'group-card sort-group-card';
     card.classList.toggle('is-targeted', selectedItemId !== null);
-    card.setAttribute('role', 'button');
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('aria-label', `Place selected item in ${formatLabel(group.id)}`);
+    card.setAttribute('role', 'group');
+    card.setAttribute('aria-label', formatLabel(group.id));
 
     const heading = document.createElement('h4');
     heading.textContent = formatLabel(group.id);
     card.append(heading);
+
+    const placeButton = document.createElement('button');
+    placeButton.type = 'button';
+    placeButton.className = 'sort-place';
+    placeButton.textContent = `Place selected item in ${formatLabel(group.id)}`;
+    placeButton.setAttribute('aria-label', `Place selected item in ${formatLabel(group.id)}`);
+    const placeItem = () => onSessionChange(placeSelectedSortItem(session, group.id));
+    placeButton.addEventListener('click', placeItem);
+    placeButton.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        placeItem();
+      }
+    });
+    card.append(placeButton);
 
     const list = document.createElement('div');
     list.className = 'sort-group-items';
@@ -86,19 +100,11 @@ function createGroupGrid({ snapshot, selectedItemId, session, onSessionChange })
     if (group.items.length === 0) {
       const empty = document.createElement('p');
       empty.className = 'muted';
-      empty.textContent = selectedItemId ? 'Tap here to place the selected item.' : 'Select an item first.';
+      empty.textContent = selectedItemId ? 'Use the button above to place the selected item.' : 'Select an item first.';
       list.append(empty);
     }
 
     card.append(list);
-    card.addEventListener('click', () => onSessionChange(placeSelectedSortItem(session, group.id)));
-    card.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        onSessionChange(placeSelectedSortItem(session, group.id));
-      }
-    });
-
     grid.append(card);
   });
 

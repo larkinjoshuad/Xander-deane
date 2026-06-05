@@ -44,21 +44,26 @@ export const equalGroupsRenderer = {
 function createGroupCard({ session, group, index, onSessionChange }) {
   const groupCard = document.createElement('div');
   groupCard.className = 'group-card';
-  groupCard.setAttribute('role', 'button');
-  groupCard.setAttribute('tabindex', '0');
-  groupCard.setAttribute('aria-label', `Place selected counter into group ${index + 1}`);
+  groupCard.setAttribute('role', 'group');
+  groupCard.setAttribute('aria-label', `Group ${index + 1}`);
+
+  const title = document.createElement('h4');
+  title.textContent = `Group ${index + 1} (${group.items.length})`;
+
+  const placeButton = document.createElement('button');
+  placeButton.type = 'button';
+  placeButton.className = 'group-place';
+  placeButton.textContent = 'Place selected counter here';
+  placeButton.setAttribute('aria-label', `Place selected counter into group ${index + 1}`);
 
   const placeCounter = () => onSessionChange(placeSelectedCounter(session, group.id));
-  groupCard.addEventListener('click', placeCounter);
-  groupCard.addEventListener('keydown', (event) => {
+  placeButton.addEventListener('click', placeCounter);
+  placeButton.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' || event.key === ' ') {
       event.preventDefault();
       placeCounter();
     }
   });
-
-  const title = document.createElement('h4');
-  title.textContent = `Group ${index + 1} (${group.items.length})`;
 
   const items = document.createElement('div');
   items.className = 'group-items';
@@ -68,7 +73,7 @@ function createGroupCard({ session, group, index, onSessionChange }) {
     ),
   );
 
-  groupCard.append(title, items);
+  groupCard.append(title, placeButton, items);
   if (session.tutorResponse.highlightTargets.includes(group.id)) {
     groupCard.classList.add('is-targeted');
   }

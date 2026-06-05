@@ -345,12 +345,24 @@ button.primary {
   }
 }
 
-.group-card[role="button"] {
+.group-place,
+.sort-place {
+  background: #eef3ff;
+  border: 1px solid var(--brand);
+  border-radius: 12px;
+  color: var(--brand-dark);
   cursor: pointer;
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  padding: 0.55rem 0.8rem;
+  width: 100%;
 }
 
-.group-card[role="button"]:hover,
-.group-card[role="button"]:focus-visible {
+.group-place:hover,
+.group-place:focus-visible,
+.sort-place:hover,
+.sort-place:focus-visible {
   border-color: var(--brand);
   outline: 3px solid rgb(49 87 255 / 18%);
   outline-offset: 2px;
@@ -502,7 +514,8 @@ button,
 .counter,
 .token-button,
 .sort-item,
-.group-card[role="button"] {
+.group-place,
+.sort-place {
   min-height: 44px;
   touch-action: manipulation;
 }

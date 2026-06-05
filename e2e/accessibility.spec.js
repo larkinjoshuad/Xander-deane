@@ -46,7 +46,7 @@ test('math workspace has no serious automated accessibility violations after int
 test('language workspace has no serious automated accessibility violations', async ({ page }) => {
   await openShell(page);
   await page.getByRole('button', { name: 'Language: Action Verb' }).click();
-  await expect(page.locator('#problem-prompt')).toContainText('Which word shows the action');
+  await expect(page.locator('#problem-prompt')).toContainText('Tap the action verb');
   await expectNoSeriousViolations(page);
 });
 

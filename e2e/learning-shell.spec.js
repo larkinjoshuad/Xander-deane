@@ -76,13 +76,13 @@ test('learner gets retry feedback, resets, and recovers the cleared math workspa
 test('learner can switch to language and complete token selection', async ({ page }) => {
   await openShell(page);
   await page.getByRole('button', { name: 'Language: Action Verb' }).click();
-  await expect(page.locator('#problem-prompt')).toContainText('Which word shows the action');
+  await expect(page.locator('#problem-prompt')).toContainText('Tap the action verb');
 
   await page.getByRole('button', { name: 'runs' }).click();
   await page.getByRole('button', { name: 'Check answer' }).click();
 
   await expect(page.locator('#feedback-type')).toContainText('Summary');
-  await expect(page.locator('#tutor-message')).toContainText('shows the action');
+  await expect(page.locator('#tutor-message')).toContainText('is the action verb');
   await expect(page.locator('#progress-attempts')).toContainText('1 checked · 1 correct');
   await expect(page.locator('#recent-session-count')).toContainText('2 saved');
   await expect(page.locator('#recent-session-list')).toContainText('Language: Token Selection');
@@ -162,5 +162,5 @@ test('critical shell controls are keyboard reachable', async ({ page }) => {
   await page.keyboard.press('Tab');
   await expect(page.getByRole('button', { name: 'Language: Action Verb' })).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(page.locator('#problem-prompt')).toContainText('Which word shows the action');
+  await expect(page.locator('#problem-prompt')).toContainText('Tap the action verb');
 });
