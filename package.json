@@ -11,6 +11,7 @@
     "validate:data-inventory": "node scripts/validate-data-inventory.js",
     "replay:api-fixtures": "node scripts/replay-api-fixtures.js",
     "start": "python3 -m http.server 4173",
+    "start:tutor": "node scripts/tutor-server.js",
     "start:session-api": "node scripts/session-api-server.js",
     "test:device": "node scripts/device-qa.js",
     "test:e2e": "playwright test",

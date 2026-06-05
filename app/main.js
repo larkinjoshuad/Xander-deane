@@ -24,6 +24,7 @@ import {
   createSkillMasteryForSession,
   updateSkillMasteryForSession,
 } from './learner-insights.js';
+import { requestLiveTutorResponse } from './tutor-client.js';
 
 const DEMOS = Object.freeze({
   math: {
@@ -76,6 +77,8 @@ const sessionStore = createBrowserSessionStore();
 const skillMasteryByObjectiveId = new Map();
 let activeSessionRecord = null;
 let session;
+let liveTutorMessage = null;
+let tutorRequestToken = 0;
 let selectedDemo = 'math';
 let deviceProfile = inferBrowserDeviceProfile(window);
 let responsiveLayout = resolveResponsiveLayout(deviceProfile);
@@ -118,7 +121,8 @@ function bindGlobalActions() {
   elements.speakButton.addEventListener('click', () => {
     if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(new SpeechSynthesisUtterance(session.tutorResponse.speechText));
+    const speechText = liveTutorMessage?.speechText ?? session.tutorResponse.speechText;
+    window.speechSynthesis.speak(new SpeechSynthesisUtterance(speechText));
   });
 }
 
@@ -141,7 +145,27 @@ async function loadDemo(demoId, { forceFresh = false } = {}) {
 function commitSession(nextSession) {
   session = nextSession;
   activeSessionRecord = sessionStore.saveSession(session);
+  liveTutorMessage = null;
   render();
+  void enhanceTutorPanel(session);
+}
+
+// Opt-in progressive enhancement: when the live tutor endpoint is configured,
+// replace the deterministic message with a real, adaptive one once it arrives.
+// No-ops (and never touches the DOM) when the live tutor is disabled.
+async function enhanceTutorPanel(currentSession) {
+  const token = ++tutorRequestToken;
+  const live = await requestLiveTutorResponse(currentSession);
+  if (!live || token !== tutorRequestToken || currentSession !== session) {
+    return;
+  }
+  liveTutorMessage = {
+    feedbackType: live.feedbackType,
+    messageText: live.messageText,
+    speechText: typeof live.speechText === 'string' ? live.speechText : live.messageText,
+  };
+  elements.feedbackType.textContent = formatLabel(liveTutorMessage.feedbackType);
+  elements.tutorMessage.textContent = liveTutorMessage.messageText;
 }
 
 function render() {
