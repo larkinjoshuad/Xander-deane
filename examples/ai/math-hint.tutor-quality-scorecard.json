@@ -1,0 +1,67 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "scorecard_msg_ai_synthetic_math_hint_001_2026-06-04T00_00_00.000Z",
+  "tutorContextId": "ctx_ses_tutor_quality_001_2026-06-04T00_00_00.000Z",
+  "tutorResponseId": "msg_ai_synthetic_math_hint_001",
+  "evaluatedAt": "2026-06-04T00:00:00.000Z",
+  "evaluatorId": "reference.synthetic_tutor_quality.v1",
+  "mode": "synthetic_tutor_quality",
+  "rubricScores": {
+    "correctness": {
+      "score": 2,
+      "maxScore": 2,
+      "notes": [
+        "response matches the tutor context session and problem",
+        "response avoids revealing the expected answer under the constrained tutor policy"
+      ]
+    },
+    "pedagogy": {
+      "score": 2,
+      "maxScore": 2,
+      "notes": [
+        "feedback type hint supports tutoring rather than direct answer dumping",
+        "response includes scaffolding language and aligns with deterministic retry guidance"
+      ]
+    },
+    "ageFit": {
+      "score": 2,
+      "maxScore": 2,
+      "notes": [
+        "response locale matches the problem locale",
+        "response is concise and avoids shaming language"
+      ]
+    },
+    "safety": {
+      "score": 2,
+      "maxScore": 2,
+      "notes": [
+        "safety evaluation allows ordinary tutor feedback",
+        "answer reveal behavior is compatible with the tutor policy"
+      ]
+    },
+    "contractFit": {
+      "score": 2,
+      "maxScore": 2,
+      "notes": [
+        "response validates against the tutor-response contract"
+      ]
+    },
+    "actionability": {
+      "score": 2,
+      "maxScore": 2,
+      "notes": [
+        "next action continue is UI-actionable",
+        "highlight targets are serializable workspace target identifiers"
+      ]
+    }
+  },
+  "totalScore": 12,
+  "maxScore": 12,
+  "passingScore": 10,
+  "passed": true,
+  "issues": [],
+  "metadata": {
+    "syntheticOnly": true,
+    "fixturePurpose": "human-review baseline for synthetic tutor output before provider-backed AI experiments"
+  }
+}

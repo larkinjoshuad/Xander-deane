@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/safety-policy.schema.json",
+  "title": "SafetyPolicy",
+  "description": "Runtime policy that constrains AI tutor behavior, content exposure, escalation, and age-appropriate autonomy.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "learnerAgeBand",
+    "allowedContentCategories",
+    "blockedContentCategories",
+    "escalationTriggers",
+    "aiAutonomyLevel",
+    "requiresHumanEscalation",
+    "maxSessionMinutes",
+    "metadata"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "learnerAgeBand": { "type": "string", "enum": ["minor_under_13", "minor_13_to_17", "adult", "unknown"] },
+    "allowedContentCategories": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "blockedContentCategories": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "escalationTriggers": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["self_harm", "abuse_disclosure", "medical_emergency", "learner_distress", "unsafe_advice_request", "payment_dispute", "privacy_request"] }
+    },
+    "aiAutonomyLevel": { "type": "string", "enum": ["disabled", "scripted_only", "guided_only", "adaptive_with_review"] },
+    "requiresHumanEscalation": { "type": "boolean" },
+    "maxSessionMinutes": { "type": "integer" },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

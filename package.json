@@ -1,0 +1,26 @@
+{
+  "name": "xander-deane-learning-core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Subject-agnostic base layer for a multimodal AI education platform.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "test:browser": "node --test test/browser-flow.test.js",
+    "validate:fixtures": "node scripts/validate-fixtures.js",
+    "validate:data-inventory": "node scripts/validate-data-inventory.js",
+    "replay:api-fixtures": "node scripts/replay-api-fixtures.js",
+    "start": "python3 -m http.server 4173",
+    "start:session-api": "node scripts/session-api-server.js",
+    "test:device": "node scripts/device-qa.js",
+    "test:e2e": "playwright test",
+    "test:e2e:install": "playwright install chromium"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.3",
+    "@playwright/test": "^1.60.0"
+  }
+}

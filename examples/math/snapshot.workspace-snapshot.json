@@ -1,0 +1,33 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "snapshot_ses_demo_math_001_001",
+  "sessionId": "ses_demo_math_001",
+  "problemId": "math.3x4.visual-groups",
+  "kind": "equal-groups",
+  "version": 1,
+  "updatedAt": "2026-05-28T00:00:00.000Z",
+  "state": {
+    "counters": [
+      { "id": "counter_1", "groupId": null },
+      { "id": "counter_2", "groupId": null },
+      { "id": "counter_3", "groupId": null },
+      { "id": "counter_4", "groupId": null },
+      { "id": "counter_5", "groupId": null },
+      { "id": "counter_6", "groupId": null },
+      { "id": "counter_7", "groupId": null },
+      { "id": "counter_8", "groupId": null },
+      { "id": "counter_9", "groupId": null },
+      { "id": "counter_10", "groupId": null },
+      { "id": "counter_11", "groupId": null },
+      { "id": "counter_12", "groupId": null }
+    ],
+    "groups": [
+      { "id": "group_1", "items": [] },
+      { "id": "group_2", "items": [] },
+      { "id": "group_3", "items": [] }
+    ]
+  },
+  "metadata": {
+    "source": "example-fixture"
+  }
+}

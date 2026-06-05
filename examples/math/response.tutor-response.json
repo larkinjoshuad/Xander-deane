@@ -1,0 +1,16 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "msg_math_hint_001",
+  "sessionId": "ses_demo_math_001",
+  "problemId": "math.3x4.visual-groups",
+  "locale": "en-US",
+  "feedbackType": "hint",
+  "messageText": "Check each group. Does every group have exactly four counters?",
+  "speechText": "Check each group. Does every group have exactly four counters?",
+  "nextAction": "continue",
+  "highlightTargets": ["group_1", "group_2", "group_3"],
+  "safety": {
+    "answerRevealed": false,
+    "confidence": "high"
+  }
+}

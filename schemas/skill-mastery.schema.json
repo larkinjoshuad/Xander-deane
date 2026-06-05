@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/skill-mastery.schema.json",
+  "title": "SkillMastery",
+  "description": "Portable learner progress summary for one objective or skill across attempts and sessions.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "learnerId",
+    "objectiveId",
+    "subject",
+    "attemptCount",
+    "correctCount",
+    "masteryEstimate",
+    "masteryLevel",
+    "confidence",
+    "lastUpdatedAt",
+    "evidence"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "learnerId": { "type": ["string", "null"] },
+    "objectiveId": { "type": "string", "minLength": 1 },
+    "subject": { "type": "string", "minLength": 1 },
+    "attemptCount": { "type": "integer" },
+    "correctCount": { "type": "integer" },
+    "masteryEstimate": { "type": "number" },
+    "masteryLevel": { "type": "string", "enum": ["not_started", "emerging", "developing", "proficient", "mastered"] },
+    "confidence": { "type": "string", "enum": ["low", "medium", "high"] },
+    "lastAttemptAt": { "type": ["string", "null"], "format": "date-time" },
+    "lastUpdatedAt": { "type": "string", "format": "date-time" },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["sessionId", "problemId", "evaluationResultId", "isCorrect", "attemptedAt"],
+        "additionalProperties": false,
+        "properties": {
+          "sessionId": { "type": "string", "minLength": 1 },
+          "problemId": { "type": "string", "minLength": 1 },
+          "evaluationResultId": { "type": "string", "minLength": 1 },
+          "isCorrect": { "type": "boolean" },
+          "feedbackCode": { "type": "string" },
+          "attemptedAt": { "type": "string", "format": "date-time" },
+          "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+        }
+      }
+    },
+    "recommendedNextObjectiveIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "default": []
+    },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

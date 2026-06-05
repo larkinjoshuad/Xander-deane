@@ -1,0 +1,18 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "msg_ai_synthetic_math_hint_001",
+  "sessionId": "ses_demo_math_001",
+  "problemId": "math.3x4.visual-groups",
+  "locale": "en-US",
+  "feedbackType": "hint",
+  "messageText": "Let's work on this step by step: Build 3 groups of 4 counters. How many counters are there in all? Start by explaining what the problem is asking.",
+  "speechText": "Let's work on this step by step: Build 3 groups of 4 counters. How many counters are there in all? Start by explaining what the problem is asking.",
+  "nextAction": "continue",
+  "highlightTargets": ["group_1", "group_2", "group_3"],
+  "safety": {
+    "answerRevealed": false,
+    "confidence": "medium",
+    "gatewayId": "synthetic_model_gateway_reference",
+    "syntheticOnly": true
+  }
+}

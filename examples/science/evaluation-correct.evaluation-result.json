@@ -1,0 +1,25 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "eval_science_correct_001",
+  "sessionId": "ses_demo_science_001",
+  "problemId": "science.animals.sort-feathers",
+  "workspaceSnapshotId": "snapshot_ses_demo_science_001_001",
+  "evaluatorId": "science.classification-sort.pack.classification-sort",
+  "isCorrect": true,
+  "feedbackCode": "correct",
+  "submittedAnswer": {
+    "groups": [
+      { "id": "feathers", "items": ["duck", "eagle"] },
+      { "id": "not_feathers", "items": ["dog", "snake"] }
+    ]
+  },
+  "expectedAnswer": ["duck", "eagle"],
+  "confidence": "high",
+  "diagnostics": {
+    "targetGroup": "feathers",
+    "sortedItems": ["duck", "eagle"],
+    "missingItems": [],
+    "misplacedItems": []
+  },
+  "evaluatedAt": "2026-05-28T00:00:00.000Z"
+}

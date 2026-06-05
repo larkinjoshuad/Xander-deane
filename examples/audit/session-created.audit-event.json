@@ -1,0 +1,19 @@
+{
+  "contractVersion": "1.0.0",
+  "id": "audit_session_created_001",
+  "occurredAt": "2026-05-29T00:00:00.000Z",
+  "actorAccountId": "acct_guardian_001",
+  "learnerId": "learner_example_001",
+  "action": "session.create",
+  "resourceType": "session",
+  "resourceId": "session_math_equal_groups_001",
+  "permission": "manage_sessions",
+  "consentScope": "progress_tracking",
+  "decision": "allowed",
+  "reason": "guardian has active learner link and progress tracking consent",
+  "traceId": "trace_session_created_001",
+  "metadata": {
+    "linkId": "link_guardian_learner_001",
+    "relationship": "parent_guardian"
+  }
+}

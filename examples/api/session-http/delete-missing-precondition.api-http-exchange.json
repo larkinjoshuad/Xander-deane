@@ -1,0 +1,28 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "api_session_delete_missing_precondition",
+  "description": "Reject a destructive session delete when no version precondition is provided.",
+  "request": {
+    "method": "DELETE",
+    "path": "/sessions/ses_api_fixture_math_001",
+    "headers": {
+      "x-audit-event-id": "audit_api_fixture_delete_missing_precondition_001"
+    }
+  },
+  "response": {
+    "status": 428,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store"
+    },
+    "body": {
+      "error": {
+        "code": "precondition_required",
+        "message": "deleteSession requires If-Match or X-Record-Version"
+      }
+    }
+  },
+  "notes": [
+    "Deletes require If-Match or X-Record-Version because they are destructive."
+  ]
+}

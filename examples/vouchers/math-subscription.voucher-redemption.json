@@ -1,0 +1,47 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "redemption_demo_math_subscription_001",
+  "fundingSourceId": "funding.az.esa",
+  "learnerId": "learner_demo_001",
+  "guardianId": "guardian_demo_001",
+  "status": "eligibility_pending",
+  "currency": "USD",
+  "lineItems": [
+    {
+      "id": "line_online_math_001",
+      "description": "Online math learning subscription for equal-groups practice",
+      "expenseCategory": "online_learning",
+      "amountCents": 2500,
+      "servicePeriod": {
+        "startsAt": "2026-08-01T00:00:00.000Z",
+        "endsAt": "2026-08-31T23:59:59.000Z"
+      },
+      "metadata": {
+        "problemIds": ["math.3x4.visual-groups"]
+      }
+    }
+  ],
+  "eligibleAmountCents": 2500,
+  "requestedAmountCents": 2500,
+  "documentation": [
+    {
+      "type": "itemized_invoice",
+      "status": "uploaded",
+      "uri": "memory://documents/invoice_demo_001.pdf"
+    },
+    {
+      "type": "course_description",
+      "status": "uploaded",
+      "uri": "memory://documents/course_description_demo_001.pdf"
+    }
+  ],
+  "attestations": {
+    "guardianConfirmedEducationalUse": true,
+    "providerConfirmedEligibleService": true
+  },
+  "createdAt": "2026-05-28T00:00:00.000Z",
+  "updatedAt": "2026-05-28T00:00:00.000Z",
+  "metadata": {
+    "checkoutId": "checkout_demo_001"
+  }
+}

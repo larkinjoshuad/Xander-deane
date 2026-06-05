@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/account-ledger-entry.schema.json",
+  "title": "AccountLedgerEntry",
+  "description": "Auditable billing ledger entry for charges, voucher credits, direct payments, reimbursements, refunds, and adjustments.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "accountId",
+    "invoiceId",
+    "entryType",
+    "direction",
+    "amountCents",
+    "currency",
+    "occurredAt",
+    "source"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "accountId": { "type": "string", "minLength": 1 },
+    "invoiceId": { "type": "string", "minLength": 1 },
+    "voucherRedemptionId": { "type": "string", "minLength": 1 },
+    "entryType": { "type": "string", "enum": ["charge", "voucher_credit", "direct_payment", "reimbursement", "refund", "adjustment"] },
+    "direction": { "type": "string", "enum": ["debit", "credit"] },
+    "amountCents": { "type": "integer" },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "source": { "type": "string", "enum": ["checkout", "voucher", "manual", "system"] },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

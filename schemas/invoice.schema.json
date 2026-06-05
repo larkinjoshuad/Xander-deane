@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/invoice.schema.json",
+  "title": "Invoice",
+  "description": "Billing invoice generated from checkout and voucher/ESA funding selections.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "checkoutSessionId",
+    "guardianId",
+    "learnerId",
+    "currency",
+    "lineItems",
+    "subtotalCents",
+    "fundingCredits",
+    "balanceDueCents",
+    "status",
+    "issuedAt",
+    "updatedAt"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "checkoutSessionId": { "type": "string", "minLength": 1 },
+    "guardianId": { "type": "string", "minLength": 1 },
+    "learnerId": { "type": "string", "minLength": 1 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "lineItems": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "expenseCategory", "amountCents"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "productOfferingId": { "type": "string", "minLength": 1 },
+          "description": { "type": "string", "minLength": 1 },
+          "expenseCategory": { "type": "string", "minLength": 1 },
+          "amountCents": { "type": "integer" },
+          "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+        }
+      }
+    },
+    "subtotalCents": { "type": "integer" },
+    "fundingCredits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["fundingSourceId", "voucherRedemptionId", "amountCents", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "fundingSourceId": { "type": "string", "minLength": 1 },
+          "voucherRedemptionId": { "type": "string", "minLength": 1 },
+          "amountCents": { "type": "integer" },
+          "status": { "type": "string", "enum": ["pending", "approved", "paid", "reimbursed", "denied", "canceled"] }
+        }
+      },
+      "default": []
+    },
+    "balanceDueCents": { "type": "integer" },
+    "status": { "type": "string", "enum": ["draft", "issued", "funding_pending", "partially_funded", "paid", "void", "refunded"] },
+    "issuedAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

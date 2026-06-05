@@ -1,0 +1,41 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "api_session_append_snapshot_success",
+  "description": "Append a workspace snapshot when the request includes a matching expected record version.",
+  "request": {
+    "method": "POST",
+    "path": "/sessions/ses_api_fixture_math_001/snapshots",
+    "headers": {
+      "content-type": "application/json",
+      "x-record-version": "2",
+      "x-audit-event-id": "audit_api_fixture_snapshot_001"
+    },
+    "body": {
+      "workspaceSnapshot": {
+        "id": "snap_api_fixture_001",
+        "sessionId": "ses_api_fixture_math_001",
+        "workspaceKind": "equal-groups"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+      "etag": "W/\"ses_api_fixture_math_001:3\""
+    },
+    "body": {
+      "data": {
+        "sessionId": "ses_api_fixture_math_001",
+        "metadata": {
+          "recordVersion": 3,
+          "etag": "W/\"ses_api_fixture_math_001:3\""
+        }
+      }
+    }
+  },
+  "notes": [
+    "The full workspace snapshot shape is validated separately by workspace-snapshot fixtures."
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "policy.science.classification-sort.elementary",
+  "subject": "science",
+  "locale": "en-US",
+  "gradeBand": "elementary",
+  "answerReveal": "after_correct_or_explicit_request",
+  "maxHintLevel": 3,
+  "hintLevels": [
+    { "level": 1, "strategy": "identify_trait", "mayRevealAnswer": false },
+    { "level": 2, "strategy": "sort_matching_items", "mayRevealAnswer": false },
+    { "level": 3, "strategy": "check_each_group", "mayRevealAnswer": false }
+  ],
+  "allowedFeedbackTypes": ["encouragement", "hint", "correction", "explanation", "question", "summary", "safety_redirect"],
+  "allowedModalities": ["text", "audio", "touch", "manipulative"],
+  "safety": {
+    "allowEscalation": true,
+    "handoffTriggers": ["learner_distress", "repeated_frustration"],
+    "blockedBehaviors": ["shaming", "unsafe_advice", "unbounded_answer_reveal"]
+  }
+}

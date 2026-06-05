@@ -1,0 +1,28 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "api_session_read_missing",
+  "description": "Return not_found when a caller requests a session record that does not exist.",
+  "request": {
+    "method": "GET",
+    "path": "/sessions/ses_api_fixture_missing_001",
+    "headers": {
+      "x-audit-event-id": "audit_api_fixture_missing_001"
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store"
+    },
+    "body": {
+      "error": {
+        "code": "not_found",
+        "message": "session record ses_api_fixture_missing_001 was not found"
+      }
+    }
+  },
+  "notes": [
+    "Missing records use the same JSON error envelope as permission and validation failures."
+  ]
+}

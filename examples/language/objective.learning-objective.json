@@ -1,0 +1,11 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "language.grammar.identify-verbs",
+  "subject": "language",
+  "locale": "en-US",
+  "title": "Identify action verbs in simple sentences",
+  "description": "Learners identify words that show actions in short sentences.",
+  "standards": [],
+  "prerequisites": ["language.parts-of-speech.nouns"],
+  "tags": ["grammar", "verbs", "selection"]
+}

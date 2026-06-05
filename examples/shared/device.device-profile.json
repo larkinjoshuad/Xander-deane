@@ -1,0 +1,26 @@
+{
+  "contractVersion": "0.1.0",
+  "category": "tablet",
+  "viewport": {
+    "width": 820,
+    "height": 1180
+  },
+  "pixelRatio": 2,
+  "inputModes": ["touch", "keyboard", "voice"],
+  "presentationMode": "compact",
+  "capabilities": {
+    "hover": false,
+    "speech": true,
+    "coarsePointer": true,
+    "reducedMotion": false
+  },
+  "safeArea": {
+    "top": 0,
+    "right": 0,
+    "bottom": 0,
+    "left": 0
+  },
+  "metadata": {
+    "exampleUse": "Responsive tablet shell"
+  }
+}

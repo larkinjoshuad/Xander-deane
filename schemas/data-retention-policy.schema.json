@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/data-retention-policy.schema.json",
+  "title": "DataRetentionPolicy",
+  "description": "Portable data retention and deletion/export policy for learner, session, voucher, and safety records.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "jurisdiction",
+    "recordType",
+    "retentionDays",
+    "deleteOnConsentRevocation",
+    "exportableByGuardian",
+    "requiresAuditTrail",
+    "effectiveAt",
+    "metadata"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "jurisdiction": { "type": "string", "minLength": 2 },
+    "recordType": { "type": "string", "enum": ["learner_profile", "session_record", "interaction_event", "progress_summary", "voucher_billing", "safety_incident", "audit_log"] },
+    "retentionDays": { "type": "integer" },
+    "deleteOnConsentRevocation": { "type": "boolean" },
+    "exportableByGuardian": { "type": "boolean" },
+    "requiresAuditTrail": { "type": "boolean" },
+    "effectiveAt": { "type": "string", "format": "date-time" },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/product-offering.schema.json",
+  "title": "ProductOffering",
+  "description": "Catalog item that can be sold directly or mapped to voucher/ESA eligible expense categories.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "name",
+    "expenseCategory",
+    "priceCents",
+    "currency",
+    "billingPeriod",
+    "eligibleFundingSourceIds",
+    "status"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string" },
+    "expenseCategory": {
+      "type": "string",
+      "enum": [
+        "tuition",
+        "curriculum",
+        "instructional_materials",
+        "online_learning",
+        "tutoring",
+        "assessment",
+        "therapy",
+        "technology",
+        "fees",
+        "custom"
+      ]
+    },
+    "priceCents": { "type": "integer" },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "billingPeriod": { "type": "string", "enum": ["one_time", "monthly", "semester", "annual", "custom"] },
+    "eligibleFundingSourceIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "default": []
+    },
+    "status": { "type": "string", "enum": ["draft", "active", "retired"] },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

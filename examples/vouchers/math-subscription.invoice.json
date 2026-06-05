@@ -1,0 +1,38 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "invoice_checkout_demo_001",
+  "checkoutSessionId": "checkout_demo_001",
+  "guardianId": "guardian_demo_001",
+  "learnerId": "learner_demo_001",
+  "currency": "USD",
+  "lineItems": [
+    {
+      "id": "line_1_product.online_math_monthly",
+      "productOfferingId": "product.online_math_monthly",
+      "description": "Online Math Learning Monthly Subscription",
+      "expenseCategory": "online_learning",
+      "amountCents": 2500,
+      "metadata": {
+        "billingPeriod": "monthly",
+        "eligibleFundingSourceIds": ["funding.az.esa"]
+      }
+    }
+  ],
+  "subtotalCents": 2500,
+  "fundingCredits": [
+    {
+      "fundingSourceId": "funding.az.esa",
+      "voucherRedemptionId": "redemption_demo_math_subscription_001",
+      "amountCents": 2500,
+      "status": "pending"
+    }
+  ],
+  "balanceDueCents": 0,
+  "status": "funding_pending",
+  "issuedAt": "2026-05-28T00:00:00.000Z",
+  "updatedAt": "2026-05-28T00:00:00.000Z",
+  "metadata": {
+    "fundingProgram": "Arizona ESA",
+    "checkoutStatus": "voucher_pending"
+  }
+}

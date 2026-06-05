@@ -1,0 +1,23 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "language.verbs.tap-runs",
+  "objectiveId": "language.grammar.identify-verbs",
+  "subject": "language",
+  "locale": "en-US",
+  "prompt": "Tap the action verb in this sentence: The dog runs fast.",
+  "difficulty": "intro",
+  "expectedAnswer": "runs",
+  "acceptableAnswers": ["runs"],
+  "interactionModes": ["text", "audio", "touch"],
+  "workspace": {
+    "kind": "token-selection",
+    "state": {
+      "tokens": ["The", "dog", "runs", "fast"],
+      "selectableTokenIndexes": [0, 1, 2, 3]
+    }
+  },
+  "metadata": {
+    "estimatedSeconds": 45,
+    "hintPolicy": "minimal"
+  }
+}

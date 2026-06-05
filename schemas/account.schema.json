@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/account.schema.json",
+  "title": "Account",
+  "description": "Portable identity account for guardians, educators, operators, and learners before provider-specific authentication is added.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "role",
+    "displayName",
+    "status",
+    "locale",
+    "createdAt",
+    "metadata"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "role": { "type": "string", "enum": ["guardian", "educator", "operator", "learner"] },
+    "displayName": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "enum": ["invited", "active", "suspended", "closed"] },
+    "locale": { "type": "string", "minLength": 2 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

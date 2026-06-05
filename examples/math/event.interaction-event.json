@@ -1,0 +1,19 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "evt_math_drag_001",
+  "sessionId": "ses_demo_math_001",
+  "learnerId": null,
+  "problemId": "math.3x4.visual-groups",
+  "type": "user_dragged",
+  "occurredAt": "2026-05-28T00:00:00.000Z",
+  "modality": "touch",
+  "payload": {
+    "counterId": "counter_7",
+    "from": "bank",
+    "to": "group_2"
+  },
+  "trace": {
+    "region": "demo",
+    "requestId": "req_demo_math_001"
+  }
+}

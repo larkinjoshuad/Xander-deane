@@ -1,0 +1,29 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "api_session_create_malformed_json",
+  "description": "Reject malformed JSON before the request reaches session persistence.",
+  "request": {
+    "method": "POST",
+    "path": "/sessions",
+    "headers": {
+      "content-type": "application/json"
+    },
+    "rawBody": "{bad json"
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store"
+    },
+    "body": {
+      "error": {
+        "code": "bad_request",
+        "message": "request body must be valid JSON"
+      }
+    }
+  },
+  "notes": [
+    "Malformed payloads are rejected before auth and session-service dispatch because the route requires a JSON body."
+  ]
+}

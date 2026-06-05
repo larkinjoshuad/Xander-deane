@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/session-record.schema.json",
+  "title": "SessionRecord",
+  "description": "Recoverable, append-oriented learning session state containing events, snapshots, and latest tutor/evaluation output.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "sessionId",
+    "learnerId",
+    "problemId",
+    "subject",
+    "workspaceKind",
+    "currentWorkspaceSnapshot",
+    "snapshotHistory",
+    "events",
+    "tutorResponse",
+    "evaluation",
+    "updatedAt"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "sessionId": { "type": "string", "minLength": 1 },
+    "learnerId": { "type": ["string", "null"] },
+    "problemId": { "type": "string", "minLength": 1 },
+    "subject": {
+      "type": "string",
+      "enum": [
+        "math",
+        "language",
+        "science",
+        "history",
+        "arts",
+        "social_studies",
+        "computer_science",
+        "world_languages",
+        "life_skills",
+        "custom"
+      ]
+    },
+    "workspaceKind": { "type": "string", "minLength": 1 },
+    "currentWorkspaceSnapshot": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "snapshotHistory": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "tutorResponse": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "evaluation": {
+      "type": ["object", "null"],
+      "additionalProperties": true
+    },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    }
+  }
+}

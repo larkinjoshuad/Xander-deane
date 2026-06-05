@@ -1,0 +1,14 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "link_guardian_learner_demo_001",
+  "accountId": "guardian_demo_001",
+  "learnerId": "learner_demo_anonymous",
+  "relationship": "parent_guardian",
+  "permissions": ["grant_consent", "view_progress", "manage_vouchers", "export_data", "delete_data", "manage_sessions"],
+  "status": "active",
+  "createdAt": "2026-05-29T00:00:00.000Z",
+  "expiresAt": null,
+  "metadata": {
+    "verification": "prototype_guardian_attestation"
+  }
+}

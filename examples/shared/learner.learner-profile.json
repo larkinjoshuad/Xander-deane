@@ -1,0 +1,16 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "learner_demo_anonymous",
+  "locale": "en-US",
+  "gradeBand": "elementary",
+  "accessibility": {
+    "captionsRequired": true,
+    "reducedMotion": false,
+    "screenReaderOptimized": false,
+    "inputAlternatives": ["keyboard", "touch", "speech"]
+  },
+  "preferences": {
+    "voiceEnabled": true,
+    "hintStyle": "guided"
+  }
+}

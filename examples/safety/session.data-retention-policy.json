@@ -1,0 +1,14 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "retention.us.session.default",
+  "jurisdiction": "US",
+  "recordType": "session_record",
+  "retentionDays": 365,
+  "deleteOnConsentRevocation": true,
+  "exportableByGuardian": true,
+  "requiresAuditTrail": true,
+  "effectiveAt": "2026-05-29T00:00:00.000Z",
+  "metadata": {
+    "notes": "Prototype default; replace with counsel-approved retention schedules before production."
+  }
+}

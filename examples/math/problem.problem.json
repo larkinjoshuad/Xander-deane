@@ -1,0 +1,25 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "math.3x4.visual-groups",
+  "objectiveId": "math.multiplication.equal-groups",
+  "subject": "math",
+  "locale": "en-US",
+  "prompt": "Build 3 groups of 4 counters. How many counters are there in all?",
+  "difficulty": "intro",
+  "expectedAnswer": 12,
+  "acceptableAnswers": ["12", "twelve"],
+  "interactionModes": ["text", "audio", "touch", "manipulative"],
+  "workspace": {
+    "kind": "equal-groups",
+    "state": {
+      "groupsRequired": 3,
+      "itemsPerGroup": 4,
+      "availableCounters": 12,
+      "groupIds": ["group_1", "group_2", "group_3"]
+    }
+  },
+  "metadata": {
+    "estimatedSeconds": 90,
+    "hintPolicy": "guided"
+  }
+}

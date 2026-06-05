@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/learner-account-link.schema.json",
+  "title": "LearnerAccountLink",
+  "description": "Relationship and authorization link between an account and a learner profile.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "accountId",
+    "learnerId",
+    "relationship",
+    "permissions",
+    "status",
+    "createdAt",
+    "expiresAt",
+    "metadata"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "accountId": { "type": "string", "minLength": 1 },
+    "learnerId": { "type": "string", "minLength": 1 },
+    "relationship": { "type": "string", "enum": ["parent_guardian", "teacher", "school_admin", "case_manager", "learner_self", "operator"] },
+    "permissions": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["grant_consent", "view_progress", "assign_content", "manage_vouchers", "export_data", "delete_data", "review_safety", "manage_sessions"] }
+    },
+    "status": { "type": "string", "enum": ["active", "pending", "revoked", "expired"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": ["string", "null"], "format": "date-time" },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

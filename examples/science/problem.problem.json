@@ -1,0 +1,45 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "science.animals.sort-feathers",
+  "objectiveId": "science.life.classify-animals",
+  "subject": "science",
+  "locale": "en-US",
+  "prompt": "Drag each animal with feathers into the Feathers group.",
+  "difficulty": "intro",
+  "expectedAnswer": [
+    "duck",
+    "eagle"
+  ],
+  "acceptableAnswers": [
+    [
+      "eagle",
+      "duck"
+    ]
+  ],
+  "interactionModes": [
+    "text",
+    "audio",
+    "touch",
+    "manipulative"
+  ],
+  "workspace": {
+    "kind": "classification-sort",
+    "state": {
+      "items": [
+        "duck",
+        "dog",
+        "eagle",
+        "snake"
+      ],
+      "groups": [
+        "feathers",
+        "not_feathers"
+      ],
+      "targetGroupId": "feathers"
+    }
+  },
+  "metadata": {
+    "estimatedSeconds": 60,
+    "hintPolicy": "guided"
+  }
+}

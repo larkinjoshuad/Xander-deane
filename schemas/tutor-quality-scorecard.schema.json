@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/tutor-quality-scorecard.schema.json",
+  "title": "TutorQualityScorecard",
+  "description": "Synthetic-only rubric scorecard for evaluating tutor responses before provider-backed or child-facing AI is considered.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "tutorContextId",
+    "tutorResponseId",
+    "evaluatedAt",
+    "evaluatorId",
+    "mode",
+    "rubricScores",
+    "totalScore",
+    "maxScore",
+    "passingScore",
+    "passed",
+    "issues",
+    "metadata"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "tutorContextId": { "type": "string", "minLength": 1 },
+    "tutorResponseId": { "type": "string", "minLength": 1 },
+    "evaluatedAt": { "type": "string", "format": "date-time" },
+    "evaluatorId": { "type": "string", "minLength": 1 },
+    "mode": { "type": "string", "enum": ["synthetic_tutor_quality"] },
+    "rubricScores": {
+      "type": "object",
+      "required": ["correctness", "pedagogy", "ageFit", "safety", "contractFit", "actionability"],
+      "additionalProperties": false,
+      "properties": {
+        "correctness": { "$ref": "#/$defs/rubricScore" },
+        "pedagogy": { "$ref": "#/$defs/rubricScore" },
+        "ageFit": { "$ref": "#/$defs/rubricScore" },
+        "safety": { "$ref": "#/$defs/rubricScore" },
+        "contractFit": { "$ref": "#/$defs/rubricScore" },
+        "actionability": { "$ref": "#/$defs/rubricScore" }
+      }
+    },
+    "totalScore": { "type": "integer", "minimum": 0 },
+    "maxScore": { "type": "integer", "minimum": 1 },
+    "passingScore": { "type": "integer", "minimum": 0 },
+    "passed": { "type": "boolean" },
+    "issues": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  },
+  "$defs": {
+    "rubricScore": {
+      "type": "object",
+      "required": ["score", "maxScore", "notes"],
+      "additionalProperties": false,
+      "properties": {
+        "score": { "type": "integer", "minimum": 0 },
+        "maxScore": { "type": "integer", "minimum": 1 },
+        "notes": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    }
+  }
+}

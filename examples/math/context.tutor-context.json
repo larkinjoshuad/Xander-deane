@@ -1,0 +1,231 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "ctx_ses_demo_math_001_2026-05-29",
+  "sessionId": "ses_demo_math_001",
+  "learnerId": "learner_demo_anonymous",
+  "objectiveId": "math.multiplication.equal-groups",
+  "problemId": "math.3x4.visual-groups",
+  "generatedAt": "2026-05-29T00:00:00.000Z",
+  "learnerProfile": {
+    "contractVersion": "0.1.0",
+    "id": "learner_demo_anonymous",
+    "locale": "en-US",
+    "gradeBand": "elementary",
+    "accessibility": {
+      "captionsRequired": true,
+      "reducedMotion": false,
+      "screenReaderOptimized": false,
+      "inputAlternatives": [
+        "keyboard",
+        "touch",
+        "speech"
+      ]
+    },
+    "preferences": {
+      "voiceEnabled": true,
+      "hintStyle": "guided"
+    }
+  },
+  "deviceProfile": {
+    "contractVersion": "0.1.0",
+    "category": "tablet",
+    "viewport": {
+      "width": 820,
+      "height": 1180
+    },
+    "pixelRatio": 2,
+    "inputModes": [
+      "touch",
+      "keyboard",
+      "voice"
+    ],
+    "presentationMode": "compact",
+    "capabilities": {
+      "hover": false,
+      "speech": true,
+      "coarsePointer": true,
+      "reducedMotion": false
+    },
+    "safeArea": {
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "left": 0
+    },
+    "metadata": {
+      "exampleUse": "Responsive tablet shell"
+    }
+  },
+  "objective": {
+    "contractVersion": "0.1.0",
+    "id": "math.multiplication.equal-groups",
+    "subject": "math",
+    "locale": "en-US",
+    "title": "Understand multiplication as equal groups",
+    "description": "Learners build and count equal groups to understand multiplication as repeated addition.",
+    "standards": [
+      "CCSS.MATH.CONTENT.3.OA.A.1"
+    ],
+    "prerequisites": [
+      "math.addition.counting"
+    ],
+    "tags": [
+      "multiplication",
+      "visual",
+      "manipulatives"
+    ]
+  },
+  "problem": {
+    "contractVersion": "0.1.0",
+    "id": "math.3x4.visual-groups",
+    "objectiveId": "math.multiplication.equal-groups",
+    "subject": "math",
+    "locale": "en-US",
+    "prompt": "Build 3 groups of 4 counters. How many counters are there in all?",
+    "difficulty": "intro",
+    "expectedAnswer": 12,
+    "acceptableAnswers": [
+      "12",
+      "twelve"
+    ],
+    "interactionModes": [
+      "text",
+      "audio",
+      "touch",
+      "manipulative"
+    ],
+    "workspace": {
+      "kind": "equal-groups",
+      "state": {
+        "groupsRequired": 3,
+        "itemsPerGroup": 4,
+        "availableCounters": 12,
+        "groupIds": [
+          "group_1",
+          "group_2",
+          "group_3"
+        ]
+      }
+    },
+    "metadata": {
+      "estimatedSeconds": 90,
+      "hintPolicy": "guided"
+    }
+  },
+  "recentEvents": [
+    {
+      "contractVersion": "0.1.0",
+      "id": "evt_problem_presented_001",
+      "sessionId": "ses_demo_math_001",
+      "learnerId": "learner_demo_anonymous",
+      "problemId": "math.3x4.visual-groups",
+      "type": "problem_presented",
+      "occurredAt": "2026-05-29T00:00:00.000Z",
+      "modality": "text",
+      "payload": {
+        "prompt": "Build 3 groups of 4 counters. How many counters are there in all?"
+      },
+      "trace": {}
+    }
+  ],
+  "workspaceSnapshot": {
+    "contractVersion": "0.1.0",
+    "id": "snapshot_ses_demo_math_001_001",
+    "sessionId": "ses_demo_math_001",
+    "problemId": "math.3x4.visual-groups",
+    "kind": "equal-groups",
+    "state": {
+      "availableCounters": [
+        "counter_1",
+        "counter_2"
+      ],
+      "groups": [
+        {
+          "id": "group_1",
+          "items": []
+        },
+        {
+          "id": "group_2",
+          "items": []
+        },
+        {
+          "id": "group_3",
+          "items": []
+        }
+      ],
+      "selectedCounterId": null
+    },
+    "createdAt": "2026-05-29T00:00:00.000Z",
+    "updatedAt": "2026-05-29T00:00:00.000Z"
+  },
+  "evaluationResult": null,
+  "tutorPolicy": {
+    "contractVersion": "0.1.0",
+    "id": "policy.math.equal-groups.elementary",
+    "subject": "math",
+    "locale": "en-US",
+    "gradeBand": "elementary",
+    "answerReveal": "after_correct_or_explicit_request",
+    "maxHintLevel": 3,
+    "hintLevels": [
+      {
+        "level": 1,
+        "strategy": "check_groups",
+        "mayRevealAnswer": false
+      }
+    ],
+    "allowedFeedbackTypes": [
+      "encouragement",
+      "hint",
+      "question",
+      "summary"
+    ],
+    "allowedModalities": [
+      "text",
+      "audio",
+      "touch",
+      "manipulative"
+    ],
+    "safety": {
+      "allowEscalation": true,
+      "handoffTriggers": [
+        "learner_distress"
+      ],
+      "blockedBehaviors": [
+        "shaming",
+        "unsafe_advice"
+      ]
+    }
+  },
+  "skillMastery": null,
+  "progressSummary": null,
+  "constraints": {
+    "maxRecentEvents": 5,
+    "allowedModalities": [
+      "text",
+      "audio",
+      "touch",
+      "manipulative"
+    ],
+    "answerReveal": "after_correct_or_explicit_request",
+    "presentationMode": "compact",
+    "mustValidateTutorResponse": true,
+    "mayCallAi": false
+  },
+  "metadata": {
+    "source": "example-fixture"
+  },
+  "consentSafetySummary": {
+    "consentStatus": "granted",
+    "activeScopes": [
+      "ai_tutoring",
+      "personalization",
+      "progress_tracking",
+      "guardian_notifications",
+      "data_export"
+    ],
+    "safetyPolicyId": "safety.minor.default",
+    "aiAutonomyLevel": "guided_only",
+    "requiresHumanEscalation": true
+  }
+}

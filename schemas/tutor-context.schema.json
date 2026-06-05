@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/tutor-context.schema.json",
+  "title": "TutorContext",
+  "description": "Validated context package for scripted or AI tutor generation.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "sessionId",
+    "learnerId",
+    "objectiveId",
+    "problemId",
+    "generatedAt",
+    "learnerProfile",
+    "deviceProfile",
+    "objective",
+    "problem",
+    "recentEvents",
+    "workspaceSnapshot",
+    "evaluationResult",
+    "tutorPolicy",
+    "skillMastery",
+    "progressSummary",
+    "consentSafetySummary",
+    "constraints"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "sessionId": { "type": "string", "minLength": 1 },
+    "learnerId": { "type": ["string", "null"] },
+    "objectiveId": { "type": "string", "minLength": 1 },
+    "problemId": { "type": "string", "minLength": 1 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "learnerProfile": { "type": ["object", "null"], "additionalProperties": true },
+    "deviceProfile": { "type": ["object", "null"], "additionalProperties": true },
+    "objective": { "type": "object", "additionalProperties": true },
+    "problem": { "type": "object", "additionalProperties": true },
+    "recentEvents": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+    "workspaceSnapshot": { "type": "object", "additionalProperties": true },
+    "evaluationResult": { "type": ["object", "null"], "additionalProperties": true },
+    "tutorPolicy": { "type": "object", "additionalProperties": true },
+    "skillMastery": { "type": ["object", "null"], "additionalProperties": true },
+    "progressSummary": { "type": ["object", "null"], "additionalProperties": true },
+    "consentSafetySummary": {
+      "type": "object",
+      "required": ["consentStatus", "activeScopes", "safetyPolicyId", "aiAutonomyLevel", "requiresHumanEscalation"],
+      "additionalProperties": false,
+      "properties": {
+        "consentStatus": { "type": "string", "minLength": 1 },
+        "activeScopes": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "safetyPolicyId": { "type": ["string", "null"] },
+        "aiAutonomyLevel": { "type": "string", "minLength": 1 },
+        "requiresHumanEscalation": { "type": "boolean" }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "required": ["maxRecentEvents", "allowedModalities", "answerReveal", "presentationMode", "mustValidateTutorResponse", "mayCallAi"],
+      "additionalProperties": false,
+      "properties": {
+        "maxRecentEvents": { "type": "integer" },
+        "allowedModalities": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "answerReveal": { "type": "string", "minLength": 1 },
+        "presentationMode": { "type": ["string", "null"] },
+        "mustValidateTutorResponse": { "type": "boolean" },
+        "mayCallAi": { "type": "boolean" }
+      }
+    },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/checkout-session.schema.json",
+  "title": "CheckoutSession",
+  "description": "Guardian checkout state that can combine direct balance due with voucher/ESA funding selections.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "guardianId",
+    "learnerId",
+    "currency",
+    "lineItems",
+    "subtotalCents",
+    "fundingSelections",
+    "balanceDueCents",
+    "status",
+    "createdAt",
+    "updatedAt"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "guardianId": { "type": "string", "minLength": 1 },
+    "learnerId": { "type": "string", "minLength": 1 },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "lineItems": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "productOfferingId", "description", "expenseCategory", "amountCents"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "productOfferingId": { "type": "string", "minLength": 1 },
+          "description": { "type": "string", "minLength": 1 },
+          "expenseCategory": {
+            "type": "string",
+            "enum": [
+              "tuition",
+              "curriculum",
+              "instructional_materials",
+              "online_learning",
+              "tutoring",
+              "assessment",
+              "therapy",
+              "technology",
+              "fees",
+              "custom"
+            ]
+          },
+          "amountCents": { "type": "integer" },
+          "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+        }
+      }
+    },
+    "subtotalCents": { "type": "integer" },
+    "fundingSelections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["fundingSourceId", "voucherRedemptionId", "amountCents", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "fundingSourceId": { "type": "string", "minLength": 1 },
+          "voucherRedemptionId": { "type": "string", "minLength": 1 },
+          "amountCents": { "type": "integer" },
+          "status": { "type": "string", "enum": ["pending", "approved", "paid", "reimbursed", "denied", "canceled"] }
+        }
+      },
+      "default": []
+    },
+    "balanceDueCents": { "type": "integer" },
+    "status": { "type": "string", "enum": ["draft", "voucher_pending", "payment_due", "paid", "canceled"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

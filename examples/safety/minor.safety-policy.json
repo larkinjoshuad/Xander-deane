@@ -1,0 +1,15 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "safety.minor.default",
+  "learnerAgeBand": "minor_under_13",
+  "allowedContentCategories": ["curriculum_instruction", "encouragement", "study_skills"],
+  "blockedContentCategories": ["unsafe_advice", "shaming", "adult_content", "medical_or_legal_advice"],
+  "escalationTriggers": ["self_harm", "abuse_disclosure", "medical_emergency", "learner_distress", "unsafe_advice_request", "privacy_request"],
+  "aiAutonomyLevel": "guided_only",
+  "requiresHumanEscalation": true,
+  "maxSessionMinutes": 30,
+  "metadata": {
+    "reviewCadence": "quarterly",
+    "owner": "trust-and-safety"
+  }
+}

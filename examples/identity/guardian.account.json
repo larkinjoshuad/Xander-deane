@@ -1,0 +1,12 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "guardian_demo_001",
+  "role": "guardian",
+  "displayName": "Demo Guardian",
+  "status": "active",
+  "locale": "en-US",
+  "createdAt": "2026-05-29T00:00:00.000Z",
+  "metadata": {
+    "authProvider": "prototype"
+  }
+}

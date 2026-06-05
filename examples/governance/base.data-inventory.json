@@ -1,0 +1,676 @@
+{
+  "contractVersion": "0.1.0",
+  "generatedAt": "2026-05-31T00:00:00.000Z",
+  "mode": "synthetic_architecture_prototype",
+  "records": [
+    {
+      "contractName": "account-ledger-entry",
+      "schemaPath": "schemas/account-ledger-entry.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "billing",
+        "voucher",
+        "audit"
+      ],
+      "requiresConsentScopes": [
+        "voucher_billing",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes",
+        "voucher/payment compliance review before real funds"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "account",
+      "schemaPath": "schemas/account.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "identity"
+      ],
+      "requiresConsentScopes": [
+        "guardian_notifications",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "api-http-exchange",
+      "schemaPath": "schemas/api-http-exchange.schema.json",
+      "classification": "restricted",
+      "piiRisk": "medium",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "api_exchange"
+      ],
+      "requiresConsentScopes": [],
+      "retentionPolicyRequired": true,
+      "exportRequired": false,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "audit-event",
+      "schemaPath": "schemas/audit-event.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "audit"
+      ],
+      "requiresConsentScopes": [
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "checkout-session",
+      "schemaPath": "schemas/checkout-session.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "billing",
+        "voucher"
+      ],
+      "requiresConsentScopes": [
+        "voucher_billing",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes",
+        "voucher/payment compliance review before real funds"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "consent-record",
+      "schemaPath": "schemas/consent-record.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "consent"
+      ],
+      "requiresConsentScopes": [
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "data-retention-policy",
+      "schemaPath": "schemas/data-retention-policy.schema.json",
+      "classification": "synthetic_safe",
+      "piiRisk": "low",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "retention"
+      ],
+      "requiresConsentScopes": [],
+      "retentionPolicyRequired": true,
+      "exportRequired": false,
+      "deletionRequired": true,
+      "productionRequirements": [],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "data-inventory",
+      "schemaPath": "schemas/data-inventory.schema.json",
+      "classification": "public_contract",
+      "piiRisk": "none",
+      "realDataAllowed": true,
+      "recordTypes": [
+        "contract_metadata",
+        "retention"
+      ],
+      "requiresConsentScopes": [],
+      "retentionPolicyRequired": false,
+      "exportRequired": false,
+      "deletionRequired": false,
+      "productionRequirements": [],
+      "notes": "Public contract metadata or configurable catalog/policy data; still review before deployment."
+    },
+    {
+      "contractName": "device-profile",
+      "schemaPath": "schemas/device-profile.schema.json",
+      "classification": "restricted",
+      "piiRisk": "medium",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "device"
+      ],
+      "requiresConsentScopes": [],
+      "retentionPolicyRequired": true,
+      "exportRequired": false,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "evaluation-result",
+      "schemaPath": "schemas/evaluation-result.schema.json",
+      "classification": "restricted",
+      "piiRisk": "medium",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "learner_work",
+        "session_state"
+      ],
+      "requiresConsentScopes": [],
+      "retentionPolicyRequired": true,
+      "exportRequired": false,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "funding-source",
+      "schemaPath": "schemas/funding-source.schema.json",
+      "classification": "synthetic_safe",
+      "piiRisk": "low",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "voucher",
+        "billing"
+      ],
+      "requiresConsentScopes": [],
+      "retentionPolicyRequired": true,
+      "exportRequired": false,
+      "deletionRequired": false,
+      "productionRequirements": [
+        "voucher/payment compliance review before real funds"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "interaction-event",
+      "schemaPath": "schemas/interaction-event.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "learner_work",
+        "session_state"
+      ],
+      "requiresConsentScopes": [
+        "progress_tracking",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "invoice",
+      "schemaPath": "schemas/invoice.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "billing",
+        "voucher"
+      ],
+      "requiresConsentScopes": [
+        "voucher_billing",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes",
+        "voucher/payment compliance review before real funds"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "learner-account-link",
+      "schemaPath": "schemas/learner-account-link.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "access_control",
+        "identity"
+      ],
+      "requiresConsentScopes": [
+        "guardian_notifications",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "learner-profile",
+      "schemaPath": "schemas/learner-profile.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "learner_profile"
+      ],
+      "requiresConsentScopes": [
+        "personalization",
+        "progress_tracking",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "learning-objective",
+      "schemaPath": "schemas/learning-objective.schema.json",
+      "classification": "synthetic_safe",
+      "piiRisk": "low",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "curriculum"
+      ],
+      "requiresConsentScopes": [],
+      "retentionPolicyRequired": true,
+      "exportRequired": false,
+      "deletionRequired": false,
+      "productionRequirements": [],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "problem",
+      "schemaPath": "schemas/problem.schema.json",
+      "classification": "synthetic_safe",
+      "piiRisk": "low",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "curriculum"
+      ],
+      "requiresConsentScopes": [],
+      "retentionPolicyRequired": true,
+      "exportRequired": false,
+      "deletionRequired": false,
+      "productionRequirements": [],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "product-offering",
+      "schemaPath": "schemas/product-offering.schema.json",
+      "classification": "synthetic_safe",
+      "piiRisk": "low",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "billing",
+        "voucher"
+      ],
+      "requiresConsentScopes": [],
+      "retentionPolicyRequired": true,
+      "exportRequired": false,
+      "deletionRequired": false,
+      "productionRequirements": [
+        "voucher/payment compliance review before real funds"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "progress-summary",
+      "schemaPath": "schemas/progress-summary.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "learner_profile",
+        "learner_work"
+      ],
+      "requiresConsentScopes": [
+        "progress_tracking",
+        "guardian_notifications",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "safety-incident",
+      "schemaPath": "schemas/safety-incident.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "safety",
+        "audit"
+      ],
+      "requiresConsentScopes": [
+        "guardian_notifications",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "safety-policy",
+      "schemaPath": "schemas/safety-policy.schema.json",
+      "classification": "synthetic_safe",
+      "piiRisk": "low",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "safety"
+      ],
+      "requiresConsentScopes": [],
+      "retentionPolicyRequired": true,
+      "exportRequired": false,
+      "deletionRequired": false,
+      "productionRequirements": [],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "schema-registry",
+      "schemaPath": "schemas/schema-registry.schema.json",
+      "classification": "public_contract",
+      "piiRisk": "none",
+      "realDataAllowed": true,
+      "recordTypes": [
+        "contract_metadata"
+      ],
+      "requiresConsentScopes": [],
+      "retentionPolicyRequired": false,
+      "exportRequired": false,
+      "deletionRequired": false,
+      "productionRequirements": [],
+      "notes": "Public contract metadata or configurable catalog/policy data; still review before deployment."
+    },
+    {
+      "contractName": "session-record",
+      "schemaPath": "schemas/session-record.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "session_state",
+        "learner_work"
+      ],
+      "requiresConsentScopes": [
+        "progress_tracking",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "skill-mastery",
+      "schemaPath": "schemas/skill-mastery.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "learner_profile",
+        "learner_work"
+      ],
+      "requiresConsentScopes": [
+        "progress_tracking",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "tutor-context",
+      "schemaPath": "schemas/tutor-context.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "ai_context",
+        "learner_profile",
+        "session_state"
+      ],
+      "requiresConsentScopes": [
+        "ai_tutoring",
+        "personalization",
+        "progress_tracking",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes",
+        "synthetic-only until model gateway safety, retention, and audit review"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "tutor-policy",
+      "schemaPath": "schemas/tutor-policy.schema.json",
+      "classification": "synthetic_safe",
+      "piiRisk": "low",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "ai_context",
+        "safety"
+      ],
+      "requiresConsentScopes": [],
+      "retentionPolicyRequired": true,
+      "exportRequired": false,
+      "deletionRequired": false,
+      "productionRequirements": [],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "tutor-quality-scorecard",
+      "schemaPath": "schemas/tutor-quality-scorecard.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "ai_output",
+        "audit"
+      ],
+      "requiresConsentScopes": [
+        "ai_tutoring",
+        "progress_tracking"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes",
+        "model quality review before live child-facing AI"
+      ],
+      "notes": "Synthetic tutor-quality evaluation only until real learner AI governance and human review workflows are approved."
+    },
+    {
+      "contractName": "tutor-response",
+      "schemaPath": "schemas/tutor-response.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "ai_output"
+      ],
+      "requiresConsentScopes": [
+        "ai_tutoring",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes",
+        "synthetic-only until model gateway safety, retention, and audit review"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "voucher-redemption",
+      "schemaPath": "schemas/voucher-redemption.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "voucher",
+        "billing"
+      ],
+      "requiresConsentScopes": [
+        "voucher_billing",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes",
+        "voucher/payment compliance review before real funds"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    },
+    {
+      "contractName": "workspace-snapshot",
+      "schemaPath": "schemas/workspace-snapshot.schema.json",
+      "classification": "restricted",
+      "piiRisk": "medium",
+      "realDataAllowed": false,
+      "recordTypes": [
+        "session_state",
+        "learner_work"
+      ],
+      "requiresConsentScopes": [
+        "progress_tracking",
+        "data_export"
+      ],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "data classification reviewed against regulatory assumptions",
+        "least-privilege access controls enforced",
+        "audit events emitted for create/read/update/delete/export paths",
+        "active consent or authority check for required scopes"
+      ],
+      "notes": "Reference/synthetic use only unless production requirements are satisfied."
+    }
+  ]
+}
