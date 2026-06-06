@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Xander-deane Parent Dashboard</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-device-profile="unknown" data-presentation-mode="full">
+    <main class="app-shell" aria-labelledby="dashboard-title">
+      <header class="hero">
+        <p class="eyebrow">Parent &amp; educator view</p>
+        <h1 id="dashboard-title">Learning Dashboard</h1>
+        <p id="dashboard-headline" aria-live="polite">Loading progress…</p>
+        <p><a href="./index.html" class="dashboard-link">← Back to lessons</a></p>
+      </header>
+
+      <section class="dashboard-overview" aria-label="Overall progress">
+        <div class="overview-grid">
+          <div class="overview-stat">
+            <span class="overview-label">Subjects active</span>
+            <strong id="overview-subjects">0 of 0</strong>
+          </div>
+          <div class="overview-stat">
+            <span class="overview-label">Checked attempts</span>
+            <strong id="overview-attempts">0</strong>
+          </div>
+          <div class="overview-stat">
+            <span class="overview-label">Overall accuracy</span>
+            <strong id="overview-accuracy">0%</strong>
+          </div>
+          <div class="overview-stat overview-focus">
+            <span class="overview-label">Suggested focus</span>
+            <strong id="overview-focus">—</strong>
+            <span id="overview-focus-reason" class="overview-reason"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard-subjects" aria-label="Subject progress">
+        <div class="workspace-heading">
+          <div>
+            <p class="eyebrow">By subject</p>
+            <h2>How each subject is going</h2>
+          </div>
+        </div>
+        <div id="subject-cards" class="subject-cards"></div>
+      </section>
+    </main>
+    <script type="module" src="./parent-dashboard.js"></script>
+  </body>
+</html>

@@ -730,3 +730,135 @@ html[data-device-profile="glasses"] .sort-item {
     outline: 3px solid Highlight;
   }
 }
+
+/* Parent / educator dashboard */
+.dashboard-link {
+  color: var(--brand-dark);
+  font-weight: 700;
+}
+
+.shell-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.dashboard-overview,
+.dashboard-subjects {
+  background: rgb(255 255 255 / 86%);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+}
+
+.overview-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.overview-stat {
+  background: #eef3ff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem;
+}
+
+.overview-label {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.overview-stat strong {
+  font-size: 1.5rem;
+}
+
+.overview-focus {
+  background: #fff7e8;
+}
+
+.overview-reason {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.subject-cards {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  margin-top: 1rem;
+}
+
+.subject-card {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1.25rem;
+}
+
+.subject-card.is-inactive {
+  opacity: 0.72;
+}
+
+.subject-card-heading {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+.subject-card-heading h3 {
+  margin: 0;
+}
+
+.subject-card-objective {
+  color: var(--muted);
+  margin: 0;
+}
+
+.subject-card-stats {
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+.subject-card-stats div {
+  background: #f5f7fc;
+  border-radius: 12px;
+  padding: 0.5rem 0.7rem;
+}
+
+.subject-card-stats dt {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.subject-card-stats dd {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.subject-card-next {
+  margin: 0;
+}
+
+.subject-card-meta {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin: 0;
+}
