@@ -862,3 +862,164 @@ html[data-device-profile="glasses"] .sort-item {
   font-size: 0.85rem;
   margin: 0;
 }
+
+/* Learner mode: split screen (interactive AI on top, problem area below) */
+body:has(.learn-shell) {
+  margin: 0;
+  background: #0f1426;
+}
+
+.learn-shell {
+  display: grid;
+  grid-template-rows: 42fr 58fr;
+  min-height: 100vh;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.ai-stage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 1.75rem;
+  background: radial-gradient(120% 120% at 50% 0%, #1c2540 0%, #11172b 70%);
+  color: #f4f7ff;
+}
+
+.avatar-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  background: #0b1020;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 24px;
+  padding: 1.5rem 2rem;
+  min-width: 200px;
+  box-shadow: 0 18px 40px rgb(0 0 0 / 35%);
+}
+
+.avatar-orb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  font-size: 3.2rem;
+  background: linear-gradient(160deg, #3157ff, #6b8bff);
+  box-shadow: 0 0 0 0 rgb(99 140 255 / 55%);
+}
+
+.avatar-orb.is-speaking {
+  animation: avatar-pulse 1.2s ease-out infinite;
+}
+
+@keyframes avatar-pulse {
+  0% { box-shadow: 0 0 0 0 rgb(99 140 255 / 55%); }
+  100% { box-shadow: 0 0 0 24px rgb(99 140 255 / 0%); }
+}
+
+.avatar-caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.2;
+}
+
+.avatar-name {
+  font-weight: 800;
+}
+
+.avatar-state {
+  color: #9fb2e6;
+  font-size: 0.85rem;
+}
+
+.ai-speech {
+  flex: 1 1 320px;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ai-message {
+  margin: 0;
+  font-size: clamp(1.25rem, 1rem + 1.4vw, 2rem);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.speak-button {
+  align-self: flex-start;
+  background: rgb(255 255 255 / 12%);
+  color: #f4f7ff;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 999px;
+  padding: 0.6rem 1.1rem;
+  font-weight: 700;
+}
+
+.speak-button:hover {
+  background: rgb(255 255 255 / 20%);
+}
+
+.problem-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem clamp(1rem, 3vw, 2.5rem) 2rem;
+  background: var(--bg, #f4f6fb);
+  border-radius: 28px 28px 0 0;
+  overflow: auto;
+}
+
+.problem-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.problem-prompt {
+  margin: 0;
+  font-size: clamp(1.1rem, 0.9rem + 1vw, 1.6rem);
+  font-weight: 800;
+}
+
+.subject-mini {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.subject-mini button {
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.9rem;
+}
+
+.problem-workspace {
+  flex: 1 1 auto;
+  min-height: 220px;
+}
+
+.problem-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+button.big {
+  font-size: 1.1rem;
+  padding: 0.9rem 1.6rem;
+  border-radius: 16px;
+}
+
+@media (max-width: 640px) {
+  .learn-shell { grid-template-rows: auto 1fr; }
+  .ai-stage { padding: 1.25rem; }
+}

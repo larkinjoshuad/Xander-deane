@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Xander-deane</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-device-profile="unknown" data-presentation-mode="full">
+    <main class="learn-shell" aria-label="Tutoring session">
+      <!-- Top: interactive AI (avatar tile + speech/text) -->
+      <section class="ai-stage" aria-label="Tutor">
+        <div class="avatar-tile">
+          <div class="avatar-orb" id="avatar-orb" aria-hidden="true">🦊</div>
+          <div class="avatar-caption">
+            <span class="avatar-name">Tutor</span>
+            <span class="avatar-state" id="ai-state">Ready</span>
+          </div>
+        </div>
+        <div class="ai-speech">
+          <p class="ai-message" id="tutor-message" aria-live="polite">Pick an activity below and we'll get started.</p>
+          <button class="speak-button" id="speak-button" type="button" aria-label="Hear the tutor again">🔊 Hear it again</button>
+        </div>
+      </section>
+
+      <!-- Bottom: problem area (kinetic workspace) -->
+      <section class="problem-stage" aria-label="Problem area">
+        <div class="problem-bar">
+          <p class="problem-prompt" id="problem-prompt"></p>
+          <div class="subject-mini" role="group" aria-label="Choose an activity">
+            <button type="button" data-subject="math" class="primary">Math</button>
+            <button type="button" data-subject="language">Language</button>
+            <button type="button" data-subject="science">Science</button>
+          </div>
+        </div>
+        <div class="problem-workspace" id="workspace-root"></div>
+        <div class="problem-actions">
+          <button class="primary big" id="check-button" type="button">Check answer</button>
+          <button class="big" id="reset-button" type="button">Reset</button>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./learn.js"></script>
+  </body>
+</html>
