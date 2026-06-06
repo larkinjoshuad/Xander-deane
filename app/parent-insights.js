@@ -42,7 +42,12 @@ function buildSubjectCard({ subject, sessionStore, masteryLookup, now }) {
   const skillMastery = masteryLookup(objectiveId) ?? createSkillMasteryForSession(session, { now });
   const progress = createLearnerProgressView({ session, sessionRecord: record, skillMastery });
 
-  const started = progress.attempts > 0 || (record?.events?.length ?? 0) > 0;
+  const events = session.events ?? [];
+  const hintsUsed = events.filter((event) => event.type === 'hint_requested').length;
+  const started = progress.attempts > 0 || events.length > 1;
+  // The playbook's north-star signal: getting it right without leaning on hints.
+  const unaidedSuccess = progress.correct > 0 && hintsUsed === 0;
+
   return freeze({
     id,
     label: label ?? capitalize(progress.subject ?? id),
@@ -53,6 +58,8 @@ function buildSubjectCard({ subject, sessionStore, masteryLookup, now }) {
     attempts: progress.attempts,
     correct: progress.correct,
     accuracy: progress.accuracy,
+    hintsUsed,
+    unaidedSuccess,
     readyToAdvance: progress.readyToAdvance,
     needsPractice: progress.needsPractice,
     nextStep: progress.nextStep,
@@ -65,6 +72,8 @@ function summarizeOverall(subjectCards) {
   const started = subjectCards.filter((card) => card.started);
   const totalAttempts = started.reduce((sum, card) => sum + card.attempts, 0);
   const totalCorrect = started.reduce((sum, card) => sum + card.correct, 0);
+  const totalHints = started.reduce((sum, card) => sum + card.hintsUsed, 0);
+  const unaidedSubjects = started.filter((card) => card.unaidedSuccess).length;
   const overallAccuracy = totalAttempts === 0 ? 0 : Math.round((totalCorrect / totalAttempts) * 100);
 
   const focus = chooseFocus(subjectCards);
@@ -73,6 +82,8 @@ function summarizeOverall(subjectCards) {
     subjectsStarted: started.length,
     totalAttempts,
     totalCorrect,
+    totalHints,
+    unaidedSubjects,
     overallAccuracy,
     focus,
     headline: buildHeadline({ started, overallAccuracy, focus, total: subjectCards.length }),

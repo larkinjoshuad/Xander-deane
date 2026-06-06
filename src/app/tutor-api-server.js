@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+import { summarizeHintLadder } from './learning-session.js';
 import { createTutorContext } from './tutor-context.js';
 import { createTutorGateway } from './model-gateway-claude.js';
 
@@ -36,12 +37,15 @@ export function createTutorApiServer({
     }
     let tutorContext;
     try {
+      const ladder = summarizeHintLadder(session);
       tutorContext = createTutorContext({
         session,
         learnerProfile,
         consentRecord,
         safetyPolicy,
         mayCallAi: true,
+        hintLevel: ladder.level > 0 ? ladder.level : null,
+        hintStrategy: ladder.level > 0 ? session.tutorPolicy?.hintLevels?.[ladder.level - 1]?.strategy ?? null : null,
         generatedAt: now(),
         metadata: { dataMode: 'synthetic', purpose: 'live-tutor' },
       });

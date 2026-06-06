@@ -12,6 +12,8 @@ export function createTutorContext({
   safetyPolicy = null,
   maxRecentEvents = 10,
   mayCallAi = false,
+  hintLevel = null,
+  hintStrategy = null,
   generatedAt = new Date().toISOString(),
   metadata = {},
   contractVersion = CONTRACT_VERSION,
@@ -65,6 +67,8 @@ export function createTutorContext({
       presentationMode: deviceProfile?.presentationMode ?? null,
       mustValidateTutorResponse: true,
       mayCallAi,
+      hintLevel,
+      hintStrategy,
     },
     metadata,
   });

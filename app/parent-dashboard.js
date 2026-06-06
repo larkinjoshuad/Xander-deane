@@ -12,6 +12,8 @@ const elements = {
   subjects: document.querySelector('#overview-subjects'),
   attempts: document.querySelector('#overview-attempts'),
   accuracy: document.querySelector('#overview-accuracy'),
+  hints: document.querySelector('#overview-hints'),
+  independence: document.querySelector('#overview-independence'),
   focus: document.querySelector('#overview-focus'),
   focusReason: document.querySelector('#overview-focus-reason'),
   cards: document.querySelector('#subject-cards'),
@@ -46,6 +48,10 @@ function render(model) {
   elements.subjects.textContent = `${model.overall.subjectsStarted} of ${model.overall.subjectsTracked}`;
   elements.attempts.textContent = String(model.overall.totalAttempts);
   elements.accuracy.textContent = `${model.overall.overallAccuracy}%`;
+  elements.hints.textContent = String(model.overall.totalHints);
+  elements.independence.textContent = model.overall.subjectsStarted === 0
+    ? ''
+    : `${model.overall.unaidedSubjects} of ${model.overall.subjectsStarted} solved without hints`;
   if (model.overall.focus) {
     elements.focus.textContent = model.overall.focus.label;
     elements.focusReason.textContent = model.overall.focus.reason;
@@ -78,9 +84,9 @@ function createSubjectCard(card) {
   stats.className = 'subject-card-stats';
   stats.append(
     statPair('Attempts', String(card.attempts)),
-    statPair('Correct', String(card.correct)),
     statPair('Accuracy', `${card.accuracy}%`),
-    statPair('Confidence', formatLabel(card.confidence)),
+    statPair('Hints used', String(card.hintsUsed)),
+    statPair('Independent', card.unaidedSuccess ? 'Yes' : card.started ? 'Not yet' : '—'),
   );
 
   const next = document.createElement('p');

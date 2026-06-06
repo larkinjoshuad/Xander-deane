@@ -99,6 +99,13 @@ export function buildTutorUserContent(tutorContext) {
   if (targets.length > 0) {
     lines.push(`Highlightable workspace ids: ${targets.join(', ')}`);
   }
+  const hintLevel = tutorContext.constraints?.hintLevel;
+  if (hintLevel) {
+    lines.push(
+      `Hint level requested: ${hintLevel}${tutorContext.constraints?.hintStrategy ? ` (${tutorContext.constraints.hintStrategy})` : ''}.`,
+      'Give a hint at this level only — one small nudge. Do NOT jump ahead to a fuller explanation or the answer.',
+    );
+  }
   lines.push('', 'Write the next tutor message for this child.');
   return lines.join('\n');
 }

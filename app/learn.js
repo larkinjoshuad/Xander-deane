@@ -1,6 +1,7 @@
 import {
   checkWorkspaceAnswer,
   createInitialLearningSession,
+  requestHint,
   resetWorkspace,
 } from '../src/app/learning-session.js';
 import { renderWorkspaceHost } from '../src/app/workspace-host.js';
@@ -43,6 +44,7 @@ const elements = {
   workspaceRoot: document.querySelector('#workspace-root'),
   checkButton: document.querySelector('#check-button'),
   resetButton: document.querySelector('#reset-button'),
+  hintButton: document.querySelector('#hint-button'),
   subjectButtons: Array.from(document.querySelectorAll('[data-subject]')),
 };
 
@@ -87,6 +89,11 @@ function bindActions() {
   elements.resetButton.addEventListener('click', () => {
     audioUnlocked = true;
     commitSession(resetWorkspace(session), { speak: true });
+  });
+
+  elements.hintButton.addEventListener('click', () => {
+    audioUnlocked = true;
+    commitSession(requestHint(session), { speak: true });
   });
 
   elements.speakButton.addEventListener('click', () => {

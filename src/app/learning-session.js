@@ -334,6 +334,85 @@ export function checkWorkspaceAnswer(session, now = () => new Date().toISOString
   });
 }
 
+const HINT_ATTEMPT_EVENT_TYPES = Object.freeze(['user_dragged', 'user_selected', 'answer_checked']);
+
+// Derives the current state of the effort-preserving hint ladder from the
+// event log (so it survives persistence/rehydration without extra state). The
+// "window" is the current attempt — everything since the last workspace reset.
+export function summarizeHintLadder(session) {
+  const maxLevel = session.tutorPolicy?.maxHintLevel ?? 0;
+  const events = session.events ?? [];
+  let windowStart = 0;
+  for (let i = events.length - 1; i >= 0; i -= 1) {
+    if (events[i].type === 'workspace_reset') {
+      windowStart = i + 1;
+      break;
+    }
+  }
+  const windowEvents = events.slice(windowStart);
+  const hintEvents = windowEvents.filter((event) => event.type === 'hint_requested');
+  const level = hintEvents.reduce((max, event) => Math.max(max, event.payload?.hintLevel ?? 0), 0);
+  const lastHintIndex = windowEvents.findLastIndex((event) => event.type === 'hint_requested');
+  const attemptsSinceLastHint = lastHintIndex < 0
+    ? 0
+    : windowEvents.slice(lastHintIndex + 1).filter((event) => HINT_ATTEMPT_EVENT_TYPES.includes(event.type)).length;
+
+  return {
+    level: Math.min(level, maxLevel),
+    maxLevel,
+    hintsRequested: hintEvents.length,
+    attemptsSinceLastHint,
+    atMax: maxLevel > 0 && level >= maxLevel,
+  };
+}
+
+// Effort-preserving hint: escalates one rung only after a genuine attempt, never
+// reveals the answer (per policy), and logs the request as a learning-quality
+// signal. This is the load-bearing guardrail against AI over-reliance.
+export function requestHint(session, now = () => new Date().toISOString()) {
+  const policy = session.tutorPolicy;
+  if (!Array.isArray(policy?.hintLevels) || policy.hintLevels.length === 0) {
+    return session;
+  }
+  const ladder = summarizeHintLadder(session);
+  const canEscalate = ladder.level === 0 || (ladder.level < ladder.maxLevel && ladder.attemptsSinceLastHint > 0);
+  const gatedByEffort = !canEscalate && ladder.level >= 1 && ladder.level < ladder.maxLevel && ladder.attemptsSinceLastHint === 0;
+  const nextLevel = canEscalate ? ladder.level + 1 : Math.max(ladder.level, 1);
+  const hintConfig = policy.hintLevels[nextLevel - 1] ?? {};
+  const mayRevealAnswer = hintConfig.mayRevealAnswer === true && policy.answerReveal !== 'never';
+  const hintBody = createHintMessage({ problem: session.problem, level: nextLevel, strategy: hintConfig.strategy });
+  const messageText = gatedByEffort ? `Give it a try first, then I can show you more. ${hintBody}` : hintBody;
+
+  const hintEvent = createInteractionEvent({
+    id: createEventId('evt_hint_requested', session.events.length + 1),
+    sessionId: session.sessionId,
+    learnerId: session.learnerId,
+    problemId: session.problem.id,
+    type: 'hint_requested',
+    occurredAt: now(),
+    modality: 'text',
+    payload: { hintLevel: nextLevel, strategy: hintConfig.strategy ?? null, gatedByEffort },
+  });
+
+  return freezeSession({
+    ...session,
+    tutorResponse: createTutorResponse({
+      id: createEventId('msg_hint', session.events.length + 1),
+      sessionId: session.sessionId,
+      problemId: session.problem.id,
+      feedbackType: 'hint',
+      messageText,
+      nextAction: 'continue',
+      highlightTargets: getInitialHighlightTargets(session.problem),
+      safety: {
+        answerRevealed: mayRevealAnswer,
+        confidence: 'medium',
+      },
+    }),
+    events: [...session.events, hintEvent],
+  });
+}
+
 export function createEvaluationResult({ id, session, rawEvaluation, answer, evaluatedAt }) {
   return freezeJson({
     contractVersion: CONTRACT_VERSION,
@@ -542,6 +621,29 @@ function createFeedbackMessage({ problem, evaluation }) {
   return evaluation.isCorrect
     ? `Great work. You made ${evaluation.diagnostics.groupSizes.length} groups of ${problem.workspace.state.itemsPerGroup}, so there are ${evaluation.diagnostics.totalCounters} counters in all.`
     : `You're close. Your group sizes are ${evaluation.diagnostics.groupSizes.join(', ') || 'empty'}. Each group needs exactly ${problem.workspace.state.itemsPerGroup} counters.`;
+}
+
+const HINT_LADDERS = Object.freeze({
+  'equal-groups': {
+    check_groups: 'Look at your groups. Do they all have the same number of counters?',
+    count_each_group: 'Count the counters in one group. Each group needs the same amount.',
+    count_all_counters: 'Try putting the same number in every group, then count them all together.',
+  },
+  'token-selection': {
+    read_sentence: 'Read the whole sentence out loud. What is happening in it?',
+    look_for_action: 'An action word tells what someone or something does. Which word shows the doing?',
+    try_each_word: 'Try each word one at a time: can you DO it? Pick the word that is an action.',
+  },
+  'classification-sort': {
+    identify_trait: 'Look at the group name. What trait are we sorting by?',
+    sort_matching_items: 'Pick one item. Does it have that trait? If it does, it goes in that group.',
+    check_each_group: 'Go through each item one at a time and ask: does it match the trait?',
+  },
+});
+
+function createHintMessage({ problem, level, strategy }) {
+  const ladder = HINT_LADDERS[problem.workspace.kind] ?? {};
+  return ladder[strategy] ?? `Take another look and try the next small step (hint ${level}).`;
 }
 
 function getFeedbackHighlightTargets(problem, evaluation) {

@@ -5,6 +5,7 @@ import {
   checkWorkspaceAnswer,
   createInitialLearningSession,
   placeSelectedCounter,
+  requestHint,
   selectCounter,
   selectToken,
 } from '../src/app/learning-session.js';
@@ -23,14 +24,14 @@ test('parent dashboard rolls up per-subject progress across the learner', () => 
   const store = createBrowserSessionStore({ namespace: 'parent-test', storage: createFakeStorage(), now: fixedNow });
   const masteryByObjective = new Map();
 
-  // Math: one incorrect attempt (struggling).
+  // Math: one incorrect attempt, and the learner asked for a hint (struggling).
   seedSubject(store, masteryByObjective, subjects[0], (session) => {
     const selected = selectCounter(session, 'counter_1', fixedNow);
     const groupId = selected.workspaceSnapshot.state.groups[0].id;
-    return placeSelectedCounter(selected, groupId, fixedNow);
+    return requestHint(placeSelectedCounter(selected, groupId, fixedNow), fixedNow);
   });
 
-  // Language: one correct attempt (token "runs" at index 2).
+  // Language: one correct attempt with no hints (token "runs" at index 2).
   seedSubject(store, masteryByObjective, subjects[1], (session) => selectToken(session, 2, fixedNow));
 
   // Science: left untouched (not started).
@@ -53,10 +54,17 @@ test('parent dashboard rolls up per-subject progress across the learner', () => 
   assert.equal(byId.math.attempts, 1);
   assert.equal(byId.math.correct, 0);
   assert.equal(byId.math.started, true);
+  assert.equal(byId.math.hintsUsed, 1);
+  assert.equal(byId.math.unaidedSuccess, false);
   assert.equal(byId.language.attempts, 1);
   assert.equal(byId.language.correct, 1);
+  assert.equal(byId.language.hintsUsed, 0);
+  assert.equal(byId.language.unaidedSuccess, true);
   assert.equal(byId.science.started, false);
   assert.equal(byId.science.attempts, 0);
+
+  assert.equal(model.overall.totalHints, 1);
+  assert.equal(model.overall.unaidedSubjects, 1);
 });
 
 test('parent dashboard headline reports no work before any activity', () => {
