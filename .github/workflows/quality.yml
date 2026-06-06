@@ -1,0 +1,96 @@
+name: Quality Gates
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - work
+
+jobs:
+  contract-runtime:
+    name: Contracts, runtime, device, and DOM smoke tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate example fixtures
+        run: npm run validate:fixtures
+
+      - name: Validate learner data inventory
+        run: npm run validate:data-inventory
+
+      - name: Replay API contract fixtures
+        run: npm run replay:api-fixtures
+
+      - name: Run Node test suite
+        run: npm test
+
+      - name: Run device QA presets
+        run: npm run test:device
+
+      - name: Run DOM product-flow smoke tests
+        run: npm run test:browser
+
+  browser-e2e:
+    name: Real-browser learner shell tests
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.60.0-noble
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: List Playwright test matrix
+        run: npm run test:e2e -- --list
+
+      - name: Run Playwright browser tests
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload browser verification screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-verification-screenshots
+          path: test-results/**/verification-*.png
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Upload Playwright failure traces
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: test-results/
+          if-no-files-found: ignore
+          retention-days: 14

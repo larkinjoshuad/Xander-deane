@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/evaluation-result.schema.json",
+  "title": "EvaluationResult",
+  "description": "Deterministic evaluator output used before tutor feedback or AI explanation.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "sessionId",
+    "problemId",
+    "workspaceSnapshotId",
+    "evaluatorId",
+    "isCorrect",
+    "feedbackCode",
+    "submittedAnswer",
+    "expectedAnswer",
+    "confidence",
+    "diagnostics",
+    "evaluatedAt"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "sessionId": { "type": "string", "minLength": 1 },
+    "problemId": { "type": "string", "minLength": 1 },
+    "workspaceSnapshotId": { "type": "string", "minLength": 1 },
+    "evaluatorId": { "type": "string", "minLength": 1 },
+    "isCorrect": { "type": "boolean" },
+    "feedbackCode": { "type": "string", "minLength": 1 },
+    "submittedAnswer": {},
+    "expectedAnswer": {},
+    "confidence": { "type": "string", "enum": ["low", "medium", "high"] },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "evaluatedAt": { "type": "string", "format": "date-time" }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "product.online_math_monthly",
+  "name": "Online Math Learning Monthly Subscription",
+  "description": "Monthly access to the math equal-groups learning workspace and guided practice.",
+  "expenseCategory": "online_learning",
+  "priceCents": 2500,
+  "currency": "USD",
+  "billingPeriod": "monthly",
+  "eligibleFundingSourceIds": ["funding.az.esa"],
+  "status": "active",
+  "metadata": {
+    "subject": "math",
+    "includedProblemIds": ["math.3x4.visual-groups"]
+  }
+}

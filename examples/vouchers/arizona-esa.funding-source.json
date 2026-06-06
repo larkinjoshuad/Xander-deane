@@ -1,0 +1,37 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "funding.az.esa",
+  "programName": "Arizona Empowerment Scholarship Account",
+  "programType": "esa",
+  "jurisdiction": {
+    "country": "US",
+    "region": "AZ"
+  },
+  "administrator": {
+    "name": "Arizona Department of Education",
+    "website": "https://www.azed.gov/esa/"
+  },
+  "eligibleExpenseCategories": [
+    "curriculum",
+    "instructional_materials",
+    "online_learning",
+    "tutoring",
+    "assessment"
+  ],
+  "paymentRails": {
+    "directPay": true,
+    "marketplace": true,
+    "reimbursement": true,
+    "purchaseOrder": false
+  },
+  "documentationRequirements": [
+    "itemized invoice",
+    "curriculum or course description",
+    "proof of payment for reimbursement"
+  ],
+  "status": "provider_application_required",
+  "metadata": {
+    "reviewCadence": "quarterly",
+    "notes": "Program rules vary and must be verified before accepting funds."
+  }
+}

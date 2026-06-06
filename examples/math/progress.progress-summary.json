@@ -1,0 +1,56 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "progress_learner_demo_001_2026-05-28",
+  "learnerId": "learner_demo_001",
+  "generatedAt": "2026-05-28T00:00:00.000Z",
+  "totals": {
+    "objectiveCount": 1,
+    "attemptCount": 2,
+    "correctCount": 1,
+    "averageMasteryEstimate": 0.5,
+    "readyToAdvanceCount": 0,
+    "needsPracticeCount": 1
+  },
+  "subjectSummaries": [
+    {
+      "subject": "math",
+      "objectiveCount": 1,
+      "attemptCount": 2,
+      "correctCount": 1,
+      "averageMasteryEstimate": 0.5,
+      "masteryLevelCounts": {
+        "not_started": 0,
+        "emerging": 0,
+        "developing": 1,
+        "proficient": 0,
+        "mastered": 0
+      }
+    }
+  ],
+  "objectiveSummaries": [
+    {
+      "objectiveId": "math.multiplication.equal-groups",
+      "subject": "math",
+      "attemptCount": 2,
+      "correctCount": 1,
+      "masteryEstimate": 0.5,
+      "masteryLevel": "developing",
+      "confidence": "medium",
+      "needsPractice": true,
+      "readyToAdvance": false,
+      "recommendedNextObjectiveIds": ["math.multiplication.arrays"]
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "practice",
+      "objectiveId": "math.multiplication.equal-groups",
+      "subject": "math",
+      "priority": "medium",
+      "reason": "Learner is still developing this objective."
+    }
+  ],
+  "metadata": {
+    "source": "example-fixture"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/safety-incident.schema.json",
+  "title": "SafetyIncident",
+  "description": "Append-only audit record for safety, privacy, consent, or escalation events in a learning session.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "sessionId",
+    "learnerId",
+    "policyId",
+    "severity",
+    "category",
+    "trigger",
+    "description",
+    "actionTaken",
+    "occurredAt",
+    "relatedEventId",
+    "tutorResponseId",
+    "metadata"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "sessionId": { "type": "string", "minLength": 1 },
+    "learnerId": { "type": ["string", "null"] },
+    "policyId": { "type": "string", "minLength": 1 },
+    "severity": { "type": "string", "enum": ["info", "low", "medium", "high", "critical"] },
+    "category": { "type": "string", "enum": ["consent", "privacy", "content_safety", "learner_wellbeing", "billing", "security", "accessibility"] },
+    "trigger": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "actionTaken": { "type": "string", "enum": ["blocked", "redirected", "guardian_notified", "educator_notified", "human_review", "logged_only"] },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "relatedEventId": { "type": ["string", "null"] },
+    "tutorResponseId": { "type": ["string", "null"] },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

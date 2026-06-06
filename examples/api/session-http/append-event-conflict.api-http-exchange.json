@@ -1,0 +1,36 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "api_session_append_event_conflict",
+  "description": "Reject an append-event request when the caller supplies a stale expected record version.",
+  "request": {
+    "method": "POST",
+    "path": "/sessions/ses_api_fixture_math_001/events",
+    "headers": {
+      "content-type": "application/json",
+      "if-match": "0",
+      "x-audit-event-id": "audit_api_fixture_conflict_001"
+    },
+    "body": {
+      "event": {
+        "id": "evt_api_fixture_conflict_001",
+        "type": "workspace_action"
+      }
+    }
+  },
+  "response": {
+    "status": 409,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store"
+    },
+    "body": {
+      "error": {
+        "code": "conflict",
+        "message": "session record ses_api_fixture_math_001 version conflict: expected 0, current 1"
+      }
+    }
+  },
+  "notes": [
+    "Stale writes must not mutate the stored session record."
+  ]
+}

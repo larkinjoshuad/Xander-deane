@@ -1,0 +1,21 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "policy.math.equal-groups.elementary",
+  "subject": "math",
+  "locale": "en-US",
+  "gradeBand": "elementary",
+  "answerReveal": "after_correct_or_explicit_request",
+  "maxHintLevel": 3,
+  "hintLevels": [
+    { "level": 1, "strategy": "check_groups", "mayRevealAnswer": false },
+    { "level": 2, "strategy": "count_each_group", "mayRevealAnswer": false },
+    { "level": 3, "strategy": "count_all_counters", "mayRevealAnswer": false }
+  ],
+  "allowedFeedbackTypes": ["encouragement", "hint", "correction", "explanation", "question", "summary", "safety_redirect"],
+  "allowedModalities": ["text", "audio", "touch", "manipulative"],
+  "safety": {
+    "allowEscalation": true,
+    "handoffTriggers": ["learner_distress", "repeated_frustration"],
+    "blockedBehaviors": ["shaming", "unsafe_advice", "unbounded_answer_reveal"]
+  }
+}

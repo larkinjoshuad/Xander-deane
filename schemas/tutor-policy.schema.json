@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/tutor-policy.schema.json",
+  "title": "TutorPolicy",
+  "description": "Portable rules that constrain tutor feedback, hints, answer reveal, and safety behavior.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "subject",
+    "locale",
+    "gradeBand",
+    "answerReveal",
+    "hintLevels",
+    "allowedFeedbackTypes",
+    "allowedModalities",
+    "safety"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "subject": {
+      "type": "string",
+      "enum": ["math", "language", "science", "history", "arts", "social_studies", "computer_science", "world_languages", "life_skills", "custom"]
+    },
+    "locale": { "type": "string", "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$" },
+    "gradeBand": { "type": "string", "minLength": 1 },
+    "answerReveal": {
+      "type": "string",
+      "enum": ["never", "after_correct", "after_attempt_limit", "after_explicit_request", "after_correct_or_explicit_request"]
+    },
+    "maxHintLevel": { "type": "integer" },
+    "hintLevels": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["level", "strategy"],
+        "additionalProperties": false,
+        "properties": {
+          "level": { "type": "integer" },
+          "strategy": { "type": "string", "minLength": 1 },
+          "mayRevealAnswer": { "type": "boolean" }
+        }
+      }
+    },
+    "allowedFeedbackTypes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": ["encouragement", "hint", "correction", "explanation", "question", "summary", "safety_redirect"]
+      }
+    },
+    "allowedModalities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "enum": ["text", "audio", "video", "drawing", "touch", "gesture", "manipulative", "camera"]
+      }
+    },
+    "safety": {
+      "type": "object",
+      "required": ["allowEscalation", "handoffTriggers", "blockedBehaviors"],
+      "additionalProperties": false,
+      "properties": {
+        "allowEscalation": { "type": "boolean" },
+        "handoffTriggers": { "type": "array", "items": { "type": "string" } },
+        "blockedBehaviors": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

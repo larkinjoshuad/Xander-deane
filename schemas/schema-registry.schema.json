@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/schema-registry.schema.json",
+  "title": "SchemaRegistry",
+  "description": "Machine-readable registry of contract schemas, fixture suffixes, and prototype stability metadata.",
+  "type": "object",
+  "required": ["contractVersion", "schemas"],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "schemas": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "schemaId", "schemaPath", "fixtureSuffix", "stability"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "schemaId": { "type": "string", "minLength": 1 },
+          "schemaPath": { "type": "string", "minLength": 1 },
+          "fixtureSuffix": { "type": "string", "minLength": 1 },
+          "stability": { "type": "string", "enum": ["prototype", "candidate", "stable", "deprecated"] }
+        }
+      }
+    }
+  }
+}

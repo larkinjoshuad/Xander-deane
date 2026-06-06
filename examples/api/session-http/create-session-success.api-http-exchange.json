@@ -1,0 +1,42 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "api_session_create_success",
+  "description": "Create a learner session through the access-controlled HTTP API.",
+  "request": {
+    "method": "POST",
+    "path": "/sessions",
+    "headers": {
+      "content-type": "application/json",
+      "x-audit-event-id": "audit_api_fixture_create_001",
+      "x-trace-id": "trace_api_fixture_create_001"
+    },
+    "body": {
+      "session": {
+        "sessionId": "ses_api_fixture_math_001",
+        "learnerId": "learner_api_fixture_001",
+        "subject": "math",
+        "workspaceKind": "equal-groups"
+      }
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store",
+      "etag": "W/\"ses_api_fixture_math_001:1\""
+    },
+    "body": {
+      "data": {
+        "sessionId": "ses_api_fixture_math_001",
+        "metadata": {
+          "recordVersion": 1,
+          "etag": "W/\"ses_api_fixture_math_001:1\""
+        }
+      }
+    }
+  },
+  "notes": [
+    "The full session payload is intentionally abbreviated; canonical session shape is covered by session-record fixtures."
+  ]
+}

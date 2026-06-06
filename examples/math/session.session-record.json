@@ -1,0 +1,309 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "record_ses_demo_math_001",
+  "sessionId": "ses_demo_math_001",
+  "learnerId": null,
+  "problemId": "math.3x4.visual-groups",
+  "subject": "math",
+  "workspaceKind": "equal-groups",
+  "currentWorkspaceSnapshot": {
+    "contractVersion": "0.1.0",
+    "id": "snapshot_ses_demo_math_001_001",
+    "sessionId": "ses_demo_math_001",
+    "problemId": "math.3x4.visual-groups",
+    "kind": "equal-groups",
+    "version": 2,
+    "updatedAt": "2026-05-28T00:00:00.000Z",
+    "state": {
+      "counters": [
+        {
+          "id": "counter_1",
+          "groupId": "group_1"
+        },
+        {
+          "id": "counter_2",
+          "groupId": null
+        },
+        {
+          "id": "counter_3",
+          "groupId": null
+        },
+        {
+          "id": "counter_4",
+          "groupId": null
+        },
+        {
+          "id": "counter_5",
+          "groupId": null
+        },
+        {
+          "id": "counter_6",
+          "groupId": null
+        },
+        {
+          "id": "counter_7",
+          "groupId": null
+        },
+        {
+          "id": "counter_8",
+          "groupId": null
+        },
+        {
+          "id": "counter_9",
+          "groupId": null
+        },
+        {
+          "id": "counter_10",
+          "groupId": null
+        },
+        {
+          "id": "counter_11",
+          "groupId": null
+        },
+        {
+          "id": "counter_12",
+          "groupId": null
+        }
+      ],
+      "groups": [
+        {
+          "id": "group_1",
+          "items": [
+            "counter_1"
+          ]
+        },
+        {
+          "id": "group_2",
+          "items": []
+        },
+        {
+          "id": "group_3",
+          "items": []
+        }
+      ]
+    },
+    "metadata": {
+      "source": "learning-session"
+    }
+  },
+  "snapshotHistory": [
+    {
+      "contractVersion": "0.1.0",
+      "id": "snapshot_ses_demo_math_001_001",
+      "sessionId": "ses_demo_math_001",
+      "problemId": "math.3x4.visual-groups",
+      "kind": "equal-groups",
+      "version": 1,
+      "updatedAt": "2026-05-28T00:00:00.000Z",
+      "state": {
+        "counters": [
+          {
+            "id": "counter_1",
+            "groupId": null
+          },
+          {
+            "id": "counter_2",
+            "groupId": null
+          },
+          {
+            "id": "counter_3",
+            "groupId": null
+          },
+          {
+            "id": "counter_4",
+            "groupId": null
+          },
+          {
+            "id": "counter_5",
+            "groupId": null
+          },
+          {
+            "id": "counter_6",
+            "groupId": null
+          },
+          {
+            "id": "counter_7",
+            "groupId": null
+          },
+          {
+            "id": "counter_8",
+            "groupId": null
+          },
+          {
+            "id": "counter_9",
+            "groupId": null
+          },
+          {
+            "id": "counter_10",
+            "groupId": null
+          },
+          {
+            "id": "counter_11",
+            "groupId": null
+          },
+          {
+            "id": "counter_12",
+            "groupId": null
+          }
+        ],
+        "groups": [
+          {
+            "id": "group_1",
+            "items": []
+          },
+          {
+            "id": "group_2",
+            "items": []
+          },
+          {
+            "id": "group_3",
+            "items": []
+          }
+        ]
+      },
+      "metadata": {
+        "source": "learning-session"
+      }
+    },
+    {
+      "contractVersion": "0.1.0",
+      "id": "snapshot_ses_demo_math_001_001",
+      "sessionId": "ses_demo_math_001",
+      "problemId": "math.3x4.visual-groups",
+      "kind": "equal-groups",
+      "version": 2,
+      "updatedAt": "2026-05-28T00:00:00.000Z",
+      "state": {
+        "counters": [
+          {
+            "id": "counter_1",
+            "groupId": "group_1"
+          },
+          {
+            "id": "counter_2",
+            "groupId": null
+          },
+          {
+            "id": "counter_3",
+            "groupId": null
+          },
+          {
+            "id": "counter_4",
+            "groupId": null
+          },
+          {
+            "id": "counter_5",
+            "groupId": null
+          },
+          {
+            "id": "counter_6",
+            "groupId": null
+          },
+          {
+            "id": "counter_7",
+            "groupId": null
+          },
+          {
+            "id": "counter_8",
+            "groupId": null
+          },
+          {
+            "id": "counter_9",
+            "groupId": null
+          },
+          {
+            "id": "counter_10",
+            "groupId": null
+          },
+          {
+            "id": "counter_11",
+            "groupId": null
+          },
+          {
+            "id": "counter_12",
+            "groupId": null
+          }
+        ],
+        "groups": [
+          {
+            "id": "group_1",
+            "items": [
+              "counter_1"
+            ]
+          },
+          {
+            "id": "group_2",
+            "items": []
+          },
+          {
+            "id": "group_3",
+            "items": []
+          }
+        ]
+      },
+      "metadata": {
+        "source": "learning-session"
+      }
+    }
+  ],
+  "events": [
+    {
+      "contractVersion": "0.1.0",
+      "id": "evt_problem_presented_001",
+      "sessionId": "ses_demo_math_001",
+      "learnerId": null,
+      "problemId": "math.3x4.visual-groups",
+      "type": "problem_presented",
+      "occurredAt": "2026-05-28T00:00:00.000Z",
+      "modality": "text",
+      "payload": {
+        "prompt": "Build 3 groups of 4 counters. How many counters are there in all?",
+        "workspaceKind": "equal-groups"
+      },
+      "trace": {}
+    },
+    {
+      "contractVersion": "0.1.0",
+      "id": "evt_user_dragged_002",
+      "sessionId": "ses_demo_math_001",
+      "learnerId": null,
+      "problemId": "math.3x4.visual-groups",
+      "type": "user_dragged",
+      "occurredAt": "2026-05-28T00:00:00.000Z",
+      "modality": "touch",
+      "payload": {
+        "counterId": "counter_1",
+        "to": "group_1",
+        "workspaceSnapshotId": "snapshot_ses_demo_math_001_001"
+      },
+      "trace": {}
+    }
+  ],
+  "tutorResponse": {
+    "contractVersion": "0.1.0",
+    "id": "msg_initial_guidance",
+    "sessionId": "ses_demo_math_001",
+    "problemId": "math.3x4.visual-groups",
+    "locale": "en-US",
+    "feedbackType": "question",
+    "messageText": "Let's build 3 groups with 4 counters in each group. Tap a counter, then tap a group.",
+    "speechText": "Let's build 3 groups with 4 counters in each group. Tap a counter, then tap a group.",
+    "nextAction": "continue",
+    "highlightTargets": [
+      "group_1",
+      "group_2",
+      "group_3"
+    ],
+    "safety": {
+      "answerRevealed": false,
+      "confidence": "medium"
+    }
+  },
+  "evaluation": null,
+  "updatedAt": "2026-05-28T00:00:00.000Z",
+  "metadata": {
+    "source": "session-persistence",
+    "eventCount": 2,
+    "snapshotCount": 2
+  }
+}

@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/voucher-redemption.schema.json",
+  "title": "VoucherRedemption",
+  "description": "Checkout, reimbursement, or direct-pay request against an ESA, voucher, scholarship, or homeschool funding source.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "fundingSourceId",
+    "learnerId",
+    "guardianId",
+    "status",
+    "currency",
+    "lineItems",
+    "eligibleAmountCents",
+    "requestedAmountCents",
+    "documentation",
+    "attestations",
+    "createdAt",
+    "updatedAt"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "fundingSourceId": { "type": "string", "minLength": 1 },
+    "learnerId": { "type": "string", "minLength": 1 },
+    "guardianId": { "type": "string", "minLength": 1 },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "eligibility_pending",
+        "documentation_requested",
+        "submitted",
+        "approved",
+        "paid",
+        "reimbursed",
+        "denied",
+        "canceled",
+        "refunded"
+      ]
+    },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "lineItems": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "description", "expenseCategory", "amountCents"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "description": { "type": "string", "minLength": 1 },
+          "expenseCategory": {
+            "type": "string",
+            "enum": [
+              "tuition",
+              "curriculum",
+              "instructional_materials",
+              "online_learning",
+              "tutoring",
+              "assessment",
+              "therapy",
+              "technology",
+              "fees",
+              "custom"
+            ]
+          },
+          "amountCents": { "type": "integer" },
+          "servicePeriod": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "startsAt": { "type": "string", "format": "date-time" },
+              "endsAt": { "type": "string", "format": "date-time" }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true,
+            "default": {}
+          }
+        }
+      }
+    },
+    "eligibleAmountCents": { "type": "integer" },
+    "requestedAmountCents": { "type": "integer" },
+    "documentation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "type": { "type": "string", "minLength": 1 },
+          "status": { "type": "string", "enum": ["missing", "uploaded", "accepted", "rejected"] },
+          "uri": { "type": "string", "minLength": 1 },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "attestations": {
+      "type": "object",
+      "required": ["guardianConfirmedEducationalUse", "providerConfirmedEligibleService"],
+      "additionalProperties": false,
+      "properties": {
+        "guardianConfirmedEducationalUse": { "type": "boolean" },
+        "providerConfirmedEligibleService": { "type": "boolean" }
+      }
+    },
+    "denialReason": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    }
+  }
+}

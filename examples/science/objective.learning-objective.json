@@ -1,0 +1,11 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "science.life.classify-animals",
+  "subject": "science",
+  "locale": "en-US",
+  "title": "Classify animals by observable traits",
+  "description": "Learners sort animals into groups using observable traits such as feathers, fur, or scales.",
+  "standards": [],
+  "prerequisites": [],
+  "tags": ["classification", "life-science", "sorting"]
+}

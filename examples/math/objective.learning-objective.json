@@ -1,0 +1,11 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "math.multiplication.equal-groups",
+  "subject": "math",
+  "locale": "en-US",
+  "title": "Understand multiplication as equal groups",
+  "description": "Learners build and count equal groups to understand multiplication as repeated addition.",
+  "standards": ["CCSS.MATH.CONTENT.3.OA.A.1"],
+  "prerequisites": ["math.addition.counting"],
+  "tags": ["multiplication", "visual", "manipulatives"]
+}

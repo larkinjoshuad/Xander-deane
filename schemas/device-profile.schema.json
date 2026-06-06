@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/device-profile.schema.json",
+  "title": "DeviceProfile",
+  "description": "Portable description of the learner device and presentation constraints for computers, tablets, phones, and smart glasses.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "category",
+    "viewport",
+    "pixelRatio",
+    "inputModes",
+    "presentationMode",
+    "capabilities"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "category": { "type": "string", "enum": ["computer", "tablet", "phone", "glasses", "unknown"] },
+    "viewport": {
+      "type": "object",
+      "required": ["width", "height"],
+      "additionalProperties": false,
+      "properties": {
+        "width": { "type": "integer" },
+        "height": { "type": "integer" }
+      }
+    },
+    "pixelRatio": { "type": "number" },
+    "inputModes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "enum": ["keyboard", "pointer", "touch", "voice", "gaze", "controller"] }
+    },
+    "presentationMode": { "type": "string", "enum": ["full", "compact", "glance", "immersive"] },
+    "capabilities": {
+      "type": "object",
+      "required": ["hover", "speech", "coarsePointer", "reducedMotion"],
+      "additionalProperties": false,
+      "properties": {
+        "hover": { "type": "boolean" },
+        "speech": { "type": "boolean" },
+        "coarsePointer": { "type": "boolean" },
+        "reducedMotion": { "type": "boolean" }
+      }
+    },
+    "safeArea": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "top": { "type": "integer" },
+        "right": { "type": "integer" },
+        "bottom": { "type": "integer" },
+        "left": { "type": "integer" }
+      }
+    },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

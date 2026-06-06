@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/tutor-response.schema.json",
+  "title": "TutorResponse",
+  "description": "Structured AI tutor output that can drive text, speech, visuals, and next UI actions.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "sessionId",
+    "problemId",
+    "locale",
+    "feedbackType",
+    "messageText",
+    "speechText",
+    "nextAction",
+    "highlightTargets",
+    "safety"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sessionId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "problemId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "locale": {
+      "type": "string",
+      "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+    },
+    "feedbackType": {
+      "type": "string",
+      "enum": [
+        "encouragement",
+        "hint",
+        "correction",
+        "explanation",
+        "question",
+        "summary",
+        "safety_redirect"
+      ]
+    },
+    "messageText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "speechText": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nextAction": {
+      "type": "string",
+      "enum": [
+        "continue",
+        "retry",
+        "show_example",
+        "advance",
+        "pause",
+        "handoff"
+      ]
+    },
+    "highlightTargets": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "safety": {
+      "type": "object",
+      "required": [
+        "answerRevealed",
+        "confidence"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "answerRevealed": {
+          "type": "boolean"
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        }
+      }
+    }
+  }
+}

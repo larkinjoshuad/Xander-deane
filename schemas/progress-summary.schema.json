@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/progress-summary.schema.json",
+  "title": "ProgressSummary",
+  "description": "Dashboard-facing learner progress aggregate across objective-level skill mastery records.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "learnerId",
+    "generatedAt",
+    "totals",
+    "subjectSummaries",
+    "objectiveSummaries",
+    "recommendations"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "learnerId": { "type": ["string", "null"] },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "totals": {
+      "type": "object",
+      "required": ["objectiveCount", "attemptCount", "correctCount", "averageMasteryEstimate", "readyToAdvanceCount", "needsPracticeCount"],
+      "additionalProperties": false,
+      "properties": {
+        "objectiveCount": { "type": "integer" },
+        "attemptCount": { "type": "integer" },
+        "correctCount": { "type": "integer" },
+        "averageMasteryEstimate": { "type": "number" },
+        "readyToAdvanceCount": { "type": "integer" },
+        "needsPracticeCount": { "type": "integer" }
+      }
+    },
+    "subjectSummaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["subject", "objectiveCount", "attemptCount", "correctCount", "averageMasteryEstimate", "masteryLevelCounts"],
+        "additionalProperties": false,
+        "properties": {
+          "subject": { "type": "string", "minLength": 1 },
+          "objectiveCount": { "type": "integer" },
+          "attemptCount": { "type": "integer" },
+          "correctCount": { "type": "integer" },
+          "averageMasteryEstimate": { "type": "number" },
+          "masteryLevelCounts": { "type": "object", "additionalProperties": true }
+        }
+      }
+    },
+    "objectiveSummaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["objectiveId", "subject", "attemptCount", "correctCount", "masteryEstimate", "masteryLevel", "confidence", "needsPractice", "readyToAdvance", "recommendedNextObjectiveIds"],
+        "additionalProperties": false,
+        "properties": {
+          "objectiveId": { "type": "string", "minLength": 1 },
+          "subject": { "type": "string", "minLength": 1 },
+          "attemptCount": { "type": "integer" },
+          "correctCount": { "type": "integer" },
+          "masteryEstimate": { "type": "number" },
+          "masteryLevel": { "type": "string", "enum": ["not_started", "emerging", "developing", "proficient", "mastered"] },
+          "confidence": { "type": "string", "enum": ["low", "medium", "high"] },
+          "needsPractice": { "type": "boolean" },
+          "readyToAdvance": { "type": "boolean" },
+          "recommendedNextObjectiveIds": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+        }
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "objectiveId", "subject", "priority", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "type": { "type": "string", "enum": ["practice", "advance", "review"] },
+          "objectiveId": { "type": "string", "minLength": 1 },
+          "subject": { "type": "string", "minLength": 1 },
+          "priority": { "type": "string", "enum": ["low", "medium", "high"] },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/audit-event.schema.json",
+  "title": "AuditEvent",
+  "description": "Append-only operational audit event for learner, consent, session, voucher, safety, and AI gateway actions.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "occurredAt",
+    "actorAccountId",
+    "learnerId",
+    "action",
+    "resourceType",
+    "resourceId",
+    "permission",
+    "consentScope",
+    "decision",
+    "reason",
+    "traceId",
+    "metadata"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "actorAccountId": { "type": ["string", "null"] },
+    "learnerId": { "type": ["string", "null"] },
+    "action": {
+      "type": "string",
+      "enum": [
+        "session.create",
+        "session.read",
+        "session.list",
+        "session.tombstone.read",
+        "session.tombstone.list",
+        "session.delete",
+        "event.append",
+        "snapshot.append",
+        "consent.grant",
+        "consent.revoke",
+        "voucher.checkout",
+        "voucher.refund",
+        "safety.incident.create",
+        "learner_link.create",
+        "learner_link.update",
+        "data.export",
+        "data.delete",
+        "ai.request",
+        "ai.response"
+      ]
+    },
+    "resourceType": {
+      "type": "string",
+      "enum": ["session", "session_collection", "session_tombstone", "session_tombstone_collection", "interaction_event", "workspace_snapshot", "consent_record", "voucher_redemption", "invoice", "ledger_entry", "safety_incident", "learner_account_link", "learner_profile", "tutor_context", "tutor_response"]
+    },
+    "resourceId": { "type": "string", "minLength": 1 },
+    "permission": { "type": ["string", "null"] },
+    "consentScope": { "type": ["string", "null"] },
+    "decision": { "type": "string", "enum": ["allowed", "denied", "logged", "escalated"] },
+    "reason": { "type": "string", "minLength": 1 },
+    "traceId": { "type": "string", "minLength": 1 },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

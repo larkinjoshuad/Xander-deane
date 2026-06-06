@@ -1,0 +1,42 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "mastery_learner_demo_001_math_multiplication_equal_groups",
+  "learnerId": "learner_demo_001",
+  "objectiveId": "math.multiplication.equal-groups",
+  "subject": "math",
+  "attemptCount": 2,
+  "correctCount": 1,
+  "masteryEstimate": 0.5,
+  "masteryLevel": "developing",
+  "confidence": "medium",
+  "lastAttemptAt": "2026-05-28T00:00:00.000Z",
+  "lastUpdatedAt": "2026-05-28T00:00:00.000Z",
+  "evidence": [
+    {
+      "sessionId": "ses_demo_math_001",
+      "problemId": "math.3x4.visual-groups",
+      "evaluationResultId": "eval_math_incorrect_001",
+      "isCorrect": false,
+      "feedbackCode": "incorrect_group_size",
+      "attemptedAt": "2026-05-28T00:00:00.000Z",
+      "metadata": {
+        "groupSizes": [4, 4, 3]
+      }
+    },
+    {
+      "sessionId": "ses_demo_math_001",
+      "problemId": "math.3x4.visual-groups",
+      "evaluationResultId": "eval_math_correct_001",
+      "isCorrect": true,
+      "feedbackCode": "correct",
+      "attemptedAt": "2026-05-28T00:00:00.000Z",
+      "metadata": {
+        "groupSizes": [4, 4, 4]
+      }
+    }
+  ],
+  "recommendedNextObjectiveIds": ["math.multiplication.arrays"],
+  "metadata": {
+    "source": "example-fixture"
+  }
+}

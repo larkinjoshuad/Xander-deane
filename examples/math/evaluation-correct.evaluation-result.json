@@ -1,0 +1,25 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "eval_math_correct_001",
+  "sessionId": "ses_demo_math_001",
+  "problemId": "math.3x4.visual-groups",
+  "workspaceSnapshotId": "snapshot_ses_demo_math_001_001",
+  "evaluatorId": "math.equal-groups.pack.equal-groups",
+  "isCorrect": true,
+  "feedbackCode": "correct",
+  "submittedAnswer": {
+    "groups": [
+      { "id": "group_1", "items": ["counter_1", "counter_2", "counter_3", "counter_4"] },
+      { "id": "group_2", "items": ["counter_5", "counter_6", "counter_7", "counter_8"] },
+      { "id": "group_3", "items": ["counter_9", "counter_10", "counter_11", "counter_12"] }
+    ]
+  },
+  "expectedAnswer": 12,
+  "confidence": "high",
+  "diagnostics": {
+    "groupSizes": [4, 4, 4],
+    "totalCounters": 12,
+    "missingGroups": 0
+  },
+  "evaluatedAt": "2026-05-28T00:00:00.000Z"
+}

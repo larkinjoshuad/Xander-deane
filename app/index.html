@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Xander-deane Learning Shell</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-device-profile="unknown" data-presentation-mode="full">
+    <main class="app-shell" aria-labelledby="app-title">
+      <header class="hero">
+        <p class="eyebrow">Contract-first learning prototype</p>
+        <h1 id="app-title">Interactive AI Tutor Shell</h1>
+        <p>
+          A runnable implementation of the original sketch: tutor communication on top,
+          a kinetic problem workspace below, and structured learning events underneath.
+        </p>
+      </header>
+
+      <section class="subject-switcher" aria-label="Subject selector">
+        <div>
+          <p class="eyebrow">Workspace host</p>
+          <h2>Choose a learning workspace</h2>
+        </div>
+        <div class="subject-actions">
+          <button id="math-demo-button" type="button" class="primary">Math: Equal Groups</button>
+          <button id="language-demo-button" type="button">Language: Action Verb</button>
+          <button id="science-demo-button" type="button">Science: Sort Animals</button>
+        </div>
+      </section>
+
+      <section class="recent-sessions-panel" aria-label="Recent saved sessions">
+        <div class="workspace-heading">
+          <div>
+            <p class="eyebrow">Resume work</p>
+            <h2>Recent sessions</h2>
+          </div>
+          <span id="recent-session-count" class="badge">0 saved</span>
+        </div>
+        <ol id="recent-session-list" class="recent-session-list" aria-live="polite"></ol>
+      </section>
+
+      <section class="tutor-panel" aria-live="polite" aria-label="Tutor communication area">
+        <div>
+          <p class="eyebrow">Tutor communication area</p>
+          <h2 id="feedback-type">Loading…</h2>
+          <p id="tutor-message">Preparing the learning session.</p>
+        </div>
+        <div class="tutor-actions">
+          <span id="device-status" class="device-status" aria-live="polite">Detecting device…</span>
+          <button id="speak-button" type="button">Speak</button>
+          <button id="reset-button" type="button">Reset</button>
+        </div>
+      </section>
+
+      <section class="workspace-card" aria-label="Interactive problem workspace">
+        <div class="workspace-heading">
+          <div>
+            <p class="eyebrow">Problem area</p>
+            <h2 id="problem-prompt">Loading problem…</h2>
+          </div>
+          <button id="check-button" type="button" class="primary">Check answer</button>
+        </div>
+
+        <div id="workspace-root"></div>
+      </section>
+
+      <section class="insights-grid" aria-label="Learner progress and activity">
+        <article class="progress-card" aria-labelledby="progress-heading">
+          <div class="workspace-heading">
+            <div>
+              <p class="eyebrow">Learner progress</p>
+              <h2 id="progress-heading">Objective dashboard</h2>
+            </div>
+            <span id="mastery-status" class="badge">Not started</span>
+          </div>
+          <dl id="progress-dashboard" class="progress-dashboard" aria-live="polite">
+            <div>
+              <dt>Objective</dt>
+              <dd id="progress-objective">Loading…</dd>
+            </div>
+            <div>
+              <dt>Attempts</dt>
+              <dd id="progress-attempts">0 checked</dd>
+            </div>
+            <div>
+              <dt>Accuracy</dt>
+              <dd id="progress-accuracy">0%</dd>
+            </div>
+            <div>
+              <dt>Saved work</dt>
+              <dd id="progress-snapshots">0 snapshots</dd>
+            </div>
+          </dl>
+          <p id="progress-next-step" class="next-step" aria-live="polite">Try the activity, then check your answer to start tracking progress.</p>
+        </article>
+
+        <article class="activity-panel" aria-labelledby="activity-heading">
+          <div class="workspace-heading">
+            <div>
+              <p class="eyebrow">Learning activity</p>
+              <h2 id="activity-heading">Recent work</h2>
+            </div>
+            <span id="event-count" class="badge">0 events</span>
+          </div>
+          <ol id="event-log" class="event-log" aria-live="polite"></ol>
+        </article>
+
+        <article class="guardian-preview-card" aria-labelledby="guardian-preview-heading">
+          <div class="workspace-heading">
+            <div>
+              <p class="eyebrow">Guardian preview</p>
+              <h2 id="guardian-preview-heading">What adults should know</h2>
+            </div>
+            <span id="guardian-preview-status" class="badge">Demo only</span>
+          </div>
+          <ul id="guardian-preview-list" class="guardian-preview-list" aria-live="polite">
+            <li>Progress, consent, and export readiness will appear after the session loads.</li>
+          </ul>
+        </article>
+      </section>
+
+      <footer class="shell-footer">
+        <a href="./parent.html" class="dashboard-link">View the parent dashboard →</a>
+      </footer>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

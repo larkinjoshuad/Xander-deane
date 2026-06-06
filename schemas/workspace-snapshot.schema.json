@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/workspace-snapshot.schema.json",
+  "title": "WorkspaceSnapshot",
+  "description": "Serializable live state for an interactive problem workspace.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "sessionId",
+    "problemId",
+    "kind",
+    "version",
+    "updatedAt",
+    "state"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "sessionId": { "type": "string", "minLength": 1 },
+    "problemId": { "type": "string", "minLength": 1 },
+    "kind": { "type": "string", "minLength": 1 },
+    "version": { "type": "integer" },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "state": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "default": {}
+    }
+  }
+}

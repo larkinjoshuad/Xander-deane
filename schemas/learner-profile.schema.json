@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/learner-profile.schema.json",
+  "title": "LearnerProfile",
+  "description": "Privacy-conscious learner preferences and accessibility metadata.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "locale",
+    "accessibility",
+    "preferences"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "locale": {
+      "type": "string",
+      "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+    },
+    "gradeBand": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "accessibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "captionsRequired": {
+          "type": "boolean",
+          "default": true
+        },
+        "reducedMotion": {
+          "type": "boolean",
+          "default": false
+        },
+        "screenReaderOptimized": {
+          "type": "boolean",
+          "default": false
+        },
+        "inputAlternatives": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "keyboard",
+              "touch",
+              "speech",
+              "switch",
+              "eye_tracking",
+              "mouse"
+            ]
+          },
+          "default": [
+            "keyboard",
+            "touch"
+          ]
+        }
+      }
+    },
+    "preferences": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "voiceEnabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "hintStyle": {
+          "type": "string",
+          "enum": [
+            "minimal",
+            "guided",
+            "worked_example"
+          ],
+          "default": "guided"
+        }
+      }
+    }
+  }
+}

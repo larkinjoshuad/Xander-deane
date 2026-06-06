@@ -1,0 +1,215 @@
+{
+  "contractVersion": "0.1.0",
+  "schemas": [
+    {
+      "name": "account-ledger-entry",
+      "schemaId": "https://xander-deane.dev/schemas/account-ledger-entry.schema.json",
+      "schemaPath": "schemas/account-ledger-entry.schema.json",
+      "fixtureSuffix": ".account-ledger-entry.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "account",
+      "schemaId": "https://xander-deane.dev/schemas/account.schema.json",
+      "schemaPath": "schemas/account.schema.json",
+      "fixtureSuffix": ".account.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "api-http-exchange",
+      "schemaId": "https://xander-deane.dev/schemas/api-http-exchange.schema.json",
+      "schemaPath": "schemas/api-http-exchange.schema.json",
+      "fixtureSuffix": ".api-http-exchange.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "audit-event",
+      "schemaId": "https://xander-deane.dev/schemas/audit-event.schema.json",
+      "schemaPath": "schemas/audit-event.schema.json",
+      "fixtureSuffix": ".audit-event.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "checkout-session",
+      "schemaId": "https://xander-deane.dev/schemas/checkout-session.schema.json",
+      "schemaPath": "schemas/checkout-session.schema.json",
+      "fixtureSuffix": ".checkout-session.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "consent-record",
+      "schemaId": "https://xander-deane.dev/schemas/consent-record.schema.json",
+      "schemaPath": "schemas/consent-record.schema.json",
+      "fixtureSuffix": ".consent-record.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "data-retention-policy",
+      "schemaId": "https://xander-deane.dev/schemas/data-retention-policy.schema.json",
+      "schemaPath": "schemas/data-retention-policy.schema.json",
+      "fixtureSuffix": ".data-retention-policy.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "data-inventory",
+      "schemaId": "https://xander-deane.dev/schemas/data-inventory.schema.json",
+      "schemaPath": "schemas/data-inventory.schema.json",
+      "fixtureSuffix": ".data-inventory.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "device-profile",
+      "schemaId": "https://xander-deane.dev/schemas/device-profile.schema.json",
+      "schemaPath": "schemas/device-profile.schema.json",
+      "fixtureSuffix": ".device-profile.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "evaluation-result",
+      "schemaId": "https://xander-deane.dev/schemas/evaluation-result.schema.json",
+      "schemaPath": "schemas/evaluation-result.schema.json",
+      "fixtureSuffix": ".evaluation-result.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "funding-source",
+      "schemaId": "https://xander-deane.dev/schemas/funding-source.schema.json",
+      "schemaPath": "schemas/funding-source.schema.json",
+      "fixtureSuffix": ".funding-source.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "interaction-event",
+      "schemaId": "https://xander-deane.dev/schemas/interaction-event.schema.json",
+      "schemaPath": "schemas/interaction-event.schema.json",
+      "fixtureSuffix": ".interaction-event.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "invoice",
+      "schemaId": "https://xander-deane.dev/schemas/invoice.schema.json",
+      "schemaPath": "schemas/invoice.schema.json",
+      "fixtureSuffix": ".invoice.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "learner-account-link",
+      "schemaId": "https://xander-deane.dev/schemas/learner-account-link.schema.json",
+      "schemaPath": "schemas/learner-account-link.schema.json",
+      "fixtureSuffix": ".learner-account-link.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "learner-profile",
+      "schemaId": "https://xander-deane.dev/schemas/learner-profile.schema.json",
+      "schemaPath": "schemas/learner-profile.schema.json",
+      "fixtureSuffix": ".learner-profile.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "learning-objective",
+      "schemaId": "https://xander-deane.dev/schemas/learning-objective.schema.json",
+      "schemaPath": "schemas/learning-objective.schema.json",
+      "fixtureSuffix": ".learning-objective.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "problem",
+      "schemaId": "https://xander-deane.dev/schemas/problem.schema.json",
+      "schemaPath": "schemas/problem.schema.json",
+      "fixtureSuffix": ".problem.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "product-offering",
+      "schemaId": "https://xander-deane.dev/schemas/product-offering.schema.json",
+      "schemaPath": "schemas/product-offering.schema.json",
+      "fixtureSuffix": ".product-offering.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "progress-summary",
+      "schemaId": "https://xander-deane.dev/schemas/progress-summary.schema.json",
+      "schemaPath": "schemas/progress-summary.schema.json",
+      "fixtureSuffix": ".progress-summary.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "safety-incident",
+      "schemaId": "https://xander-deane.dev/schemas/safety-incident.schema.json",
+      "schemaPath": "schemas/safety-incident.schema.json",
+      "fixtureSuffix": ".safety-incident.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "safety-policy",
+      "schemaId": "https://xander-deane.dev/schemas/safety-policy.schema.json",
+      "schemaPath": "schemas/safety-policy.schema.json",
+      "fixtureSuffix": ".safety-policy.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "schema-registry",
+      "schemaId": "https://xander-deane.dev/schemas/schema-registry.schema.json",
+      "schemaPath": "schemas/schema-registry.schema.json",
+      "fixtureSuffix": ".schema-registry.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "session-record",
+      "schemaId": "https://xander-deane.dev/schemas/session-record.schema.json",
+      "schemaPath": "schemas/session-record.schema.json",
+      "fixtureSuffix": ".session-record.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "skill-mastery",
+      "schemaId": "https://xander-deane.dev/schemas/skill-mastery.schema.json",
+      "schemaPath": "schemas/skill-mastery.schema.json",
+      "fixtureSuffix": ".skill-mastery.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "tutor-context",
+      "schemaId": "https://xander-deane.dev/schemas/tutor-context.schema.json",
+      "schemaPath": "schemas/tutor-context.schema.json",
+      "fixtureSuffix": ".tutor-context.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "tutor-policy",
+      "schemaId": "https://xander-deane.dev/schemas/tutor-policy.schema.json",
+      "schemaPath": "schemas/tutor-policy.schema.json",
+      "fixtureSuffix": ".tutor-policy.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "tutor-quality-scorecard",
+      "schemaId": "https://xander-deane.dev/schemas/tutor-quality-scorecard.schema.json",
+      "schemaPath": "schemas/tutor-quality-scorecard.schema.json",
+      "fixtureSuffix": ".tutor-quality-scorecard.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "tutor-response",
+      "schemaId": "https://xander-deane.dev/schemas/tutor-response.schema.json",
+      "schemaPath": "schemas/tutor-response.schema.json",
+      "fixtureSuffix": ".tutor-response.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "voucher-redemption",
+      "schemaId": "https://xander-deane.dev/schemas/voucher-redemption.schema.json",
+      "schemaPath": "schemas/voucher-redemption.schema.json",
+      "fixtureSuffix": ".voucher-redemption.json",
+      "stability": "prototype"
+    },
+    {
+      "name": "workspace-snapshot",
+      "schemaId": "https://xander-deane.dev/schemas/workspace-snapshot.schema.json",
+      "schemaPath": "schemas/workspace-snapshot.schema.json",
+      "fixtureSuffix": ".workspace-snapshot.json",
+      "stability": "prototype"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "api_session_create_forbidden",
+  "description": "Reject a session create request when the authenticated account lacks manage-session permission.",
+  "request": {
+    "method": "POST",
+    "path": "/sessions",
+    "headers": {
+      "content-type": "application/json",
+      "x-audit-event-id": "audit_api_fixture_forbidden_001"
+    },
+    "body": {
+      "session": {
+        "sessionId": "ses_api_fixture_forbidden_001",
+        "learnerId": "learner_api_fixture_001"
+      }
+    }
+  },
+  "response": {
+    "status": 403,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store"
+    },
+    "body": {
+      "error": {
+        "code": "forbidden",
+        "message": "account guardian_api_fixture_001 is not authorized to manage_sessions for learner learner_api_fixture_001"
+      }
+    }
+  },
+  "notes": [
+    "Forbidden requests should still be represented in the audit trail as denied access decisions."
+  ]
+}

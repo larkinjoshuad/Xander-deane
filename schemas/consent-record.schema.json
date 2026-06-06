@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/consent-record.schema.json",
+  "title": "ConsentRecord",
+  "description": "Portable guardian or learner consent record that gates personalization, AI tutoring, analytics, billing, and data retention workflows.",
+  "type": "object",
+  "required": [
+    "contractVersion",
+    "id",
+    "learnerId",
+    "guardianId",
+    "status",
+    "source",
+    "grantedScopes",
+    "deniedScopes",
+    "collectedAt",
+    "expiresAt",
+    "revokedAt",
+    "locale",
+    "metadata"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contractVersion": { "type": "string", "minLength": 1 },
+    "id": { "type": "string", "minLength": 1 },
+    "learnerId": { "type": "string", "minLength": 1 },
+    "guardianId": { "type": ["string", "null"] },
+    "status": { "type": "string", "enum": ["pending", "granted", "revoked", "expired"] },
+    "source": { "type": "string", "enum": ["guardian_portal", "school_admin", "provider_import", "paper_form", "system_migration"] },
+    "grantedScopes": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["ai_tutoring", "personalization", "progress_tracking", "analytics", "voucher_billing", "guardian_notifications", "data_export"] }
+    },
+    "deniedScopes": {
+      "type": "array",
+      "items": { "type": "string", "enum": ["ai_tutoring", "personalization", "progress_tracking", "analytics", "voucher_billing", "guardian_notifications", "data_export"] }
+    },
+    "collectedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": ["string", "null"], "format": "date-time" },
+    "revokedAt": { "type": ["string", "null"], "format": "date-time" },
+    "locale": { "type": "string", "minLength": 2 },
+    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+  }
+}

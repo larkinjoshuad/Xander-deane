@@ -1,0 +1,17 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "ledger_invoice_checkout_demo_001_redemption_demo_math_subscription_001_voucher_credit",
+  "accountId": "guardian_demo_001",
+  "invoiceId": "invoice_checkout_demo_001",
+  "voucherRedemptionId": "redemption_demo_math_subscription_001",
+  "entryType": "voucher_credit",
+  "direction": "credit",
+  "amountCents": 2500,
+  "currency": "USD",
+  "occurredAt": "2026-05-28T00:00:00.000Z",
+  "source": "voucher",
+  "metadata": {
+    "fundingSourceId": "funding.az.esa",
+    "status": "pending"
+  }
+}

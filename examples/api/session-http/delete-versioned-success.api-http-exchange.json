@@ -1,0 +1,29 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "api_session_delete_versioned_success",
+  "description": "Delete a session only when the caller provides the current record version precondition.",
+  "request": {
+    "method": "DELETE",
+    "path": "/sessions/ses_api_fixture_math_001",
+    "headers": {
+      "if-match": "W/\"ses_api_fixture_math_001:3\"",
+      "x-audit-event-id": "audit_api_fixture_delete_success_001"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "content-type": "application/json; charset=utf-8",
+      "cache-control": "no-store"
+    },
+    "body": {
+      "data": {
+        "deleted": true,
+        "sessionId": "ses_api_fixture_math_001"
+      }
+    }
+  },
+  "notes": [
+    "Versioned deletes are the success counterpart to missing-precondition and stale-version delete errors."
+  ]
+}
