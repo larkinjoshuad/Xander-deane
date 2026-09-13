@@ -3,7 +3,13 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const REPO_ROOT = new URL('..', import.meta.url).pathname;
+import Ajv2020 from 'ajv/dist/2020.js';
+import addFormats from 'ajv-formats';
+
+const ajv = new Ajv2020({ allErrors: true, strict: true, allowUnionTypes: true, addUsedSchema: false });
+addFormats(ajv);
+
+const REPO_ROOT = fileURLToPath(new URL('..', import.meta.url));
 
 
 export function loadSchemaRegistry(repoRoot = REPO_ROOT) {
@@ -82,70 +88,19 @@ export function validateFixtureTree(rootDir = join(REPO_ROOT, 'examples')) {
 }
 
 export function validateJsonSchema(value, schema, path = '$') {
-  const errors = [];
-
-  if (!schema || Object.keys(schema).length === 0) {
-    return errors;
-  }
-
-  if (schema.type !== undefined && !matchesType(value, schema.type)) {
-    errors.push(`${path} must be ${formatType(schema.type)}`);
-    return errors;
-  }
-
-  if (schema.enum && !schema.enum.some((allowed) => deepEqual(value, allowed))) {
-    errors.push(`${path} must be one of ${JSON.stringify(schema.enum)}`);
-  }
-
-  if (typeof value === 'string') {
-    if (schema.minLength !== undefined && value.length < schema.minLength) {
-      errors.push(`${path} must be at least ${schema.minLength} characters`);
+  const validate = ajv.compile(schema);
+  if (validate(value)) return [];
+  return validate.errors.map((error) => {
+    const location = path + error.instancePath.split('/').slice(1)
+      .map((part) => `[${JSON.stringify(part.replaceAll('~1', '/').replaceAll('~0', '~'))}]`).join('');
+    if (error.keyword === 'required') {
+      return `${location}.${error.params.missingProperty} is required`;
     }
-    if (schema.pattern && !new RegExp(schema.pattern).test(value)) {
-      errors.push(`${path} must match pattern ${schema.pattern}`);
+    if (error.keyword === 'enum') {
+      return `${location} must be one of ${JSON.stringify(error.params.allowedValues)}`;
     }
-    if (schema.format === 'date-time' && Number.isNaN(Date.parse(value))) {
-      errors.push(`${path} must be a valid date-time`);
-    }
-  }
-
-  if (Array.isArray(value)) {
-    if (schema.minItems !== undefined && value.length < schema.minItems) {
-      errors.push(`${path} must contain at least ${schema.minItems} items`);
-    }
-    if (schema.items) {
-      value.forEach((item, index) => {
-        errors.push(...validateJsonSchema(item, schema.items, `${path}[${index}]`));
-      });
-    }
-  }
-
-  if (isPlainObject(value)) {
-    const properties = schema.properties ?? {};
-    const required = schema.required ?? [];
-
-    required.forEach((key) => {
-      if (!Object.hasOwn(value, key)) {
-        errors.push(`${path}.${key} is required`);
-      }
-    });
-
-    if (schema.additionalProperties === false) {
-      Object.keys(value).forEach((key) => {
-        if (!Object.hasOwn(properties, key)) {
-          errors.push(`${path}.${key} is not allowed`);
-        }
-      });
-    }
-
-    Object.entries(properties).forEach(([key, propertySchema]) => {
-      if (Object.hasOwn(value, key)) {
-        errors.push(...validateJsonSchema(value[key], propertySchema, `${path}.${key}`));
-      }
-    });
-  }
-
-  return errors;
+    return `${location} ${error.message}`;
+  });
 }
 
 function schemaPathForFixture(filePath, repoRoot = REPO_ROOT, shouldThrow = true, fixtureSchemaSuffixes = fixtureSchemaSuffixesFromRegistry(loadSchemaRegistry(repoRoot))) {
@@ -176,29 +131,6 @@ function collectJsonFiles(dir) {
 
 function readJson(filePath) {
   return JSON.parse(readFileSync(filePath, 'utf8'));
-}
-
-function matchesType(value, type) {
-  const allowedTypes = Array.isArray(type) ? type : [type];
-  return allowedTypes.some((allowedType) => {
-    if (allowedType === 'array') return Array.isArray(value);
-    if (allowedType === 'object') return isPlainObject(value);
-    if (allowedType === 'null') return value === null;
-    if (allowedType === 'integer') return Number.isInteger(value);
-    return typeof value === allowedType;
-  });
-}
-
-function formatType(type) {
-  return Array.isArray(type) ? type.join(' or ') : type;
-}
-
-function isPlainObject(value) {
-  return value !== null && typeof value === 'object' && !Array.isArray(value);
-}
-
-function deepEqual(left, right) {
-  return JSON.stringify(left) === JSON.stringify(right);
 }
 
 function isCliEntryPoint() {
