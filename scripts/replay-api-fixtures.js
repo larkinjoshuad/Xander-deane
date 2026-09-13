@@ -17,7 +17,7 @@ import {
 import { createSessionHttpApi } from '../src/app/session-http-api.js';
 import { createSessionPersistenceService } from '../src/app/session-service.js';
 
-const REPO_ROOT = new URL('..', import.meta.url).pathname;
+const REPO_ROOT = fileURLToPath(new URL('..', import.meta.url));
 const API_FIXTURE_DIR = join(REPO_ROOT, 'examples/api/session-http');
 const objective = readJson(join(REPO_ROOT, 'examples/math/objective.learning-objective.json'));
 const problem = readJson(join(REPO_ROOT, 'examples/math/problem.problem.json'));

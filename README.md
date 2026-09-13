@@ -85,6 +85,13 @@ This repository is currently a synthetic-data architecture/portfolio prototype. 
 
 ## Development
 
+Install development dependencies with `npm ci` before running tests or validation.
+Fixture validation uses Ajv's JSON Schema draft 2020-12 implementation and
+`ajv-formats`, including referenced definitions, numeric bounds, and date-time
+formats. Invalid schemas fail validation; fixture values are never coerced,
+defaulted, or stripped of extra properties. The validator adds development
+dependencies only.
+
 Run the static web shell:
 
 ```bash

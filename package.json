@@ -22,7 +22,9 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
-    "@playwright/test": "^1.60.0"
+    "@playwright/test": "^1.60.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1"

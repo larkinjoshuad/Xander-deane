@@ -3,7 +3,7 @@ import { join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateJsonSchema } from './validate-fixtures.js';
 
-const REPO_ROOT = new URL('..', import.meta.url).pathname.replace(/\/$/, '');
+const REPO_ROOT = fileURLToPath(new URL('..', import.meta.url));
 const DEFAULT_INVENTORY_PATH = join(REPO_ROOT, 'examples/governance/base.data-inventory.json');
 const INVENTORY_SCHEMA_PATH = join(REPO_ROOT, 'schemas/data-inventory.schema.json');
 const REGISTRY_PATH = join(REPO_ROOT, 'schemas/index.json');
