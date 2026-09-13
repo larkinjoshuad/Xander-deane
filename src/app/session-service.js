@@ -1,4 +1,4 @@
-import { appendFile, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises';
+import { appendFile, mkdir, readFile, readdir, rename, rmdir, rm, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { createSessionRecord } from './session-persistence.js';
 import { assertConsentAllows, summarizeConsentSafety } from './consent-safety.js';
@@ -32,7 +32,7 @@ export function createSessionPersistenceService({
         requiredConsentScopes,
         previousRecord,
       });
-      await recordStore.saveRecord(normalizedRecord);
+      await recordStore.saveRecord(normalizedRecord, { expectedRecordVersion: previousRecord ? getRecordVersion(previousRecord) : null });
       return freezeJson(normalizedRecord);
     },
     async saveSessionRecord(record, options = {}) {
@@ -45,7 +45,7 @@ export function createSessionPersistenceService({
         requiredConsentScopes,
         previousRecord,
       });
-      await recordStore.saveRecord(normalizedRecord);
+      await recordStore.saveRecord(normalizedRecord, { expectedRecordVersion: previousRecord ? getRecordVersion(previousRecord) : null });
       return normalizedRecord;
     },
     async loadSessionRecord(sessionId) {
@@ -73,6 +73,7 @@ export function createSessionPersistenceService({
       await recordStore.deleteRecord(sessionId, {
         tombstone: options.tombstone,
         deletedRecord: previousRecord,
+        expectedRecordVersion: previousRecord ? getRecordVersion(previousRecord) : null,
       });
     },
     async appendInteractionEvent(sessionId, event, options = {}) {
@@ -92,7 +93,7 @@ export function createSessionPersistenceService({
         requiredConsentScopes,
         previousRecord: record,
       });
-      await recordStore.saveRecord(updatedRecord);
+      await recordStore.saveRecord(updatedRecord, { expectedRecordVersion: getRecordVersion(record) });
       return updatedRecord;
     },
     async appendWorkspaceSnapshot(sessionId, workspaceSnapshot, options = {}) {
@@ -116,7 +117,7 @@ export function createSessionPersistenceService({
         requiredConsentScopes,
         previousRecord: record,
       });
-      await recordStore.saveRecord(updatedRecord);
+      await recordStore.saveRecord(updatedRecord, { expectedRecordVersion: getRecordVersion(record) });
       return updatedRecord;
     },
   });
@@ -127,7 +128,8 @@ export function createInMemorySessionRecordStore(initialRecords = []) {
   const tombstones = new Map();
 
   return Object.freeze({
-    async saveRecord(record) {
+    async saveRecord(record, options = {}) {
+      assertStoredRecordVersion(records.get(record.sessionId) ?? null, options.expectedRecordVersion, record.sessionId);
       const normalizedRecord = freezeJson(record);
       records.set(normalizedRecord.sessionId, normalizedRecord);
       tombstones.delete(normalizedRecord.sessionId);
@@ -140,6 +142,7 @@ export function createInMemorySessionRecordStore(initialRecords = []) {
       return Object.freeze([...records.values()].map((record) => freezeJson(record)));
     },
     async deleteRecord(sessionId, options = {}) {
+      assertStoredRecordVersion(records.get(sessionId) ?? null, options.expectedRecordVersion, sessionId);
       if (options.tombstone) {
         tombstones.set(sessionId, freezeJson(options.tombstone));
       }
@@ -160,10 +163,12 @@ export function createFileSessionRecordStore({ directory }) {
     throw new TypeError('directory is required for createFileSessionRecordStore');
   }
 
-  return Object.freeze({
+  return withFileWriteGuard({
     async saveRecord(record) {
       await mkdir(directory, { recursive: true });
-      await writeFile(recordPath(directory, record.sessionId), `${JSON.stringify(record, null, 2)}\n`, 'utf8');
+      const target = recordPath(directory, record.sessionId);
+      await writeFile(`${target}.tmp`, `${JSON.stringify(record, null, 2)}\n`, 'utf8');
+      await rename(`${target}.tmp`, target);
       await rm(tombstonePath(directory, record.sessionId), { force: true });
     },
     async loadRecord(sessionId) {
@@ -208,7 +213,7 @@ export function createFileSessionRecordStore({ directory }) {
         .map((entry) => readFile(join(directory, entry.name), 'utf8').then((rawTombstone) => JSON.parse(rawTombstone))));
       return Object.freeze(tombstones.map((tombstone) => freezeJson(tombstone)));
     },
-  });
+  }, join(directory, '.session-record-write-lock'));
 }
 
 export function createAppendOnlyFileSessionRecordStore({ directory, fileName = 'session-record-events.jsonl' }) {
@@ -218,7 +223,7 @@ export function createAppendOnlyFileSessionRecordStore({ directory, fileName = '
   assertNonEmptyString(fileName, 'fileName');
   const logPath = join(directory, safeFileName(fileName));
 
-  return Object.freeze({
+  return withFileWriteGuard({
     async saveRecord(record) {
       const frozenRecord = freezeJson(record);
       await appendRecordStoreEvent(logPath, {
@@ -252,6 +257,46 @@ export function createAppendOnlyFileSessionRecordStore({ directory, fileName = '
       const { tombstones } = await materializeAppendOnlyState(logPath);
       return Object.freeze([...tombstones.values()].map((tombstone) => freezeJson(tombstone)));
     },
+  }, `${logPath}.write-lock`);
+}
+
+
+// null means the record must be absent; undefined keeps direct adapter calls unconditional.
+function assertStoredRecordVersion(record, expectedRecordVersion, sessionId) {
+  if (expectedRecordVersion === undefined) return;
+  if (expectedRecordVersion !== null) assertRecordVersion(expectedRecordVersion, 'expectedRecordVersion');
+  const current = record ? getRecordVersion(record) : null;
+  if (current !== expectedRecordVersion) {
+    throw new SessionRecordVersionConflictError(
+      `session record ${sessionId} version conflict: expected ${expectedRecordVersion}, current ${current}`,
+    );
+  }
+}
+
+function withFileWriteGuard(store, lockPath) {
+  async function write(sessionId, options, operation) {
+    await mkdir(dirname(lockPath), { recursive: true });
+    try {
+      await mkdir(lockPath);
+    } catch (error) {
+      if (error.code === 'EEXIST') {
+        throw new SessionRecordVersionConflictError(`session store write conflict for ${sessionId}; reload and retry`);
+      }
+      throw error;
+    }
+    try {
+      if (options.expectedRecordVersion !== undefined) {
+        assertStoredRecordVersion(await store.loadRecord(sessionId), options.expectedRecordVersion, sessionId);
+      }
+      return await operation();
+    } finally {
+      await rmdir(lockPath);
+    }
+  }
+  return Object.freeze({
+    ...store,
+    saveRecord: (record, options = {}) => write(record.sessionId, options, () => store.saveRecord(record)),
+    deleteRecord: (sessionId, options = {}) => write(sessionId, options, () => store.deleteRecord(sessionId, options)),
   });
 }
 

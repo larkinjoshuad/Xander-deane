@@ -100,6 +100,25 @@ async function parseJson(response) {
   return JSON.parse(await response.text());
 }
 
+test('concurrent API appends return one success and one conflict without losing acknowledged events', async () => {
+  const { api } = createApiHarness();
+  const session = createMathSession('ses_http_race');
+  const created = await api.handleRequest(jsonRequest('/sessions', { method: 'POST', body: { session } }));
+  assert.equal(created.status, 201);
+  const events = ['evt_race_a', 'evt_race_b'].map((id) => ({ ...session.events[0], id }));
+  const responses = await Promise.all(events.map((event) => api.handleRequest(jsonRequest('/sessions/ses_http_race/events', {
+    method: 'POST',
+    body: { event },
+    headers: { 'x-record-version': '1' },
+  }))));
+  assert.deepEqual(responses.map((response) => response.status).sort(), [200, 409]);
+  const winner = responses.findIndex((response) => response.status === 200);
+  const saved = await parseJson(await api.handleRequest(jsonRequest('/sessions/ses_http_race')));
+  assert.equal(saved.data.metadata.recordVersion, 2);
+  assert.ok(saved.data.events.some((event) => event.id === events[winner].id));
+  assert.ok(!saved.data.events.some((event) => event.id === events[1 - winner].id));
+});
+
 test('session HTTP API saves, reads, appends, and deletes through access service', async () => {
   const { api, accessService } = createApiHarness();
   let session = createMathSession();

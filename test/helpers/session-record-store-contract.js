@@ -6,7 +6,7 @@ import {
   placeSelectedCounter,
   selectCounter,
 } from '../../src/app/learning-session.js';
-import { createSessionPersistenceService } from '../../src/app/session-service.js';
+import { createSessionPersistenceService, SessionRecordVersionConflictError } from '../../src/app/session-service.js';
 import { validateJsonSchema } from '../../scripts/validate-fixtures.js';
 
 const defaultObjective = readJson('examples/math/objective.learning-objective.json');
@@ -25,6 +25,56 @@ export function runSessionRecordStoreContractTests({
   assertStoreFactories(stores);
 
   for (const factory of stores) {
+    test(`${factory.name} rejects racing writes across service instances and allows retry`, async () => {
+      const context = await factory.create();
+      try {
+        const first = createSessionPersistenceService({ recordStore: context.recordStore, now });
+        const session = createContractMathSession({ sessionId: 'ses_concurrent', learnerId, objective, problem, now });
+        const initial = await first.saveSession(session);
+        const second = createSessionPersistenceService({ recordStore: await context.recreate(), now });
+        const events = ['event_a', 'event_b'].map((id) => ({ ...initial.events[0], id }));
+        const results = await Promise.allSettled([
+          first.appendInteractionEvent(session.sessionId, events[0], { expectedRecordVersion: 1 }),
+          second.appendInteractionEvent(session.sessionId, events[1], { expectedRecordVersion: 1 }),
+        ]);
+        assert.equal(results.filter((r) => r.status === 'fulfilled').length, 1);
+        const loser = results.findIndex((r) => r.status === 'rejected');
+        assert.ok(results[loser].reason instanceof SessionRecordVersionConflictError);
+        const saved = await first.loadSessionRecord(session.sessionId);
+        assert.equal(saved.metadata.recordVersion, 2);
+        assert.equal(saved.events.length, initial.events.length + 1);
+        await second.appendInteractionEvent(session.sessionId, events[loser], { expectedRecordVersion: 2 });
+        const retried = await first.loadSessionRecord(session.sessionId);
+        assert.equal(retried.metadata.recordVersion, 3);
+        assert.ok(events.every((event) => retried.events.some((stored) => stored.id === event.id)));
+
+        const race = await Promise.allSettled([
+          first.appendWorkspaceSnapshot(session.sessionId, { ...session.workspaceSnapshot, id: 'snapshot_race' }, { expectedRecordVersion: 3 }),
+          second.deleteSessionRecord(session.sessionId, { expectedRecordVersion: 3 }),
+        ]);
+        assert.equal(race.filter((r) => r.status === 'fulfilled').length, 1);
+        assert.ok(race.find((r) => r.status === 'rejected').reason instanceof SessionRecordVersionConflictError);
+
+        // Adapter-level create-only preconditions must also be atomic.
+        const candidate = { ...initial, sessionId: 'ses_create_race' };
+        const otherStore = await context.recreate();
+        const creates = await Promise.allSettled([
+          context.recordStore.saveRecord(candidate, { expectedRecordVersion: null }),
+          otherStore.saveRecord(candidate, { expectedRecordVersion: null }),
+        ]);
+        assert.equal(creates.filter((r) => r.status === 'fulfilled').length, 1);
+        assert.ok(creates.find((r) => r.status === 'rejected').reason instanceof SessionRecordVersionConflictError);
+        await assert.rejects(
+          () => otherStore.saveRecord(candidate, { expectedRecordVersion: 99 }),
+          SessionRecordVersionConflictError,
+        );
+        await otherStore.deleteRecord(candidate.sessionId, { expectedRecordVersion: 1 });
+        assert.equal(await context.recordStore.loadRecord(candidate.sessionId), null);
+      } finally {
+        await context.cleanup();
+      }
+    });
+
     test(`${factory.name} session record store satisfies the shared adapter contract`, async () => {
       const context = await factory.create();
       assertRecordStoreContext(context, factory.name);
