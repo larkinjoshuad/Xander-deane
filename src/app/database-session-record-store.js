@@ -2,6 +2,8 @@ import { execFile } from 'node:child_process';
 import { copyFile, readFile } from 'node:fs/promises';
 import { promisify } from 'node:util';
 
+import { SessionRecordVersionConflictError } from './session-service.js';
+
 const execFileAsync = promisify(execFile);
 const schemaUrl = new URL('../../db/session-adapter.sql', import.meta.url);
 
@@ -22,11 +24,11 @@ export function createSqliteSessionRecordStore({
     : Promise.resolve();
 
   return Object.freeze({
-    async saveRecord(record) {
+    async saveRecord(record, options = {}) {
       await ready;
       assertSessionRecord(record);
       const recordVersion = getRecordVersion(record);
-      await executeSql(sqliteCommand, databasePath, buildSaveRecordTransaction(record, recordVersion));
+      await executeSql(sqliteCommand, databasePath, buildSaveRecordTransaction(record, recordVersion, options.expectedRecordVersion));
     },
     async loadRecord(sessionId) {
       await ready;
@@ -58,13 +60,20 @@ export function createSqliteSessionRecordStore({
         WHERE session_id = ${sqlString(sessionId)} AND deleted_at IS NULL
         LIMIT 1;
       `);
-      if (rows.length === 0) return;
+      if (rows.length === 0) {
+        if (options.expectedRecordVersion !== undefined && options.expectedRecordVersion !== null) {
+          throw new SessionRecordVersionConflictError(`session record ${sessionId} version conflict: record is absent`);
+        }
+        return;
+      }
       const nextRecordVersion = Number(rows[0].record_version) + 1;
       await executeSql(sqliteCommand, databasePath, buildDeleteRecordTransaction({
         sessionId,
         recordVersion: nextRecordVersion,
         deletedAt: now(),
         tombstone: options.tombstone ?? null,
+        expectedRecordVersion: options.expectedRecordVersion === undefined
+          ? Number(rows[0].record_version) : options.expectedRecordVersion,
       }));
     },
     async loadTombstone(sessionId) {
@@ -181,13 +190,30 @@ export async function restoreSqliteSessionDatabase({ backupPath, restorePath } =
   return restorePath;
 }
 
-function buildSaveRecordTransaction(record, recordVersion) {
+
+function versionGuard(sessionId, expectedVersion) {
+  if (expectedVersion === undefined) return [];
+  if (expectedVersion !== null && (!Number.isInteger(expectedVersion) || expectedVersion < 0)) {
+    throw new TypeError('expectedRecordVersion must be a non-negative integer or null');
+  }
+  const query = `SELECT record_version FROM session_records WHERE session_id = ${sqlString(sessionId)} AND deleted_at IS NULL`;
+  const condition = expectedVersion === null
+    ? `NOT EXISTS (${query})`
+    : `EXISTS (${query} AND record_version = ${sqlInteger(expectedVersion)})`;
+  return [
+    'CREATE TEMP TABLE version_guard (valid INTEGER CONSTRAINT session_version_conflict CHECK (valid = 1))',
+    `INSERT INTO version_guard VALUES (CASE WHEN ${condition} THEN 1 ELSE 0 END)`,
+  ];
+}
+
+function buildSaveRecordTransaction(record, recordVersion, expectedRecordVersion) {
   const recordJson = JSON.stringify(record);
   const traceId = record.metadata?.traceId ?? `trace_${safeSqlId(record.sessionId)}_${recordVersion}`;
   const actorAccountId = record.metadata?.actorAccountId ?? null;
   const statements = [
     'PRAGMA foreign_keys = ON',
     'BEGIN IMMEDIATE',
+    ...versionGuard(record.sessionId, expectedRecordVersion),
     `INSERT INTO session_records (
       session_id,
       learner_id,
@@ -246,12 +272,13 @@ function buildSaveRecordTransaction(record, recordVersion) {
   return `${statements.join(';\n')};`;
 }
 
-function buildDeleteRecordTransaction({ sessionId, recordVersion, deletedAt, tombstone = null }) {
+function buildDeleteRecordTransaction({ sessionId, recordVersion, deletedAt, tombstone = null, expectedRecordVersion }) {
   const traceId = tombstone?.traceId ?? `trace_${safeSqlId(sessionId)}_${recordVersion}`;
   const actorAccountId = tombstone?.deletedByAccountId ?? null;
   const statements = [
     'PRAGMA foreign_keys = ON',
     'BEGIN IMMEDIATE',
+    ...versionGuard(sessionId, expectedRecordVersion),
     `UPDATE session_records
       SET deleted_at = ${sqlString(deletedAt)},
           record_version = ${sqlInteger(recordVersion)},
@@ -355,7 +382,27 @@ async function querySql(sqliteCommand, databasePath, sql) {
 }
 
 async function executeSql(sqliteCommand, databasePath, sql) {
-  await execFileAsync(sqliteCommand, ['--', databasePath, sql], { maxBuffer: 10 * 1024 * 1024 });
+  try {
+    // Feed statements through batch input so -bail stops before later writes or COMMIT.
+    await new Promise((resolve, reject) => {
+      const child = execFile(sqliteCommand, ['-batch', '-bail', '-cmd', '.timeout 5000', '--', databasePath],
+        { maxBuffer: 10 * 1024 * 1024 }, (error, stdout, stderr) => {
+          if (error) {
+            error.stderr = stderr;
+            reject(error);
+          } else resolve();
+        });
+      child.stdin.on('error', (error) => {
+        if (error.code !== 'EPIPE') reject(error);
+      });
+      child.stdin.end(sql + '\n');
+    });
+  } catch (error) {
+    if (error.stderr?.includes('session_version_conflict')) {
+      throw new SessionRecordVersionConflictError('session record version conflict; reload and retry');
+    }
+    throw error;
+  }
 }
 
 function makeSchemaIdempotent(schema) {
