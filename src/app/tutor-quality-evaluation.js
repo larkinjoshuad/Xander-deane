@@ -18,6 +18,9 @@ export function createTutorQualityScorecard({
   contractVersion = CONTRACT_VERSION,
 } = {}) {
   assertPlainObject(tutorContext, 'tutorContext');
+  if (tutorContext.metadata?.dataMode !== 'synthetic') {
+    throw new RangeError('tutor quality scoring requires tutorContext.metadata.dataMode to equal "synthetic"');
+  }
   assertPlainObject(tutorResponse, 'tutorResponse');
   assertNullableObject(safetyEvaluation, 'safetyEvaluation');
   assertStringArray(schemaValidationErrors, 'schemaValidationErrors');
@@ -56,9 +59,9 @@ export function createTutorQualityScorecard({
     passed,
     issues,
     metadata: {
+      ...metadata,
       syntheticOnly: true,
       deterministicTutorResponseId: deterministicTutorResponse?.id ?? null,
-      ...metadata,
     },
   });
 }
@@ -217,6 +220,9 @@ function rubricScore(score, notes) {
 
 function assertScorecard(value, fieldName) {
   assertPlainObject(value, fieldName);
+  if (value.mode !== 'synthetic_tutor_quality' || value.metadata?.syntheticOnly !== true) {
+    throw new RangeError(`${fieldName} must be a synthetic tutor quality scorecard`);
+  }
   assertPlainObject(value.rubricScores, `${fieldName}.rubricScores`);
   RUBRIC_KEYS.forEach((key) => assertPlainObject(value.rubricScores[key], `${fieldName}.rubricScores.${key}`));
   assertNonNegativeInteger(value.totalScore, `${fieldName}.totalScore`);
