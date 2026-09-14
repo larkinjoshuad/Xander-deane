@@ -47,7 +47,14 @@
     "passingScore": { "type": "integer", "minimum": 0 },
     "passed": { "type": "boolean" },
     "issues": { "type": "array", "items": { "type": "string", "minLength": 1 } },
-    "metadata": { "type": "object", "additionalProperties": true, "default": {} }
+    "metadata": {
+      "type": "object",
+      "required": ["syntheticOnly"],
+      "additionalProperties": true,
+      "properties": {
+        "syntheticOnly": { "type": "boolean", "const": true }
+      }
+    }
   },
   "$defs": {
     "rubricScore": {

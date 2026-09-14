@@ -98,6 +98,73 @@ test('compares baseline and candidate tutor quality scorecards', () => {
   assert.equal(typeof comparison.rubricDeltas.pedagogy, 'number');
 });
 
+test('rejects missing and non-synthetic modes before inspecting response content', () => {
+  const context = createSyntheticContext();
+  for (const metadata of [undefined, null, {}, { dataMode: 'real' }, { dataMode: 'production' },
+    { dataMode: true }, { dataMode: 'Synthetic' }, { dataMode: ' synthetic ' }]) {
+    assert.throws(() => createTutorQualityScorecard({
+      tutorContext: { ...context, metadata },
+      tutorResponse: null,
+    }), /requires tutorContext.metadata.dataMode/);
+  }
+});
+
+test('protects derived metadata while preserving caller data without mutation', () => {
+  const tutorContext = createSyntheticContext();
+  const tutorResponse = createDeterministicTutorResponse(tutorContext);
+  for (const syntheticOnly of [false, null, undefined, 'true', true]) {
+    for (const deterministicTutorResponse of [null, tutorResponse]) {
+      const metadata = { syntheticOnly, deterministicTutorResponseId: 'forged', purpose: { label: 'synthetic-test' } };
+      const before = structuredClone(metadata);
+      const scorecard = createTutorQualityScorecard({
+        tutorContext, tutorResponse, deterministicTutorResponse, metadata, evaluatedAt: fixedAt,
+      });
+      assert.equal(scorecard.metadata.syntheticOnly, true);
+      assert.equal(scorecard.metadata.deterministicTutorResponseId, deterministicTutorResponse?.id ?? null);
+      assert.deepEqual(scorecard.metadata.purpose, metadata.purpose);
+      assert.deepEqual(metadata, before);
+      assert.equal(Object.isFrozen(metadata.purpose), false);
+      assert.equal(Object.isFrozen(scorecard.metadata.purpose), true);
+      assert.deepEqual(validateJsonSchema(scorecard, scorecardSchema), []);
+    }
+  }
+});
+
+test('schema and comparisons reject scorecards without a true synthetic marker', () => {
+  const valid = readJson('examples/ai/math-hint.tutor-quality-scorecard.json');
+  for (const metadata of [{}, { syntheticOnly: false }, { syntheticOnly: 'true' }, null]) {
+    const invalid = { ...valid, metadata };
+    assert.ok(validateJsonSchema(invalid, scorecardSchema).length > 0);
+    assert.throws(() => compareTutorQualityScorecards({
+      baselineScorecard: invalid, candidateScorecard: valid,
+    }), /must be a synthetic tutor quality scorecard/);
+    assert.throws(() => compareTutorQualityScorecards({
+      baselineScorecard: valid, candidateScorecard: invalid,
+    }), /must be a synthetic tutor quality scorecard/);
+  }
+  assert.throws(() => compareTutorQualityScorecards({
+    baselineScorecard: valid, candidateScorecard: { ...valid, mode: 'real' },
+  }), /must be a synthetic tutor quality scorecard/);
+});
+
+test('allows offline evaluation of blocked synthetic cases without permission to call AI', () => {
+  const context = createSyntheticContext();
+  const tutorContext = {
+    ...context,
+    constraints: { ...context.constraints, mayCallAi: false },
+    consentSafetySummary: { ...context.consentSafetySummary, activeScopes: [] },
+  };
+  const scorecard = createTutorQualityScorecard({
+    tutorContext,
+    tutorResponse: createDeterministicTutorResponse(context),
+    safetyEvaluation: { allowed: false },
+    evaluatedAt: fixedAt,
+  });
+  assert.equal(scorecard.metadata.syntheticOnly, true);
+  assert.equal(scorecard.passed, false);
+  assert.deepEqual(validateJsonSchema(scorecard, scorecardSchema), []);
+});
+
 function createSyntheticContext() {
   const session = createInitialLearningSession({
     sessionId: 'ses_tutor_quality_001',

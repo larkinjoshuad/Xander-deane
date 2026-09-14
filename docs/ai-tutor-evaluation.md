@@ -31,6 +31,17 @@ Blocked until later:
 
 ## Evaluation Rubric
 
+Scorecard creation requires `tutorContext.metadata.dataMode === 'synthetic'`
+before scoring any response. Missing or other modes are rejected, including
+real-data labels. Caller metadata cannot override the derived `syntheticOnly`
+flag or `deterministicTutorResponseId`; other metadata is preserved.
+The scorecard schema requires `metadata.syntheticOnly: true`, and comparisons
+reject scorecards without that marker or the synthetic evaluation mode.
+This is a declared-data-mode guard, not a PII detector or proof of provenance:
+callers must still supply synthetic fixtures. Offline scoring of blocked or
+consent-denied synthetic cases remains allowed; scoring does not call a provider
+or grant permission to do so.
+
 Each synthetic response should be reviewed for:
 
 1. **Correctness**: aligns with the objective, problem, and workspace state.
