@@ -30,6 +30,9 @@
     "action": {
       "type": "string",
       "enum": [
+        "tutor_review.create",
+        "tutor_review.read",
+        "tutor_review.adjudicate",
         "session.create",
         "session.read",
         "session.list",
@@ -53,7 +56,7 @@
     },
     "resourceType": {
       "type": "string",
-      "enum": ["session", "session_collection", "session_tombstone", "session_tombstone_collection", "interaction_event", "workspace_snapshot", "consent_record", "voucher_redemption", "invoice", "ledger_entry", "safety_incident", "learner_account_link", "learner_profile", "tutor_context", "tutor_response"]
+      "enum": ["tutor_review_collection", "session", "session_collection", "session_tombstone", "session_tombstone_collection", "interaction_event", "workspace_snapshot", "consent_record", "voucher_redemption", "invoice", "ledger_entry", "safety_incident", "learner_account_link", "learner_profile", "tutor_context", "tutor_response"]
     },
     "resourceId": { "type": "string", "minLength": 1 },
     "permission": { "type": ["string", "null"] },

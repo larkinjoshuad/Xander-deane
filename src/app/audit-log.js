@@ -1,6 +1,9 @@
 import { CONTRACT_VERSION } from '../core/domain.js';
 
 export const AUDIT_ACTIONS = Object.freeze([
+  'tutor_review.create',
+  'tutor_review.read',
+  'tutor_review.adjudicate',
   'session.create',
   'session.read',
   'session.list',
@@ -23,6 +26,7 @@ export const AUDIT_ACTIONS = Object.freeze([
 ]);
 
 export const AUDIT_RESOURCE_TYPES = Object.freeze([
+  'tutor_review_collection',
   'session',
   'session_collection',
   'session_tombstone',
