@@ -1,0 +1,9 @@
+{
+  "contractVersion": "0.1.0",
+  "reviewerId": "synthetic_reviewer_001",
+  "status": "active",
+  "permissions": ["create_review", "read_review", "adjudicate_review"],
+  "validFrom": "2026-06-04T00:00:00.000Z",
+  "expiresAt": "2026-06-05T00:00:00.000Z",
+  "syntheticOnly": true
+}

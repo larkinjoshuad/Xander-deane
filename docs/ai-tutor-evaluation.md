@@ -153,9 +153,47 @@ authenticate reviewers, and does not implement production retention/export/
 deletion operations. It stores synthetic evidence only and grants no provider
 or live learner authorization.
 
+## Reviewer Authorization Boundary
+
+`createAuthorizedTutorQualityReviewService` in
+`src/app/tutor-quality-review-service.js` wraps the file store. Configure it with
+`store`, a trusted `resolveAuthority(session)` callback, and optionally a server
+clock `now`. Its methods are `create(options, session)`,
+`adjudicate(options, session)`, and `history(pendingReviewId, session)`.
+
+The resolver must validate an opaque session and load current authority from a
+trusted source on every call. It must never echo a request-provided role, account,
+reviewer ID, or grant. The service validates its result against
+`schemas/tutor-reviewer-authority.schema.json`; the synthetic example is
+`examples/ai/operator.tutor-reviewer-authority.json`. No authentication provider,
+real credentials, or public HTTP endpoint is included in this prototype.
+
+Only active, unexpired synthetic grants are allowed. `create_review`,
+`read_review`, and `adjudicate_review` are independent permissions; no existing
+guardian, learner, educator, or operator role implicitly grants them. These
+permissions cover this store's entire synthetic review collection, not tenant-
+or assignment-scoped access. Use separate trusted stores for separate boundaries.
+
+Decisions take their reviewer ID and time from the server. Requests containing
+`reviewerId` or `reviewedAt` are rejected. Authority is resolved again under the
+file write lock before persistence, and again before returning history. Revoked,
+expired, malformed, missing, or identity-switched grants fail closed with
+`REVIEW_FORBIDDEN`; resolver errors are not exposed. Session tokens are never
+included in persisted review packets.
+
+Keep the low-level file store and pure review helpers private to trusted server
+code: they remain usable for fixture tooling and do not enforce identity on
+their own. Any alternative store must honor and await the second `beforeCommit`
+callback for create/adjudicate before writing. The authorization recheck is a
+point-in-time check, not a transaction with an identity provider: revocations
+after that check can race the filesystem write. Production work still requires
+real session verification, provisioning/revocation, assignment scope, denial
+auditing, and transactional authority semantics. No reviewer grant authorizes
+live AI, real learner data, or payment flows.
+
 ## Next Steps
 
 1. Add provider-backed adapters behind the synthetic gateway interface without committing provider credentials.
 2. Expand the fixture set to compare deterministic tutor feedback against multiple model-generated candidates and subject packs.
-3. Add authenticated reviewer authority, production audit storage, and appeals once human-review operations are designed; the local synthetic store now handles per-review history and concurrent decisions.
+3. Integrate a reviewed identity provider and reviewer provisioning, add authorization audit events, and design appeals; synthetic grants and local per-review concurrency checks now provide a testable service boundary.
 4. Keep all model-gateway experiments synthetic until real-data governance is reviewed.

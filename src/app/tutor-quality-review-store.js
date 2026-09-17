@@ -31,7 +31,7 @@ export function createFileTutorQualityReviewStore({ directory } = {}) {
     return packet;
   }
 
-  async function write(id, action) {
+  async function write(id, action, beforeCommit) {
     const target = pathFor(id);
     const lock = `${target}.lock`;
     const temporary = `${target}.tmp`;
@@ -44,6 +44,8 @@ export function createFileTutorQualityReviewStore({ directory } = {}) {
     }
     try {
       const packet = await action();
+      // Recheck trusted authorization under the write lock before persistence.
+      if (beforeCommit) await beforeCommit();
       const handle = await open(temporary, 'w');
       try {
         await handle.writeFile(`${JSON.stringify(packet, null, 2)}\n`, 'utf8');
@@ -59,7 +61,7 @@ export function createFileTutorQualityReviewStore({ directory } = {}) {
   }
 
   return {
-    async create(options) {
+    async create(options, beforeCommit) {
       // Snapshot before the first await so callers cannot change committed evidence.
       const scorecard = JSON.parse(JSON.stringify(options?.scorecard));
       const pending = createTutorQualityReview({ ...options, scorecard });
@@ -71,16 +73,16 @@ export function createFileTutorQualityReviewStore({ directory } = {}) {
           throw error;
         }
         throw conflict('review already exists');
-      });
+      }, beforeCommit);
     },
-    async adjudicate({ reviewId, ...options }) {
+    async adjudicate({ reviewId, ...options }, beforeCommit) {
       const snapshot = JSON.parse(JSON.stringify(options));
       return write(reviewId, async () => {
         const packet = await read(reviewId);
         if (packet.reviews.length !== 1) throw conflict('review already finalized');
         const decision = adjudicateTutorQualityReview({ ...snapshot, review: packet.reviews[0] });
         return { ...packet, reviews: [...packet.reviews, decision] };
-      });
+      }, beforeCommit);
     },
     async history(reviewId) {
       return (await read(reviewId)).reviews;
