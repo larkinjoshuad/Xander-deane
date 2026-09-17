@@ -56,6 +56,11 @@ export function adjudicateTutorQualityReview({
 }
 
 // Structural evidence check only; callers must authenticate reviewers separately.
+export function validateTutorQualityReview({ review, scorecard } = {}) {
+  assertReview(review, scorecard);
+  return true;
+}
+
 export function isTutorQualityReviewApproved({ review, scorecard } = {}) {
   try {
     assertReview(review, scorecard);
