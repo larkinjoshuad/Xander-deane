@@ -97,16 +97,65 @@ reviewers must inspect the linked synthetic context and response as well.
 not human identity, signatures, or authorization. The fingerprint is not proof
 of provenance. This helper has no persistence, does not verify that a referenced
 pending record exists in storage, and cannot enforce one current decision across
-independent calls. Durable audit history, reviewer authentication, conflict
-handling, and appeals remain future operational work.
+independent calls. Use the file store below to persist histories and prevent
+conflicting final decisions for a pending review. Reviewer authentication and
+appeals remain future operational work.
 
 Use synthetic reviewer IDs and synthetic rationale/actions only. Automated
 rubric checks are heuristics, not proof of factual correctness. Review approval
 never enables provider calls, real learner data, or live child-facing AI.
 
+## Durable Synthetic Review History
+
+`src/app/tutor-quality-review-store.js` adds a Node file store around the review
+helper. Each file retains the synthetic scorecard, original pending review, and
+at most one final decision. Reads revalidate the evidence and history links;
+malformed or mismatched records fail closed. The envelope is an internal storage
+format; its scorecard and review records use the existing schemas.
+
+```js
+import { createFileTutorQualityReviewStore } from './src/app/tutor-quality-review-store.js';
+
+const store = createFileTutorQualityReviewStore({ directory: '/local/synthetic-reviews' });
+const pending = await store.create({ scorecard });
+await store.adjudicate({
+  reviewId: pending.id,
+  scorecard,
+  status: 'approved',
+  reviewerId: 'synthetic_reviewer_001',
+  rationale: 'Synthetic context, response, and rubric inspected.',
+});
+const history = await store.history(pending.id);
+```
+
+Keep the pending ID as the history key. Independent processes on the same host
+acquire an exclusive directory lock, reread the current history, then flush a
+temporary file and atomically rename it over the previous history. A competing
+write or already-finalized history raises `REVIEW_CONFLICT`. Read the history
+after a conflict or uncertain write outcome before deciding whether to retry.
+Unknown IDs raise `ENOENT`. Callers cannot replace a final decision through this
+API; revised evidence needs a new pending review. Separate pending IDs are
+independent, even when they reference the same scorecard: this is not a global
+scorecard approval or appeal system.
+
+Crash recovery is deliberately conservative. Readers ignore `.tmp` files and
+read the last complete `.json` history. An abandoned `.lock` blocks further
+writes. Stop all writers, inspect and back up the history, and only then remove
+the abandoned lock; the next successful write replaces a leftover temporary
+file. Never remove a lock while a writer may still be active. Corrupt history
+requires explicit recovery from a trusted backup, not automatic truncation.
+
+Use a dedicated local directory with restricted OS permissions. Network shares,
+multi-host access, and cloud-synchronized directories are unsupported. File
+flush plus rename protects against interrupted process writes, but is not a
+tested power-loss durability guarantee. This store is not tamper-proof, does not
+authenticate reviewers, and does not implement production retention/export/
+deletion operations. It stores synthetic evidence only and grants no provider
+or live learner authorization.
+
 ## Next Steps
 
 1. Add provider-backed adapters behind the synthetic gateway interface without committing provider credentials.
 2. Expand the fixture set to compare deterministic tutor feedback against multiple model-generated candidates and subject packs.
-3. Add authenticated reviewer authority, durable review history, concurrent-decision handling, and appeals once human-review operations are designed.
+3. Add authenticated reviewer authority, production audit storage, and appeals once human-review operations are designed; the local synthetic store now handles per-review history and concurrent decisions.
 4. Keep all model-gateway experiments synthetic until real-data governance is reviewed.
