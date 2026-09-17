@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/tutor-quality-review.schema.json",
+  "title": "TutorQualityReview",
+  "description": "Offline synthetic review evidence. Approval never authorizes provider calls or real learner use.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "id", "scorecardId", "scorecardDigest", "tutorContextId", "tutorResponseId", "createdAt", "status", "previousReviewId", "reviewerId", "reviewedAt", "rationale", "requiredActions", "syntheticOnly"],
+  "properties": {
+    "contractVersion": { "const": "0.1.0" },
+    "id": { "type": "string", "pattern": "^review_[a-zA-Z0-9_-]+$" },
+    "scorecardId": { "type": "string", "minLength": 1 },
+    "scorecardDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "tutorContextId": { "type": "string", "minLength": 1 },
+    "tutorResponseId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "status": { "enum": ["pending_review", "approved", "rejected", "needs_revision"] },
+    "previousReviewId": { "type": ["string", "null"], "pattern": "^review_[a-zA-Z0-9_-]+$" },
+    "reviewerId": { "type": ["string", "null"], "pattern": "^synthetic_reviewer_[a-zA-Z0-9_-]+$" },
+    "reviewedAt": { "type": ["string", "null"], "format": "date-time" },
+    "rationale": { "type": ["string", "null"], "pattern": "\\S" },
+    "requiredActions": { "type": "array", "items": { "type": "string", "pattern": "\\S" } },
+    "syntheticOnly": { "const": true }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "pending_review" } } },
+      "then": {
+        "properties": {
+          "previousReviewId": { "type": "null" },
+          "reviewerId": { "type": "null" },
+          "reviewedAt": { "type": "null" },
+          "rationale": { "type": "null" },
+          "requiredActions": { "type": "array", "maxItems": 0 }
+        }
+      },
+      "else": {
+        "properties": {
+          "previousReviewId": { "type": "string" },
+          "reviewerId": { "type": "string" },
+          "reviewedAt": { "type": "string" },
+          "rationale": { "type": "string" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "approved" } } },
+      "then": { "properties": { "requiredActions": { "type": "array", "maxItems": 0 } } }
+    },
+    {
+      "if": { "properties": { "status": { "const": "needs_revision" } } },
+      "then": { "properties": { "requiredActions": { "type": "array", "minItems": 1 } } }
+    }
+  ]
+}

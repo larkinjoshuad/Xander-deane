@@ -571,6 +571,24 @@
       "notes": "Reference/synthetic use only unless production requirements are satisfied."
     },
     {
+      "contractName": "tutor-quality-review",
+      "schemaPath": "schemas/tutor-quality-review.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": ["ai_output", "audit"],
+      "requiresConsentScopes": ["ai_tutoring", "data_export"],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": [
+        "reviewer authentication and authority enforcement",
+        "consent and real-data governance review",
+        "durable audit, retention, export, and deletion workflows"
+      ],
+      "notes": "Synthetic reviewer identifiers and fixture rationale only. Approval is not provider or production authorization."
+    },
+    {
       "contractName": "tutor-quality-scorecard",
       "schemaPath": "schemas/tutor-quality-scorecard.schema.json",
       "classification": "prohibited_until_review",

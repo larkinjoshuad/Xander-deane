@@ -7,7 +7,7 @@ Xander-deane is the foundation for a subject-agnostic, multimodal AI education p
 This repository now contains the first implementation slice for the platform foundation:
 
 - Portable JSON Schema contracts for cross-language implementations, indexed by a schema registry.
-- A dependency-free JavaScript reference implementation for early UI/API prototypes.
+- A dependency-free JavaScript core with Node adapters for early UI/API prototypes.
 - Architecture documentation for scaling the learning runtime to global usage.
 - A technical evaluation and corrective plan for production readiness gaps.
 - Cross-subject example fixtures for math, language, science, and learner preferences.
@@ -29,6 +29,7 @@ This repository now contains the first implementation slice for the platform fou
 | `schemas/interaction-event.schema.json` | Defines append-only learner, AI, and UI events. |
 | `schemas/tutor-response.schema.json` | Defines structured AI tutor output for text, speech, highlights, and next actions. |
 | `schemas/tutor-quality-scorecard.schema.json` | Defines synthetic-only tutor response rubric scorecards for correctness, pedagogy, age fit, safety, contract fit, and UI actionability. |
+| `schemas/tutor-quality-review.schema.json` | Defines synthetic-only pending reviews and explicit human decisions bound to exact scorecard evidence. |
 | `schemas/learner-profile.schema.json` | Defines locale, accessibility, and learner preference metadata. |
 | `schemas/device-profile.schema.json` | Defines runtime device categories, input modes, viewport constraints, and presentation modes. |
 | `schemas/workspace-snapshot.schema.json` | Defines serializable live workspace state for replay, persistence, and AI context. |
@@ -67,6 +68,7 @@ This repository now contains the first implementation slice for the platform fou
 | `src/app/recovery-drill.js` | Compares source and restored session services to verify synthetic backup/restore recovery for active records and deleted-session tombstones. |
 | `src/app/model-gateway.js` | Provides a synthetic-only reference model gateway for tutor-response validation and safety checks without real learner data or provider calls. |
 | `src/app/tutor-quality-evaluation.js` | Scores synthetic tutor responses against a deterministic quality rubric and compares baseline/candidate scorecards before provider-backed AI is considered. |
+| `src/app/tutor-quality-review.js` | Creates and adjudicates schema-validated offline reviews in Node; approval does not authorize provider calls. |
 | `src/app/session-persistence.js` | Provides in-memory and browser-storage adapters for recoverable prototype sessions. |
 | `src/app/session-service.js` | Provides a service boundary plus memory, overwrite-file, and append-only JSONL stores for durable-session prototypes, including optional consent-scope persistence guards. |
 | `src/app/database-session-record-store.js` | Provides server-side SQLite-backed session and audit stores that apply `db/session-adapter.sql`, write materialized records plus append-only projections, persist audit decisions, export retention/tombstone views, run backup/restore smoke checks, and pass shared store/API reconciliation tests when `sqlite3` is available. |
@@ -85,12 +87,12 @@ This repository is currently a synthetic-data architecture/portfolio prototype. 
 
 ## Development
 
-Install development dependencies with `npm ci` before running tests or validation.
+Install dependencies with `npm ci` before running tests or validation.
 Fixture validation uses Ajv's JSON Schema draft 2020-12 implementation and
 `ajv-formats`, including referenced definitions, numeric bounds, and date-time
 formats. Invalid schemas fail validation; fixture values are never coerced,
-defaulted, or stripped of extra properties. The validator adds development
-dependencies only.
+defaulted, or stripped of extra properties. Ajv and `ajv-formats` are also runtime
+dependencies of the offline Node tutor-quality review helper.
 
 Run the static web shell:
 
@@ -151,4 +153,4 @@ Run the dependency-free device QA preset checks for desktop, tablet, phone, and 
 npm run test:device
 ```
 
-The code intentionally avoids runtime dependencies at this stage so the base layer remains easy to port to other languages and services.
+The core remains dependency-free; Node adapters use explicit dependencies for provider integration and schema-validated review evidence. Offline review does not call a provider.
