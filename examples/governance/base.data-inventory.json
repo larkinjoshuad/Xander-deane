@@ -571,6 +571,20 @@
       "notes": "Reference/synthetic use only unless production requirements are satisfied."
     },
     {
+      "contractName": "tutor-reviewer-authority",
+      "schemaPath": "schemas/tutor-reviewer-authority.schema.json",
+      "classification": "prohibited_until_review",
+      "piiRisk": "high",
+      "realDataAllowed": false,
+      "recordTypes": ["audit"],
+      "requiresConsentScopes": [],
+      "retentionPolicyRequired": true,
+      "exportRequired": true,
+      "deletionRequired": true,
+      "productionRequirements": ["authenticated identity provider", "reviewer provisioning and revocation", "authority audit and retention policies"],
+      "notes": "Synthetic server-resolved grants only. Never store credentials in fixtures or review histories."
+    },
+    {
       "contractName": "tutor-quality-review",
       "schemaPath": "schemas/tutor-quality-review.schema.json",
       "classification": "prohibited_until_review",

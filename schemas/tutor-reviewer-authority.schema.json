@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://xander-deane.dev/schemas/tutor-reviewer-authority.schema.json",
+  "title": "TutorReviewerAuthority",
+  "description": "Trusted server-resolved synthetic reviewer grant, never a client-supplied identity claim.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "reviewerId", "status", "permissions", "validFrom", "expiresAt", "syntheticOnly"],
+  "properties": {
+    "contractVersion": { "const": "0.1.0" },
+    "reviewerId": { "type": "string", "pattern": "^synthetic_reviewer_[a-zA-Z0-9_-]+$" },
+    "status": { "enum": ["active", "suspended", "revoked"] },
+    "permissions": {
+      "type": "array", "uniqueItems": true,
+      "items": { "enum": ["create_review", "read_review", "adjudicate_review"] }
+    },
+    "validFrom": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "syntheticOnly": { "const": true }
+  }
+}

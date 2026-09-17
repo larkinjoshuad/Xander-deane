@@ -30,6 +30,7 @@ This repository now contains the first implementation slice for the platform fou
 | `schemas/tutor-response.schema.json` | Defines structured AI tutor output for text, speech, highlights, and next actions. |
 | `schemas/tutor-quality-scorecard.schema.json` | Defines synthetic-only tutor response rubric scorecards for correctness, pedagogy, age fit, safety, contract fit, and UI actionability. |
 | `schemas/tutor-quality-review.schema.json` | Defines synthetic-only pending reviews and explicit human decisions bound to exact scorecard evidence. |
+| `schemas/tutor-reviewer-authority.schema.json` | Defines time-limited, synthetic reviewer grants with explicit create/read/adjudicate permissions. |
 | `schemas/learner-profile.schema.json` | Defines locale, accessibility, and learner preference metadata. |
 | `schemas/device-profile.schema.json` | Defines runtime device categories, input modes, viewport constraints, and presentation modes. |
 | `schemas/workspace-snapshot.schema.json` | Defines serializable live workspace state for replay, persistence, and AI context. |
@@ -70,6 +71,7 @@ This repository now contains the first implementation slice for the platform fou
 | `src/app/tutor-quality-evaluation.js` | Scores synthetic tutor responses against a deterministic quality rubric and compares baseline/candidate scorecards before provider-backed AI is considered. |
 | `src/app/tutor-quality-review.js` | Creates and adjudicates schema-validated offline reviews in Node; approval does not authorize provider calls. |
 | `src/app/tutor-quality-review-store.js` | Persists synthetic pending/decision history with atomic replacement and one final decision per pending review on a single host. |
+| `src/app/tutor-quality-review-service.js` | Resolves reviewer authority through a trusted server callback, enforces permissions, and stamps decision identity and time. |
 | `src/app/session-persistence.js` | Provides in-memory and browser-storage adapters for recoverable prototype sessions. |
 | `src/app/session-service.js` | Provides a service boundary plus memory, overwrite-file, and append-only JSONL stores for durable-session prototypes, including optional consent-scope persistence guards. |
 | `src/app/database-session-record-store.js` | Provides server-side SQLite-backed session and audit stores that apply `db/session-adapter.sql`, write materialized records plus append-only projections, persist audit decisions, export retention/tombstone views, run backup/restore smoke checks, and pass shared store/API reconciliation tests when `sqlite3` is available. |
