@@ -157,7 +157,8 @@ or live learner authorization.
 
 `createAuthorizedTutorQualityReviewService` in
 `src/app/tutor-quality-review-service.js` wraps the file store. Configure it with
-`store`, a trusted `resolveAuthority(session)` callback, and optionally a server
+`store`, a trusted `resolveAuthority(session)` callback, an explicit
+`auditEventStore` implementing `saveAuditEvent`, and optionally a server
 clock `now`. Its methods are `create(options, session)`,
 `adjudicate(options, session)`, and `history(pendingReviewId, session)`.
 
@@ -187,13 +188,13 @@ their own. Any alternative store must honor and await the second `beforeCommit`
 callback for create/adjudicate before writing. The authorization recheck is a
 point-in-time check, not a transaction with an identity provider: revocations
 after that check can race the filesystem write. Production work still requires
-real session verification, provisioning/revocation, assignment scope, denial
-auditing, and transactional authority semantics. No reviewer grant authorizes
+real session verification, provisioning/revocation, assignment scope, production
+audit operations, and transactional authority semantics. No reviewer grant authorizes
 live AI, real learner data, or payment flows.
 
 ## Next Steps
 
 1. Add provider-backed adapters behind the synthetic gateway interface without committing provider credentials.
 2. Expand the fixture set to compare deterministic tutor feedback against multiple model-generated candidates and subject packs.
-3. Integrate a reviewed identity provider and reviewer provisioning, add authorization audit events, and design appeals; synthetic grants and local per-review concurrency checks now provide a testable service boundary.
+3. Integrate a reviewed identity provider and reviewer provisioning, reconcile review and audit persistence, and design appeals; synthetic grants, authorization audit events, and local per-review concurrency checks now provide a testable service boundary.
 4. Keep all model-gateway experiments synthetic until real-data governance is reviewed.

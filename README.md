@@ -71,7 +71,7 @@ This repository now contains the first implementation slice for the platform fou
 | `src/app/tutor-quality-evaluation.js` | Scores synthetic tutor responses against a deterministic quality rubric and compares baseline/candidate scorecards before provider-backed AI is considered. |
 | `src/app/tutor-quality-review.js` | Creates and adjudicates schema-validated offline reviews in Node; approval does not authorize provider calls. |
 | `src/app/tutor-quality-review-store.js` | Persists synthetic pending/decision history with atomic replacement and one final decision per pending review on a single host. |
-| `src/app/tutor-quality-review-service.js` | Resolves reviewer authority through a trusted server callback, enforces permissions, and stamps decision identity and time. |
+| `src/app/tutor-quality-review-service.js` | Resolves reviewer authority, enforces permissions, stamps decision identity/time, and requires an audit sink for allowed, denied, completed, and failed actions. |
 | `src/app/session-persistence.js` | Provides in-memory and browser-storage adapters for recoverable prototype sessions. |
 | `src/app/session-service.js` | Provides a service boundary plus memory, overwrite-file, and append-only JSONL stores for durable-session prototypes, including optional consent-scope persistence guards. |
 | `src/app/database-session-record-store.js` | Provides server-side SQLite-backed session and audit stores that apply `db/session-adapter.sql`, write materialized records plus append-only projections, persist audit decisions, export retention/tombstone views, run backup/restore smoke checks, and pass shared store/API reconciliation tests when `sqlite3` is available. |
