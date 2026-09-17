@@ -1,0 +1,16 @@
+{
+  "contractVersion": "0.1.0",
+  "id": "review_synthetic_math_hint_001",
+  "scorecardId": "scorecard_msg_ai_synthetic_math_hint_001_2026-06-04T00_00_00.000Z",
+  "scorecardDigest": "4ac699e8e501f8b9d4e3a9d42baca2f2adc6204bcc19187cc2308b63cc8df68f",
+  "tutorContextId": "ctx_ses_tutor_quality_001_2026-06-04T00_00_00.000Z",
+  "tutorResponseId": "msg_ai_synthetic_math_hint_001",
+  "createdAt": "2026-06-04T01:00:00.000Z",
+  "status": "pending_review",
+  "previousReviewId": null,
+  "reviewerId": null,
+  "reviewedAt": null,
+  "rationale": null,
+  "requiredActions": [],
+  "syntheticOnly": true
+}

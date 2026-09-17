@@ -184,6 +184,13 @@
       "stability": "prototype"
     },
     {
+      "name": "tutor-quality-review",
+      "schemaId": "https://xander-deane.dev/schemas/tutor-quality-review.schema.json",
+      "schemaPath": "schemas/tutor-quality-review.schema.json",
+      "fixtureSuffix": ".tutor-quality-review.json",
+      "stability": "prototype"
+    },
+    {
       "name": "tutor-quality-scorecard",
       "schemaId": "https://xander-deane.dev/schemas/tutor-quality-scorecard.schema.json",
       "schemaPath": "schemas/tutor-quality-scorecard.schema.json",

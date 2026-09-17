@@ -53,9 +53,60 @@ Each synthetic response should be reviewed for:
 
 The executable scorecard assigns up to two points per rubric dimension, requires a passing threshold of 10 out of 12, and still fails any candidate with unresolved rubric issues. This keeps the automated gate conservative: a response should be both high-scoring and free of obvious policy or contract defects before it is treated as a viable synthetic tutor candidate.
 
+## Offline Human Review
+
+`src/app/tutor-quality-review.js` is a Node-only helper backed by
+`schemas/tutor-quality-review.schema.json`. It validates scorecards and review
+records with Ajv, checks rubric totals and timestamps, and returns immutable
+copies without modifying caller inputs. The pending fixture is
+`examples/ai/math-hint.tutor-quality-review.json`.
+
+The four statuses are:
+
+- `pending_review`: no reviewer, decision time, rationale, or required actions yet.
+- `approved`: explicit synthetic reviewer ID and rationale, with a passing,
+  issue-free scorecard and no outstanding actions.
+- `rejected`: explicit synthetic reviewer ID and rationale.
+- `needs_revision`: explicit synthetic reviewer ID, rationale, and at least one
+  nonblank required action.
+
+```js
+import {
+  createTutorQualityReview, adjudicateTutorQualityReview,
+} from './src/app/tutor-quality-review.js';
+
+const pending = createTutorQualityReview({ scorecard });
+const decision = adjudicateTutorQualityReview({
+  review: pending,
+  scorecard,
+  status: 'needs_revision',
+  reviewerId: 'synthetic_reviewer_001',
+  rationale: 'Synthetic hint needs a clearer explanation.',
+  requiredActions: ['Rewrite the hint, rescore, and create a new review.'],
+});
+```
+
+Each decision has a new ID and references its pending record through
+`previousReviewId`. Final decisions cannot be adjudicated again. A SHA-256
+fingerprint binds the entire scorecard, including notes and metadata, to the
+review; JSON object key order is ignored. Changed evidence requires a new review.
+The fingerprint does not cover response content absent from the scorecard, so
+reviewers must inspect the linked synthetic context and response as well.
+
+`isTutorQualityReviewApproved({ review, scorecard })` checks structural evidence,
+not human identity, signatures, or authorization. The fingerprint is not proof
+of provenance. This helper has no persistence, does not verify that a referenced
+pending record exists in storage, and cannot enforce one current decision across
+independent calls. Durable audit history, reviewer authentication, conflict
+handling, and appeals remain future operational work.
+
+Use synthetic reviewer IDs and synthetic rationale/actions only. Automated
+rubric checks are heuristics, not proof of factual correctness. Review approval
+never enables provider calls, real learner data, or live child-facing AI.
+
 ## Next Steps
 
 1. Add provider-backed adapters behind the synthetic gateway interface without committing provider credentials.
 2. Expand the fixture set to compare deterministic tutor feedback against multiple model-generated candidates and subject packs.
-3. Add reviewer identity, adjudication status, and appeal workflow fields once human-review operations are designed.
+3. Add authenticated reviewer authority, durable review history, concurrent-decision handling, and appeals once human-review operations are designed.
 4. Keep all model-gateway experiments synthetic until real-data governance is reviewed.
