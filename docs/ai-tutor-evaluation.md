@@ -185,7 +185,9 @@ included in persisted review packets.
 Keep the low-level file store and pure review helpers private to trusted server
 code: they remain usable for fixture tooling and do not enforce identity on
 their own. Any alternative store must honor and await the second `beforeCommit`
-callback for create/adjudicate before writing. The authorization recheck is a
+callback for create/adjudicate before writing. The callback receives the new
+review and returns its completion audit event; adapters must atomically retain
+that event with the review to support recovery. The authorization recheck is a
 point-in-time check, not a transaction with an identity provider: revocations
 after that check can race the filesystem write. Production work still requires
 real session verification, provisioning/revocation, assignment scope, production
@@ -196,5 +198,5 @@ live AI, real learner data, or payment flows.
 
 1. Add provider-backed adapters behind the synthetic gateway interface without committing provider credentials.
 2. Expand the fixture set to compare deterministic tutor feedback against multiple model-generated candidates and subject packs.
-3. Integrate a reviewed identity provider and reviewer provisioning, reconcile review and audit persistence, and design appeals; synthetic grants, authorization audit events, and local per-review concurrency checks now provide a testable service boundary.
+3. Integrate a reviewed identity provider and reviewer provisioning, harden idempotent audit delivery, and design appeals; the local store now supports write-completion recovery (see `docs/audit-events.md`).
 4. Keep all model-gateway experiments synthetic until real-data governance is reviewed.

@@ -1,5 +1,7 @@
-import { mkdir, open, readFile, rename, rm, rmdir } from 'node:fs/promises';
+import { mkdir, open, readFile, readdir, rename, rm, rmdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
+import { validateReviewAuditCompletion } from './tutor-review-audit-outbox.js';
 import {
   createTutorQualityReview, adjudicateTutorQualityReview, validateTutorQualityReview,
 } from './tutor-quality-review.js';
@@ -17,7 +19,7 @@ export function createFileTutorQualityReviewStore({ directory } = {}) {
 
   async function read(id) {
     const packet = JSON.parse(await readFile(pathFor(id), 'utf8'));
-    if (!packet || Object.keys(packet).sort().join(',') !== 'reviews,scorecard'
+    if (!packet || !['reviews,scorecard', 'auditCompletions,reviews,scorecard'].includes(Object.keys(packet).sort().join(','))
       || !Array.isArray(packet.reviews) || ![1, 2].includes(packet.reviews.length)) {
       throw new TypeError('invalid review history');
     }
@@ -27,6 +29,19 @@ export function createFileTutorQualityReviewStore({ directory } = {}) {
       || (decision && (decision.status === 'pending_review' || decision.previousReviewId !== id
         || decision.createdAt !== pending.createdAt))) {
       throw new TypeError('invalid review history linkage');
+    }
+    if (Object.hasOwn(packet, 'auditCompletions')) {
+      if (!Array.isArray(packet.auditCompletions) || packet.auditCompletions.length > packet.reviews.length) {
+        throw new TypeError('invalid review audit outbox');
+      }
+      const ids = new Set();
+      const reviewIds = new Set();
+      for (const event of packet.auditCompletions) {
+        validateReviewAuditCompletion(event, packet.reviews);
+        if (ids.has(event.id) || reviewIds.has(event.metadata.reviewId)) throw new TypeError('duplicate review audit completion');
+        ids.add(event.id);
+        reviewIds.add(event.metadata.reviewId);
+      }
     }
     return packet;
   }
@@ -45,7 +60,13 @@ export function createFileTutorQualityReviewStore({ directory } = {}) {
     try {
       const packet = await action();
       // Recheck trusted authorization under the write lock before persistence.
-      if (beforeCommit) await beforeCommit();
+      if (beforeCommit) {
+        const completion = await beforeCommit(packet.reviews.at(-1));
+        if (completion !== undefined) {
+          validateReviewAuditCompletion(completion, [packet.reviews.at(-1)]);
+          packet.auditCompletions = [...(packet.auditCompletions ?? []), completion];
+        }
+      }
       const handle = await open(temporary, 'w');
       try {
         await handle.writeFile(`${JSON.stringify(packet, null, 2)}\n`, 'utf8');
@@ -86,6 +107,36 @@ export function createFileTutorQualityReviewStore({ directory } = {}) {
     },
     async history(reviewId) {
       return (await read(reviewId)).reviews;
+    },
+    // Trusted maintenance only. Stable event IDs support at-least-once delivery.
+    async reconcileAuditEvents(auditEventStore) {
+      if (typeof auditEventStore?.listAuditEvents !== 'function'
+        || typeof auditEventStore?.saveAuditEvent !== 'function') throw new TypeError('readable audit store required');
+      await mkdir(root, { recursive: true });
+      const lock = join(root, '.audit-reconcile.lock');
+      try { await mkdir(lock); } catch (error) {
+        if (error.code === 'EEXIST') throw conflict('audit reconciliation already in progress');
+        throw error;
+      }
+      try {
+        const completions = [];
+        for (const file of await readdir(root)) {
+          if (/^review_[a-zA-Z0-9_-]+\.json$/.test(file)) {
+            completions.push(...((await read(file.slice(0, -5))).auditCompletions ?? []));
+          }
+        }
+        const existing = [...await auditEventStore.listAuditEvents()];
+        let delivered = 0;
+        for (const event of completions) {
+          const matches = existing.filter((item) => item.id === event.id);
+          if (matches.some((item) => !isDeepStrictEqual(item, event))) throw new TypeError('audit event ID collision');
+          if (matches.length) continue;
+          await auditEventStore.saveAuditEvent(event);
+          existing.push(event);
+          delivered++;
+        }
+        return { delivered, inspected: completions.length };
+      } finally { await rmdir(lock); }
     },
   };
 }

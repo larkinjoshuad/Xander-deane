@@ -51,9 +51,10 @@ Each invocation generates a fresh trace ID shared by its events:
 The trusted synthetic reviewer ID is metadata, not an account ID. It remains
 null until the first successful authorization; after revocation it identifies
 the previously authorized reviewer, not a still-valid grant. No session tokens,
-request IDs, scorecard content, rationale, or exception messages are logged.
-The resource ID is a fixed collection identifier, so this prototype correlates
-events by invocation trace, not by individual review. Events carry
+request-provided IDs, scorecard content, rationale, or exception messages are logged.
+The resource ID is a fixed collection identifier. Write completion events add
+the persisted, server-generated review ID to metadata; other events correlate
+by invocation trace. Events carry
 `metadata.syntheticOnly: true`.
 
 Audit errors raise a redacted `REVIEW_AUDIT_UNAVAILABLE` with `traceId`.
@@ -65,12 +66,48 @@ Inspect review history to reconcile uncertain outcomes. Denials still block
 access if their audit event cannot be saved, but no durable denial event can be
 promised while the sink is unavailable.
 
-Review and audit storage are separate, not transactional. Crashes may leave an
-authorization event without a completion event; audit availability is not proof
-of successful adjudication. The existing file adapter is a prototype append
+Review and audit storage are separate. The file review store now saves a write
+completion event atomically with its review packet, allowing recovery as below.
+Crashes may still leave an authorization event without a completion event in the
+audit sink; audit availability is not proof of successful adjudication.
+The existing file adapter is a prototype append
 log, not tamper-proof, multi-host, or power-loss-tested storage. Production needs
-reconciliation/outbox semantics, restricted access, retention, monitoring, and
+transactional/idempotent delivery, restricted access, retention, monitoring, and
 an immutable audit backend before real data is considered.
+
+## Completion Recovery
+
+The file review store keeps `auditCompletions` alongside scorecard and review
+records. These schema-validated events are bound to the committed review ID,
+action, permission, and synthetic reviewer. The same atomic replacement writes
+the review and its completion event. No completion is replayable from a failed
+write. Completion timestamps represent preparation immediately before commit,
+not the later delivery/recovery time.
+
+Trusted maintenance code can call:
+
+```js
+const result = await reviewStore.reconcileAuditEvents(auditEventStore);
+// result: { delivered, inspected }
+```
+
+The sink must expose `listAuditEvents` and `saveAuditEvent`. Reconciliation reads
+committed packets only, validates them, and delivers missing events with their
+original IDs and trace IDs. It never replays adjudication or modifies reviews.
+Matching events are skipped; an existing event with the same ID but different
+content is an error. Retained outbox records also allow restoration to an empty
+sink. Legacy packets without outbox records remain readable but cannot have
+their missing history reconstructed. Read, denial, and failure events are not
+recoverable through this write-completion outbox.
+
+This is at-least-once delivery, not exactly-once delivery. A directory lock
+serializes reconcilers on one host, but immediate service delivery can race
+maintenance; consumers must deduplicate by event ID, or use an idempotent sink.
+An interrupted reconciliation can be retried after inspecting/removing its
+abandoned `.audit-reconcile.lock` with all maintenance workers stopped. Never
+remove an active lock. Audit sink failures propagate; already-delivered events
+remain valid and are skipped on retry. Run this only as trusted maintenance,
+not as a public or reviewer-authorized endpoint. No real data is enabled.
 
 ## Required first production audit points
 

@@ -70,7 +70,7 @@ This repository now contains the first implementation slice for the platform fou
 | `src/app/model-gateway.js` | Provides a synthetic-only reference model gateway for tutor-response validation and safety checks without real learner data or provider calls. |
 | `src/app/tutor-quality-evaluation.js` | Scores synthetic tutor responses against a deterministic quality rubric and compares baseline/candidate scorecards before provider-backed AI is considered. |
 | `src/app/tutor-quality-review.js` | Creates and adjudicates schema-validated offline reviews in Node; approval does not authorize provider calls. |
-| `src/app/tutor-quality-review-store.js` | Persists synthetic pending/decision history with atomic replacement and one final decision per pending review on a single host. |
+| `src/app/tutor-quality-review-store.js` | Persists synthetic review history and completion audit records atomically; reconciles missing audit delivery without repeating decisions. |
 | `src/app/tutor-quality-review-service.js` | Resolves reviewer authority, enforces permissions, stamps decision identity/time, and requires an audit sink for allowed, denied, completed, and failed actions. |
 | `src/app/session-persistence.js` | Provides in-memory and browser-storage adapters for recoverable prototype sessions. |
 | `src/app/session-service.js` | Provides a service boundary plus memory, overwrite-file, and append-only JSONL stores for durable-session prototypes, including optional consent-scope persistence guards. |
