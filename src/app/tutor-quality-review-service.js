@@ -34,14 +34,18 @@ export function createAuthorizedTutorQualityReviewService({ store, resolveAuthor
   async function audited(action, permission, operation) {
     const traceId = `review_trace_${randomUUID()}`;
     let reviewer = null;
-    async function log(phase, decision, operationCompleted = false) {
-      try {
-        await auditEventStore.saveAuditEvent(createAuditEvent({
+    let completion;
+    function eventFor(phase, decision, reviewId) {
+      return createAuditEvent({
           id: `audit_${randomUUID()}`, occurredAt: now(), action,
           resourceType: 'tutor_review_collection', resourceId: 'synthetic_review_collection',
           permission, decision, reason: `synthetic review operation ${phase}`, traceId,
-          metadata: { syntheticOnly: true, phase, reviewerId: reviewer },
-        }));
+          metadata: { syntheticOnly: true, phase, reviewerId: reviewer, ...(reviewId ? { reviewId } : {}) },
+      });
+    }
+    async function log(phase, decision, operationCompleted = false) {
+      try {
+        await auditEventStore.saveAuditEvent(phase === 'completed' && completion ? completion : eventFor(phase, decision));
       } catch {
         const error = new Error('review audit unavailable');
         error.code = 'REVIEW_AUDIT_UNAVAILABLE';
@@ -55,6 +59,10 @@ export function createAuthorizedTutorQualityReviewService({ store, resolveAuthor
       result = await operation({
         identify: (id) => { reviewer = id; },
         allowed: () => log('authorized', 'allowed'),
+        prepareCompletion: (review) => {
+          completion = eventFor('completed', 'logged', review.id);
+          return completion;
+        },
       });
     } catch (error) {
       if (error?.code !== 'REVIEW_AUDIT_UNAVAILABLE') {
@@ -70,18 +78,19 @@ export function createAuthorizedTutorQualityReviewService({ store, resolveAuthor
 
   return Object.freeze({
     async create(options, session) {
-      return audited('tutor_review.create', 'create_review', async ({ identify, allowed }) => {
+      return audited('tutor_review.create', 'create_review', async ({ identify, allowed, prepareCompletion }) => {
         const snapshot = JSON.parse(JSON.stringify(options));
         const reviewer = await authorize(session, 'create_review');
         identify(reviewer);
-        return store.create({ scorecard: snapshot.scorecard, createdAt: now() }, async () => {
+        return store.create({ scorecard: snapshot.scorecard, createdAt: now() }, async (review) => {
           await authorize(session, 'create_review', reviewer);
           await allowed();
+          return prepareCompletion(review);
         });
       });
     },
     async adjudicate(options, session) {
-      return audited('tutor_review.adjudicate', 'adjudicate_review', async ({ identify, allowed }) => {
+      return audited('tutor_review.adjudicate', 'adjudicate_review', async ({ identify, allowed, prepareCompletion }) => {
         const snapshot = JSON.parse(JSON.stringify(options));
         if (Object.hasOwn(snapshot, 'reviewerId') || Object.hasOwn(snapshot, 'reviewedAt')) {
           throw new TypeError('reviewer identity and decision time are server-controlled');
@@ -92,9 +101,10 @@ export function createAuthorizedTutorQualityReviewService({ store, resolveAuthor
           reviewId: snapshot.reviewId, scorecard: snapshot.scorecard, status: snapshot.status,
           rationale: snapshot.rationale, requiredActions: snapshot.requiredActions,
           reviewerId, reviewedAt: now(),
-        }, async () => {
+        }, async (review) => {
           await authorize(session, 'adjudicate_review', reviewerId);
           await allowed();
+          return prepareCompletion(review);
         });
       });
     },

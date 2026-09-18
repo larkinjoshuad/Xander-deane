@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -180,4 +180,93 @@ test('revocation produces a denial audit and an audit sink is mandatory', async 
   assert.equal(events[0].decision, 'denied');
   assert.equal(events[0].metadata.reviewerId, grant.reviewerId);
   assert.throws(() => createService({ store, now, resolveAuthority: async () => grant }), /auditEventStore/);
+});
+
+test('restart reconciliation restores missing completion with the original ID without changing the decision', async (t) => {
+  const { directory, store, pending } = await setup(t);
+  const sink = createFileAuditEventStore({ directory: join(directory, 'audit') });
+  let missing;
+  const service = createService({ store, now, resolveAuthority: async () => grant, auditEventStore: {
+    async saveAuditEvent(event) {
+      if (event.metadata.phase === 'completed') { missing = event; throw new Error('offline'); }
+      return sink.saveAuditEvent(event);
+    },
+  } });
+  await assert.rejects(service.adjudicate({ ...choice, reviewId: pending.id }, session), { operationCompleted: true });
+  const before = await store.history(pending.id);
+  const reopened = createFileTutorQualityReviewStore({ directory });
+  assert.deepEqual(await reopened.reconcileAuditEvents(sink), { delivered: 1, inspected: 1 });
+  assert.deepEqual((await sink.listAuditEvents()).at(-1), missing);
+  assert.deepEqual(await reopened.reconcileAuditEvents(sink), { delivered: 0, inspected: 1 });
+  assert.deepEqual(await reopened.history(pending.id), before);
+});
+
+test('creation recovery discovers the pending ID after an uncertain result and skips acknowledged audit events', async (t) => {
+  const { directory, store } = await setup(t);
+  const sink = createInMemoryAuditEventStore();
+  const service = createService({ store, now, resolveAuthority: async () => grant, auditEventStore: {
+    async saveAuditEvent(event) {
+      await sink.saveAuditEvent(event);
+      if (event.metadata.phase === 'completed') throw new Error('acknowledgment lost');
+    },
+  } });
+  await assert.rejects(service.create({ scorecard }, session), { operationCompleted: true });
+  const completed = (await sink.listAuditEvents()).at(-1);
+  assert.equal((await store.history(completed.metadata.reviewId))[0].status, 'pending_review');
+  assert.deepEqual(await createFileTutorQualityReviewStore({ directory }).reconcileAuditEvents(sink), { delivered: 0, inspected: 1 });
+});
+
+test('reconciliation retries sink outages, rejects ID collisions and corrupt recovery records', async (t) => {
+  const { directory, store, pending } = await setup(t);
+  const sink = createInMemoryAuditEventStore();
+  const service = createService({ store, now, resolveAuthority: async () => grant, auditEventStore: sink });
+  await service.adjudicate({ ...choice, reviewId: pending.id }, session);
+  const completion = (await sink.listAuditEvents()).at(-1);
+  await assert.rejects(store.reconcileAuditEvents({ listAuditEvents: async () => [], saveAuditEvent: async () => { throw new Error('offline'); } }), /offline/);
+  const collision = createInMemoryAuditEventStore([{ ...completion, reason: 'different' }]);
+  await assert.rejects(store.reconcileAuditEvents(collision), /collision/);
+  const fresh = createInMemoryAuditEventStore();
+  assert.equal((await store.reconcileAuditEvents(fresh)).delivered, 1);
+  const path = join(directory, `${pending.id}.json`);
+  const packet = JSON.parse(await readFile(path, 'utf8'));
+  packet.auditCompletions[0].metadata.reviewId = 'review_wrong';
+  await writeFile(path, JSON.stringify(packet));
+  await assert.rejects(store.reconcileAuditEvents(fresh), /committed evidence/);
+  assert.equal((await fresh.listAuditEvents()).length, 1);
+});
+
+test('legacy packets generate no completion evidence and concurrent reconciliation fails closed', async (t) => {
+  const { store, pending } = await setup(t);
+  const sink = createInMemoryAuditEventStore();
+  assert.deepEqual(await store.reconcileAuditEvents(sink), { delivered: 0, inspected: 0 });
+  let release;
+  let started;
+  const entered = new Promise((resolve) => { started = resolve; });
+  const wait = new Promise((resolve) => { release = resolve; });
+  const first = store.reconcileAuditEvents({
+    async listAuditEvents() { started(); await wait; return []; },
+    saveAuditEvent: sink.saveAuditEvent,
+  });
+  await entered;
+  try {
+    await assert.rejects(store.reconcileAuditEvents(sink), { code: 'REVIEW_CONFLICT' });
+  } finally { release(); await first; }
+  assert.deepEqual(await store.history(pending.id), [pending]);
+});
+
+test('failed persistence creates no replayable completion; later commits retain both recovery records', async (t) => {
+  const { directory, store, pending } = await setup(t);
+  const sink = createInMemoryAuditEventStore();
+  const service = createService({ store, now, resolveAuthority: async () => grant, auditEventStore: sink });
+  const temporary = join(directory, `${pending.id}.json.tmp`);
+  await mkdir(temporary);
+  await assert.rejects(service.adjudicate({ ...choice, reviewId: pending.id }, session));
+  assert.deepEqual(await store.reconcileAuditEvents(sink), { delivered: 0, inspected: 0 });
+  assert.deepEqual(await store.history(pending.id), [pending]);
+  await rm(temporary, { recursive: true });
+  const created = await service.create({ scorecard }, session);
+  await service.adjudicate({ ...choice, reviewId: created.id }, session);
+  const recovered = createInMemoryAuditEventStore();
+  assert.deepEqual(await store.reconcileAuditEvents(recovered), { delivered: 2, inspected: 2 });
+  assert.deepEqual((await recovered.listAuditEvents()).map((event) => event.action), ['tutor_review.create', 'tutor_review.adjudicate']);
 });
