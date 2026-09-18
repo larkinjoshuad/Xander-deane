@@ -17,11 +17,8 @@ import { equalGroupsRenderer } from './renderers/equal-groups-renderer.js';
 import { classificationSortRenderer } from './renderers/classification-sort-renderer.js';
 import { tokenSelectionRenderer } from './renderers/token-selection-renderer.js';
 import { createSkillMasteryForSession, updateSkillMasteryForSession } from './learner-insights.js';
-import { requestLiveTutorResponse } from './tutor-client.js';
 
-// Focused learner experience: split screen — interactive AI on top, problem
-// area below. Progress/event tracking is intentionally NOT shown here; it is
-// persisted (for the parent dashboard) but kept off the child's screen.
+// Synthetic touch practice keeps progress available only in the family view.
 
 const DEMOS = Object.freeze({
   math: { objective: '../examples/math/objective.learning-objective.json', problem: '../examples/math/problem.problem.json' },
@@ -39,7 +36,6 @@ const elements = {
   tutorMessage: document.querySelector('#tutor-message'),
   speakButton: document.querySelector('#speak-button'),
   aiState: document.querySelector('#ai-state'),
-  avatarOrb: document.querySelector('#avatar-orb'),
   problemPrompt: document.querySelector('#problem-prompt'),
   workspaceRoot: document.querySelector('#workspace-root'),
   checkButton: document.querySelector('#check-button'),
@@ -54,8 +50,6 @@ let session;
 let activeSessionRecord = null;
 const requestedSubject = new URLSearchParams(window.location.search).get('subject');
 let selectedDemo = Object.hasOwn(DEMOS, requestedSubject) ? requestedSubject : 'math';
-let liveTutorMessage = null;
-let tutorRequestToken = 0;
 let audioUnlocked = false;
 
 bootstrap().catch((error) => {
@@ -72,13 +66,12 @@ async function bootstrap() {
 function bindActions() {
   elements.subjectButtons.forEach((button) => {
     button.addEventListener('click', () => {
-      audioUnlocked = true;
+      document.querySelector('.activity-menu').open = false;
       loadDemo(button.dataset.subject);
     });
   });
 
   elements.checkButton.addEventListener('click', () => {
-    audioUnlocked = true;
     const checkedSession = checkWorkspaceAnswer(session);
     const objectiveId = getObjectiveId(checkedSession);
     const updatedMastery = updateSkillMasteryForSession(getSkillMastery(checkedSession), checkedSession);
@@ -88,12 +81,10 @@ function bindActions() {
   });
 
   elements.resetButton.addEventListener('click', () => {
-    audioUnlocked = true;
     commitSession(resetWorkspace(session), { speak: true });
   });
 
   elements.hintButton.addEventListener('click', () => {
-    audioUnlocked = true;
     commitSession(requestHint(session), { speak: true });
   });
 
@@ -118,10 +109,8 @@ async function loadDemo(demoId) {
 function commitSession(nextSession, { speak: shouldSpeak = false } = {}) {
   session = nextSession;
   activeSessionRecord = sessionStore.saveSession(session);
-  liveTutorMessage = null;
   render();
   if (shouldSpeak) speak(currentSpeech());
-  void enhanceTutor(session, { speak: shouldSpeak });
 }
 
 function render() {
@@ -134,32 +123,22 @@ function render() {
     target: elements.workspaceRoot,
     onSessionChange: (next) => commitSession(next),
   });
+  elements.workspaceRoot.querySelectorAll('h3, h4').forEach((heading) => heading.setAttribute('aria-level', '2'));
 }
 
 function renderSubjectSwitcher() {
   elements.subjectButtons.forEach((button) => {
     button.classList.toggle('primary', button.dataset.subject === selectedDemo);
+    button.setAttribute('aria-pressed', String(button.dataset.subject === selectedDemo));
   });
 }
 
-async function enhanceTutor(currentSession, { speak: shouldSpeak }) {
-  const token = ++tutorRequestToken;
-  const live = await requestLiveTutorResponse(currentSession);
-  if (!live || token !== tutorRequestToken || currentSession !== session) return;
-  liveTutorMessage = {
-    messageText: live.messageText,
-    speechText: typeof live.speechText === 'string' ? live.speechText : live.messageText,
-  };
-  elements.tutorMessage.textContent = liveTutorMessage.messageText;
-  if (shouldSpeak) speak(liveTutorMessage.speechText);
-}
-
 function currentSpeech() {
-  return liveTutorMessage?.speechText ?? session.tutorResponse.speechText;
+  return session.tutorResponse.speechText;
 }
 
 function speak(text) {
-  if (!('speechSynthesis' in window) || !text) return;
+  if (!audioUnlocked || !('speechSynthesis' in window) || !text) return;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.addEventListener('start', () => setAiState('Speaking…', true));
@@ -168,9 +147,8 @@ function speak(text) {
   window.speechSynthesis.speak(utterance);
 }
 
-function setAiState(label, speaking) {
+function setAiState(label) {
   elements.aiState.textContent = label;
-  elements.avatarOrb.classList.toggle('is-speaking', speaking);
 }
 
 function getSkillMastery(currentSession) {

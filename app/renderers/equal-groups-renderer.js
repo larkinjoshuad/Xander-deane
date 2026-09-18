@@ -86,6 +86,7 @@ function createCounterButton({ session, counterId, onSessionChange, placed = fal
   button.className = 'counter';
   button.textContent = counterId.replace('counter_', '');
   button.setAttribute('aria-label', `Select ${counterId}`);
+  button.setAttribute('aria-pressed', String(session.selectedCounterId === counterId));
   if (placed) button.classList.add('is-placed');
   if (session.selectedCounterId === counterId) button.classList.add('is-selected');
   button.addEventListener('click', (event) => {

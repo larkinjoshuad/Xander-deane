@@ -56,7 +56,7 @@ function createGroupGrid({ snapshot, selectedItemId, session, onSessionChange })
   grid.className = 'sort-groups-grid';
 
   snapshot.state.groups.forEach((group) => {
-    const card = document.createElement('article');
+    const card = document.createElement('div');
     card.className = 'group-card sort-group-card';
     card.classList.toggle('is-targeted', selectedItemId !== null);
     card.setAttribute('role', 'group');

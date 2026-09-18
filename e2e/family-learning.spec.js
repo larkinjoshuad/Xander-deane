@@ -17,6 +17,7 @@ test('family overview starts the selected activity and shows returned progress',
   await page.getByRole('button', { name: 'Select token runs', exact: true }).click();
   await page.getByRole('button', { name: 'Check answer', exact: true }).click();
   await expect(page.locator('#tutor-message')).toContainText('action verb');
+  await page.getByLabel('Activity menu', { exact: true }).click();
   await page.getByRole('link', { name: 'Family overview', exact: true }).click();
   await expect(page.locator('#overview-attempts')).toHaveText('1');
   await expect(page.locator('#overview-accuracy')).toHaveText('100%');

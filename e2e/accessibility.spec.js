@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 const seriousOrCritical = ['serious', 'critical'];
 
 async function openShell(page) {
-  await page.goto('/app/');
+  await page.goto('/app/prototype.html');
   await expect(page.getByRole('heading', { name: 'Interactive AI Tutor Shell' })).toBeVisible();
 }
 
