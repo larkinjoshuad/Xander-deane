@@ -3,44 +3,38 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Xander-deane</title>
+    <title>Xander-deane Practice</title>
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./touch.css" />
   </head>
-  <body data-device-profile="unknown" data-presentation-mode="full">
+  <body class="touch-learning" data-device-profile="unknown" data-presentation-mode="full">
     <main class="learn-shell" aria-label="Tutoring session">
-      <!-- Top: interactive AI (avatar tile + speech/text) -->
-      <section class="ai-stage" aria-label="Tutor">
-        <div class="avatar-tile">
-          <div class="avatar-orb" id="avatar-orb" aria-hidden="true">🦊</div>
-          <div class="avatar-caption">
-            <span class="avatar-name">Tutor</span>
-            <span class="avatar-state" id="ai-state">Ready</span>
-          </div>
-        </div>
-        <div class="ai-speech">
-          <p class="ai-message" id="tutor-message" aria-live="polite">Pick an activity below and we'll get started.</p>
-          <button class="speak-button" id="speak-button" type="button" aria-label="Hear the tutor again">🔊 Hear it again</button>
-        </div>
-      </section>
-
-      <!-- Bottom: problem area (kinetic workspace) -->
+      <header class="lesson-header">
+        <span class="lesson-label">Practice <small>Synthetic demo</small></span>
+        <details class="activity-menu">
+          <summary aria-label="Activity menu" title="Activity menu">&#8943;</summary>
+          <nav aria-label="Activity options">
+            <div class="subject-mini" role="group" aria-label="Choose an activity">
+              <button type="button" data-subject="math" aria-pressed="true">Math</button>
+              <button type="button" data-subject="language" aria-pressed="false">Language</button>
+              <button type="button" data-subject="science" aria-pressed="false">Science</button>
+            </div>
+            <button id="speak-button" type="button">Read aloud</button>
+            <a href="./parent.html">Family overview</a>
+          </nav>
+        </details>
+      </header>
       <section class="problem-stage" aria-label="Problem area">
-        <a href="./parent.html" class="dashboard-link">Family overview</a>
-        <div class="problem-bar">
-          <p class="problem-prompt" id="problem-prompt"></p>
-          <div class="subject-mini" role="group" aria-label="Choose an activity">
-            <button type="button" data-subject="math" class="primary">Math</button>
-            <button type="button" data-subject="language">Language</button>
-            <button type="button" data-subject="science">Science</button>
-          </div>
-        </div>
+        <h1 id="problem-prompt" class="problem-prompt">Loading activity...</h1>
+        <p id="tutor-message" class="ai-message" aria-live="polite"></p>
+        <span id="ai-state" hidden></span>
         <div class="problem-workspace" id="workspace-root"></div>
-        <div class="problem-actions">
-          <button class="big" id="hint-button" type="button">💡 Hint</button>
-          <button class="primary big" id="check-button" type="button">Check answer</button>
-          <button class="big" id="reset-button" type="button">Reset</button>
-        </div>
       </section>
+      <footer class="problem-actions" aria-label="Lesson actions">
+        <button id="hint-button" type="button">Hint</button>
+        <button class="primary" id="check-button" type="button" aria-label="Check answer">Check</button>
+        <button id="reset-button" type="button">Reset</button>
+      </footer>
     </main>
     <script type="module" src="./learn.js"></script>
   </body>

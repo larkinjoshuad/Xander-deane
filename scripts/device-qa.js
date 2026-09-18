@@ -38,7 +38,7 @@ export const DEVICE_QA_PRESETS = Object.freeze([
 
 const REQUIRED_HTML_SNIPPETS = Object.freeze([
   { id: 'viewport-meta', file: 'app/index.html', snippet: 'name="viewport"' },
-  { id: 'device-status-chip', file: 'app/index.html', snippet: 'id="device-status"' },
+  { id: 'device-status-chip', file: 'app/prototype.html', snippet: 'id="device-status"' },
   { id: 'responsive-device-import', file: 'app/main.js', snippet: 'inferBrowserDeviceProfile' },
   { id: 'document-profile-hook', file: 'app/main.js', snippet: 'applyDeviceProfileToDocument' },
 ]);

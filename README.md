@@ -4,6 +4,13 @@ Xander-deane is the foundation for a subject-agnostic, multimodal AI education p
 
 ## Current Base Layer
 
+The default `/app/` entry opens minimalist touch practice at `app/learn.html`.
+Tap a counter and then a group to move it; Hint, Check, and Reset stay in the
+bottom action bar. Subject selection, optional read-aloud, and the separate
+family overview are in the activity menu. This route uses deterministic
+synthetic tutor messages only, even if a tutor API was previously configured.
+The older diagnostic shell remains at `app/prototype.html` for development.
+
 This repository now contains the first implementation slice for the platform foundation:
 
 - Portable JSON Schema contracts for cross-language implementations, indexed by a schema registry.

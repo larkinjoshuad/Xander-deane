@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 async function openShell(page) {
-  await page.goto('/app/');
+  await page.goto('/app/prototype.html');
   await expect(page.getByRole('heading', { name: 'Interactive AI Tutor Shell' })).toBeVisible();
   await expect(page.locator('#device-status')).toContainText(/targets/);
   await expect(page.locator('#guardian-preview-heading')).toContainText('What adults should know');
