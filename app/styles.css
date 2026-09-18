@@ -732,6 +732,19 @@ html[data-device-profile="glasses"] .sort-item {
 }
 
 /* Parent / educator dashboard */
+.family-page {
+  background: #f7faf8;
+}
+
+.family-header {
+  padding: 1.5rem;
+}
+
+.family-header h1 {
+  font-size: 2rem;
+  letter-spacing: 0;
+}
+
 .dashboard-link {
   color: var(--brand-dark);
   font-weight: 700;
@@ -744,10 +757,7 @@ html[data-device-profile="glasses"] .sort-item {
 
 .dashboard-overview,
 .dashboard-subjects {
-  background: rgb(255 255 255 / 86%);
-  border: 1px solid var(--line);
-  border-radius: 28px;
-  box-shadow: var(--shadow);
+  border-top: 1px solid var(--line);
   margin-top: 1.5rem;
   padding: 1.5rem;
 }
@@ -759,9 +769,6 @@ html[data-device-profile="glasses"] .sort-item {
 }
 
 .overview-stat {
-  background: #eef3ff;
-  border: 1px solid var(--line);
-  border-radius: 18px;
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -773,7 +780,7 @@ html[data-device-profile="glasses"] .sort-item {
   font-size: 0.82rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
 }
 
 .overview-stat strong {
@@ -781,7 +788,7 @@ html[data-device-profile="glasses"] .sort-item {
 }
 
 .overview-focus {
-  background: #fff7e8;
+  border-left: 3px solid #327568;
 }
 
 .overview-reason {
@@ -790,17 +797,38 @@ html[data-device-profile="glasses"] .sort-item {
   font-weight: 500;
 }
 
+@media (max-width: 640px) {
+  .overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .overview-focus {
+    grid-column: 1 / -1;
+    order: -1;
+  }
+
+  .overview-stat {
+    min-width: 0;
+    padding: 0.5rem;
+    overflow-wrap: anywhere;
+  }
+
+  .overview-stat strong {
+    font-size: 1.15rem;
+  }
+}
+
 .subject-cards {
   display: grid;
   gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
   margin-top: 1rem;
 }
 
 .subject-card {
   background: white;
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
@@ -808,13 +836,15 @@ html[data-device-profile="glasses"] .sort-item {
 }
 
 .subject-card.is-inactive {
-  opacity: 0.72;
+  border-style: dashed;
 }
 
 .subject-card-heading {
   align-items: center;
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .subject-card-heading h3 {
@@ -834,8 +864,6 @@ html[data-device-profile="glasses"] .sort-item {
 }
 
 .subject-card-stats div {
-  background: #f5f7fc;
-  border-radius: 12px;
   padding: 0.5rem 0.7rem;
 }
 
@@ -844,7 +872,7 @@ html[data-device-profile="glasses"] .sort-item {
   font-size: 0.78rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0;
 }
 
 .subject-card-stats dd {

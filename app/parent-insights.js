@@ -62,7 +62,11 @@ function buildSubjectCard({ subject, sessionStore, masteryLookup, now }) {
     unaidedSuccess,
     readyToAdvance: progress.readyToAdvance,
     needsPractice: progress.needsPractice,
-    nextStep: progress.nextStep,
+    nextStep: progress.attempts === 0
+      ? 'Try the activity together, then check an answer.'
+      : progress.accuracy < 100
+        ? 'Revisit the example together and ask your child to explain their thinking.'
+        : 'Ask your child to explain the answer, then try a different example together.',
     started,
     lastActivity: record?.updatedAt ?? null,
   });
@@ -93,7 +97,7 @@ function summarizeOverall(subjectCards) {
 function chooseFocus(subjectCards) {
   const started = subjectCards.filter((card) => card.started);
   const struggling = started
-    .filter((card) => card.needsPractice || card.accuracy < 100)
+    .filter((card) => card.attempts > 0 && card.accuracy < 100)
     .sort((left, right) => left.accuracy - right.accuracy)[0];
   if (struggling) {
     return freeze({
@@ -101,6 +105,11 @@ function chooseFocus(subjectCards) {
       label: struggling.label,
       reason: `${struggling.accuracy}% accuracy across ${struggling.attempts} checked — keep this in practice rotation.`,
     });
+  }
+  const unchecked = started.find((card) => card.attempts === 0);
+  if (unchecked) {
+    return freeze({ subjectId: unchecked.id, label: unchecked.label,
+      reason: 'Activity opened, but no answers checked yet. Finish one together.' });
   }
   const notStarted = subjectCards.find((card) => !card.started);
   if (notStarted) {
@@ -110,15 +119,20 @@ function chooseFocus(subjectCards) {
       reason: 'Not started yet — a good one to introduce next.',
     });
   }
+  const developing = started.find((card) => !card.readyToAdvance);
+  if (developing) {
+    return freeze({ subjectId: developing.id, label: developing.label,
+      reason: 'A promising start. Check understanding with a different example before moving on.' });
+  }
   return null;
 }
 
 function buildHeadline({ started, overallAccuracy, focus, total }) {
-  if (started.length === 0) {
+  if (started.every((card) => card.attempts === 0)) {
     return 'No checked work yet. Start an activity with your child to begin tracking progress.';
   }
   if (!focus) {
-    return `Strong across all ${started.length} active subjects (${overallAccuracy}% accuracy). Ready to advance.`;
+    return `Checked work is accurate across ${started.length} subjects. Review understanding together before choosing a new objective.`;
   }
   return `${started.length} of ${total} subjects active · ${overallAccuracy}% overall accuracy · focus on ${focus.label}.`;
 }
