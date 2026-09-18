@@ -76,6 +76,30 @@ test('parent dashboard headline reports no work before any activity', () => {
   assert.equal(model.overall.focus.subjectId, 'math');
 });
 
+test('opened but unchecked activity is not presented as zero-percent performance', () => {
+  const store = createBrowserSessionStore({ namespace: 'parent-unchecked', storage: createFakeStorage(), now: fixedNow });
+  const initial = createInitialLearningSession({ ...subjects[1], now: fixedNow });
+  store.saveSession(selectToken(initial, 2, fixedNow));
+  const model = createParentDashboardModel({ subjects, sessionStore: store, now: fixedNow });
+  assert.equal(model.overall.focus.subjectId, 'language');
+  assert.match(model.overall.focus.reason, /no answers checked/);
+  assert.match(model.overall.headline, /No checked work yet/);
+});
+
+test('perfect activity scores do not imply subject-wide readiness', () => {
+  const store = createBrowserSessionStore({ namespace: 'parent-perfect', storage: createFakeStorage(), now: fixedNow });
+  const masteryByObjective = new Map();
+  seedSubject(store, masteryByObjective, subjects[1], (session) => selectToken(session, 2, fixedNow));
+  const mastery = masteryByObjective.get(subjects[1].objective.id);
+  const model = createParentDashboardModel({ subjects: [subjects[1]], sessionStore: store, now: fixedNow,
+    masteryLookup: () => ({ ...mastery, attemptCount: 3, correctCount: 3, masteryLevel: 'mastered', confidence: 'medium' }),
+  });
+  assert.equal(model.overall.focus, null);
+  assert.doesNotMatch(model.overall.headline, /Ready to advance/);
+  assert.match(model.overall.headline, /Review understanding together/);
+  assert.match(model.subjects[0].nextStep, /different example/);
+});
+
 function seedSubject(store, masteryByObjective, subject, interact) {
   const initial = createInitialLearningSession({ objective: subject.objective, problem: subject.problem, now: fixedNow });
   const checked = checkWorkspaceAnswer(interact(initial), fixedNow);

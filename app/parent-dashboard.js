@@ -16,6 +16,7 @@ const elements = {
   independence: document.querySelector('#overview-independence'),
   focus: document.querySelector('#overview-focus'),
   focusReason: document.querySelector('#overview-focus-reason'),
+  focusLink: document.querySelector('#focus-lesson-link'),
   cards: document.querySelector('#subject-cards'),
 };
 
@@ -47,7 +48,7 @@ function render(model) {
   elements.headline.textContent = model.overall.headline;
   elements.subjects.textContent = `${model.overall.subjectsStarted} of ${model.overall.subjectsTracked}`;
   elements.attempts.textContent = String(model.overall.totalAttempts);
-  elements.accuracy.textContent = `${model.overall.overallAccuracy}%`;
+  elements.accuracy.textContent = model.overall.totalAttempts ? `${model.overall.overallAccuracy}%` : 'No checks yet';
   elements.hints.textContent = String(model.overall.totalHints);
   elements.independence.textContent = model.overall.subjectsStarted === 0
     ? ''
@@ -55,9 +56,13 @@ function render(model) {
   if (model.overall.focus) {
     elements.focus.textContent = model.overall.focus.label;
     elements.focusReason.textContent = model.overall.focus.reason;
+    elements.focusLink.hidden = false;
+    elements.focusLink.href = lessonUrl(model.overall.focus.subjectId);
+    elements.focusLink.textContent = `Practice ${model.overall.focus.label}`;
   } else {
-    elements.focus.textContent = 'All caught up';
-    elements.focusReason.textContent = 'Every active subject is ready to advance.';
+    elements.focus.textContent = 'Review together';
+    elements.focusReason.textContent = 'Repeated success on one activity is not proof of mastery across a subject.';
+    elements.focusLink.hidden = true;
   }
 
   elements.cards.replaceChildren(...model.subjects.map(createSubjectCard));
@@ -73,7 +78,7 @@ function createSubjectCard(card) {
   title.textContent = card.label;
   const badge = document.createElement('span');
   badge.className = 'badge';
-  badge.textContent = card.started ? formatLabel(card.masteryLevel) : 'Not started';
+  badge.textContent = card.attempts > 0 ? 'Practice recorded' : card.started ? 'In progress' : 'Not started';
   heading.append(title, badge);
 
   const objective = document.createElement('p');
@@ -84,7 +89,7 @@ function createSubjectCard(card) {
   stats.className = 'subject-card-stats';
   stats.append(
     statPair('Attempts', String(card.attempts)),
-    statPair('Accuracy', `${card.accuracy}%`),
+    statPair('Accuracy', card.attempts ? `${card.accuracy}%` : 'No checks yet'),
     statPair('Hints used', String(card.hintsUsed)),
     statPair('Independent', card.unaidedSuccess ? 'Yes' : card.started ? 'Not yet' : '—'),
   );
@@ -94,6 +99,11 @@ function createSubjectCard(card) {
   next.textContent = card.nextStep;
 
   article.append(heading, objective, stats, next);
+  const practice = document.createElement('a');
+  practice.className = 'dashboard-link';
+  practice.href = lessonUrl(card.id);
+  practice.textContent = `Practice ${card.label}`;
+  article.append(practice);
   if (card.lastActivity) {
     const meta = document.createElement('p');
     meta.className = 'subject-card-meta';
@@ -101,6 +111,10 @@ function createSubjectCard(card) {
     article.append(meta);
   }
   return article;
+}
+
+function lessonUrl(subjectId) {
+  return `./learn.html?subject=${encodeURIComponent(subjectId)}`;
 }
 
 function statPair(label, value) {
@@ -134,12 +148,4 @@ function formatTimestamp(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   return date.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
-}
-
-function formatLabel(value) {
-  return String(value ?? '')
-    .split(/[_\s-]+/)
-    .filter(Boolean)
-    .map((word) => `${word.charAt(0).toUpperCase()}${word.slice(1)}`)
-    .join(' ');
 }
