@@ -88,6 +88,16 @@ add('picture-memory', 'toddler', 'Peekaboo pairs', 'memory', 'Find two pictures 
     prompt: 'Find the matching pictures.', choices: items.map(item => visual(item, item, `object:${item}`)), answer: items,
   })));
 
+const wordObjects = ['cup', 'ball', 'shoe', 'apple'];
+add('word-match', 'toddler', 'Word Match', 'choice', 'Say the word together. Look for the picture or word that goes with it.',
+  wordObjects.flatMap((item, index) => {
+    const options = [item, wordObjects[(index + 1) % wordObjects.length], wordObjects[(index + 2) % wordObjects.length]];
+    return [
+      { prompt: 'Which word goes with this picture?', preview: [`object:${item}`], choices: options.map(text), answer: [item] },
+      { prompt: `Find the picture: ${item}`, choices: options.map(value => visual(value, value, `object:${value}`)), answer: [item] },
+    ];
+  }));
+
 function freeze(value) {
   if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); }
   return value;

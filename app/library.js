@@ -72,7 +72,8 @@ function render() {
     const preview = document.createElement('div');
     preview.className = 'library-preview';
     preview.setAttribute('role', 'img');
-    preview.setAttribute('aria-label', `Pattern: ${round.preview.map(code => code.split(':')[1]).join(', ')}, what comes next?`);
+    const names = round.preview.map(code => code.split(':')[1]).join(', ');
+    preview.setAttribute('aria-label', round.preview.length === 1 ? `Picture: ${names}` : `Pattern: ${names}, what comes next?`);
     preview.append(...round.preview.map(picture));
     board.append(preview);
   }

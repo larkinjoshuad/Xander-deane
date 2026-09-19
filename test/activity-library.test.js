@@ -24,7 +24,7 @@ test('all activity sets validate, have distinct choices and reachable answers', 
 });
 test('catalog counts are exact, not estimated', () => {
   assert.deepEqual(libraryCounts(), {
-    toddler: { activities: 6, problems: 33 }, math: { activities: 6, problems: 123 },
+    toddler: { activities: 7, problems: 41 }, math: { activities: 6, problems: 123 },
     language: { activities: 6, problems: 46 }, science: { activities: 6, problems: 39 },
   });
 });
@@ -34,6 +34,19 @@ test('memory shuffle preserves exactly two of every picture and varies positions
   const second = memoryDeck(round, () => .99).map(item => item.id);
   assert.notDeepEqual(first, second);
   for (const choice of round.choices) assert.equal(first.filter(id => id === choice.id).length, 2);
+});
+test('word match pairs each familiar object with its word in both directions', () => {
+  const rounds = getActivity('word-match').rounds;
+  assert.equal(rounds.length, 8);
+  for (let index = 0; index < rounds.length; index += 2) {
+    const [pictureToWord, wordToPicture] = rounds.slice(index, index + 2);
+    const word = pictureToWord.answer[0];
+    assert.deepEqual(pictureToWord.preview, [`object:${word}`]);
+    assert.ok(pictureToWord.choices.every(choice => !choice.visual));
+    assert.deepEqual(wordToPicture.answer, [word]);
+    assert.ok(wordToPicture.prompt.endsWith(word));
+    assert.equal(wordToPicture.choices.find(choice => choice.id === word).visual, `object:${word}`);
+  }
 });
 test('arithmetic answers are independently recomputed for every generated question', () => {
   for (const id of ['add', 'subtract', 'multiply']) getActivity(id).rounds.forEach(round => {
