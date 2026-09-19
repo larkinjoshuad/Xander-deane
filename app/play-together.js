@@ -196,14 +196,8 @@ function render() {
   pieces.setAttribute('role', 'group');
   pieces.setAttribute('aria-label', 'Play pieces');
   pieces.append(...playPieces(state).map(draggable));
-  if (state.complete) {
-    const finish = document.createElement('span');
-    finish.className = 'play-finish';
-    finish.append(art('teddy'));
-    pieces.append(finish);
-  }
   world.classList.toggle('celebrate', state.complete);
-  world.replaceChildren(scene, pieces);
+  world.replaceChildren(...(state.complete ? [scene] : [scene, pieces]));
 }
 
 function restart(game = state.game, round = state.round) {

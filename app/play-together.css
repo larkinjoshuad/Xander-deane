@@ -27,9 +27,7 @@
 .touch-learning .play-piece { width: 96px; height: 96px; padding: 10px; background: #fff; border: 2px solid #b6c7bc; touch-action: none; user-select: none; flex-shrink: 0; }
 .play-piece[aria-pressed="true"] { outline: 3px solid #286b73; outline-offset: 3px; }
 .play-piece.is-moving { position: relative; z-index: 40; pointer-events: none; }
-.play-finish { display: grid; place-items: center; width: 96px; height: 96px; }
-.play-finish svg { width: 90px; height: 90px; }
-.celebrate .play-finish, .celebrate .packed-object, .celebrate .filled svg { animation: happy-hop 650ms ease-out; }
+.celebrate .packed-object, .celebrate .filled svg { animation: happy-hop 650ms ease-out; }
 .plate-items svg:last-child { animation: happy-hop 450ms ease-out; }
 @keyframes happy-hop { 0%, 100% { transform: translateY(0) rotate(0); } 35% { transform: translateY(-14px) rotate(-7deg); } 65% { transform: translateY(-5px) rotate(7deg); } }
 #offline-play { position: relative; max-width: 560px; margin: 8px auto 16px; border-top: 1px solid #a8bdb3; padding: 16px 0; }

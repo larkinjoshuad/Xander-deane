@@ -32,6 +32,8 @@ for (const width of [390, 820, 1280]) {
     for (let count = 1; count <= 3; count++) {
       for (let index = 0; index < count; index++) await drag(`apple-${index}`, 'plate');
       await expect(page.locator('.plate-items svg')).toHaveCount(count);
+      await expect(page.locator('use[href$="#teddy"]')).toHaveCount(0);
+      await expect(page.locator('.play-pieces')).toHaveCount(0);
       await expect(page.locator('#offline-play')).toBeVisible();
       await expect(page.getByRole('status')).toContainText('Picnic time');
       await page.locator('#next').tap();
@@ -44,6 +46,7 @@ for (const width of [390, 820, 1280]) {
     for (const position of ['inside', 'under', 'beside']) {
       await drag('teddy-0', position);
       await expect(page.locator(`[data-drop="${position}"]`)).toHaveClass(/filled/);
+      await expect(page.locator('use[href$="#teddy"]')).toHaveCount(1);
       await page.screenshot({ path: info.outputPath(`hide-${position}.png`), fullPage: true });
       await page.locator('#next').tap();
     }
@@ -56,6 +59,7 @@ for (const width of [390, 820, 1280]) {
       await page.locator(`[data-piece="${piece}"]`).tap();
       await page.getByRole('button', { name: 'Backpack', exact: true }).tap();
       await expect(page.locator('#offline-play')).toBeVisible();
+      await expect(page.locator('use[href$="#teddy"]')).toHaveCount(0);
       await page.locator('#next').tap();
     }
     await page.locator('#together').tap();
@@ -76,7 +80,7 @@ test('keyboard, reduced motion and opt-in sound remain available', async ({ page
   await page.getByRole('button', { name: 'Picnic plate', exact: true }).focus();
   await page.keyboard.press('Enter');
   await expect(page.locator('#next')).toBeFocused();
-  expect(await page.locator('.play-finish').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
+  expect(await page.locator('.plate-items svg').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
   await page.getByLabel('Activity menu', { exact: true }).click();
   await page.getByLabel('Sound & voice').check();
   await expect(page.getByLabel('Sound & voice')).toBeChecked();
