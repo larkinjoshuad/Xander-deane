@@ -1,4 +1,4 @@
-import { MATCHING_SETS, matchingRound, isMatchingDrop } from '../src/app/toddler-matching.js';
+import { MATCHING_SETS, matchingRound, isMatchingDrop, matchingVisual } from '../src/app/toddler-matching.js';
 
 const board = document.querySelector('#matching-board');
 const feedback = document.querySelector('#matching-feedback');
@@ -6,11 +6,22 @@ const next = document.querySelector('#matching-next');
 let mode = 'letters', round = 0, matched = [], selected = false;
 let cancelGesture = () => {};
 
+function drawSymbol(element, symbol) {
+  const visual = matchingVisual(mode, symbol);
+  if (visual.shape) {
+    const shape = document.createElement('span');
+    shape.className = `matching-shape shape-${visual.shape} size-${visual.size}`;
+    shape.setAttribute('aria-hidden', 'true');
+    element.append(shape);
+  } else element.textContent = symbol;
+  return visual.label;
+}
+
 function place(destination) {
   const symbols = matchingRound(mode, round);
   const symbol = symbols.find(value => !matched.includes(value));
   if (!isMatchingDrop(symbols, symbol, destination)) {
-    feedback.textContent = 'Try the same shape.';
+    feedback.textContent = mode === 'sizes' ? 'Try the same size.' : 'Try the same shape.';
     return;
   }
   matched.push(symbol);
@@ -30,9 +41,9 @@ function render() {
     target.type = 'button';
     target.className = 'matching-target';
     target.classList.toggle('is-matched', matched.includes(symbol));
-    target.textContent = symbol;
+    const label = drawSymbol(target, symbol);
     target.dataset.match = symbol;
-    target.setAttribute('aria-label', `${symbol} target${matched.includes(symbol) ? ', matched' : ''}`);
+    target.setAttribute('aria-label', `${label} target${matched.includes(symbol) ? ', matched' : ''}`);
     target.addEventListener('click', () => { if (selected) place(symbol); });
     targets.append(target);
   });
@@ -44,8 +55,8 @@ function render() {
     const piece = document.createElement('button');
     piece.type = 'button';
     piece.className = 'matching-piece';
-    piece.textContent = symbol;
-    piece.setAttribute('aria-label', `Match ${symbol}`);
+    const label = drawSymbol(piece, symbol);
+    piece.setAttribute('aria-label', `Match ${label}`);
     piece.setAttribute('aria-pressed', String(selected));
     let gesture = null, over = null, suppressClick = false;
     const select = () => { selected = true; piece.setAttribute('aria-pressed', 'true'); };
@@ -107,13 +118,28 @@ function restart() {
   feedback.textContent = 'Find the same one.';
   render();
 }
-document.querySelectorAll('[data-mode]').forEach(button => button.addEventListener('click', () => {
+// Touch release is reliable even when the browser omits a compatibility click after dragging.
+function activate(button, action) {
+  let start = null;
+  button.addEventListener('pointerdown', event => {
+    if (event.pointerType === 'touch' && event.isPrimary) start = { x: event.clientX, y: event.clientY };
+  });
+  button.addEventListener('pointercancel', () => { start = null; });
+  button.addEventListener('pointerup', event => {
+    if (event.pointerType !== 'touch' || !start) return;
+    const tapped = Math.hypot(event.clientX - start.x, event.clientY - start.y) < 12;
+    start = null;
+    if (tapped && !button.disabled) action();
+  });
+  button.addEventListener('click', event => { if (event.pointerType !== 'touch') action(); });
+}
+document.querySelectorAll('[data-mode]').forEach(button => activate(button, () => {
   mode = button.dataset.mode;
   round = 0;
   document.querySelectorAll('[data-mode]').forEach(option => option.setAttribute('aria-pressed', String(option === button)));
   document.querySelector('#matching-title').textContent = `Match the ${mode}`;
   restart();
 }));
-next.addEventListener('click', () => { round = (round + 1) % (MATCHING_SETS[mode].length / 2); restart(); });
-document.querySelector('#matching-reset').addEventListener('click', restart);
+activate(next, () => { round = (round + 1) % (MATCHING_SETS[mode].length / 2); restart(); });
+activate(document.querySelector('#matching-reset'), restart);
 render();

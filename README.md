@@ -24,7 +24,11 @@ and Safari verification remain outstanding. All activities remain synthetic.
 - Language: one verb-identification problem (answer "runs").
 - Science: one four-animal classification problem (duck and eagle have feathers).
 - Toddler play (`app/toddler.html`): uppercase A-Z and numbers 1-10, split
-  into 13 letter rounds and 5 number rounds, with two shape matches per round.
+  into 13 letter rounds and 5 number rounds, with two matches per round.
+  Shapes adds six shapes (circle, square, triangle, oval, star, heart) in three
+  rounds. Sizes adds three big/small rounds using circles, squares, and triangles;
+  each pair has the same shape and color, differing only in visual size.
+  Total: 24 rounds and 48 individual matches across four activities.
   Dragging, tap placement, and keyboard placement are supported. No scores,
   timers, saved child profiles, or live AI. This is a caregiver-accompanied
   prototype for the requested 2-3 age group, not a validated toddler curriculum.
