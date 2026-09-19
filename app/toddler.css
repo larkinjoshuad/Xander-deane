@@ -1,4 +1,5 @@
 .toddler-shell { align-items: stretch; }
+.together-link { align-self: center; text-align: center; padding: 12px 0 20px; color: #245e68; font-size: 17px; line-height: 1.5; }
 .matching-modes { display: flex; flex-wrap: wrap; justify-content: center; align-self: center; gap: 8px; }
 .touch-learning .matching-modes button { padding: 12px; }
 .matching-modes button[aria-pressed="true"] { background: #245eac; color: #fff; }

@@ -35,6 +35,15 @@ and Safari verification remain outstanding. All activities remain synthetic.
   Letters match identical uppercase shapes; numbers match written symbols,
   not quantities. Rounds repeat after the last pair.
 
+- Play Together (`app/play-together.html`), linked from Toddler Play: nine
+  caregiver-accompanied rounds across a picnic (one-to-one placement of 1-3
+  apples), hide-and-seek (inside, under, beside), and packing (cup, ball, shoe).
+  Original game illustrations, brief success motion, optional voice/chimes,
+  and a real-world activity after each round make this a playful alternative
+  to symbol matching. Sound starts off; reduced-motion preferences are honored.
+  There are no timers, streaks, recordings, saved profiles, or provider calls.
+  These are prototype activities, not validated measures of development.
+
 This repository now contains the first implementation slice for the platform foundation:
 
 - Portable JSON Schema contracts for cross-language implementations, indexed by a schema registry.
