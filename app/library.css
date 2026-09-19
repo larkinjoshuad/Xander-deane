@@ -23,6 +23,7 @@
 .color-swatch { width: 72px; height: 72px; border-radius: 50%; border: 2px solid #52615a; }
 .count-dot { width: 21px; height: 21px; background: #286b73; border-radius: 50%; }
 .library .matching-shape { max-width: 100%; }
+.touch-learning .library-choice.named-shape { min-height: 140px; }
 .memory-board { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 430px; }
 .library .memory-board .library-choice { min-height: 132px; background: #e9f0ed; }
 .memory-back { font-size: 48px; color: #286b73; }

@@ -38,6 +38,13 @@ function picture(code) {
 function decorate(element, choice) {
   if (choice.visual) element.append(picture(choice.visual));
   else element.textContent = choice.text;
+  if (choice.visual?.startsWith('shape:')) {
+    element.classList.add('named-shape');
+    const caption = document.createElement('span');
+    caption.className = 'shape-name';
+    caption.textContent = choice.text[0].toUpperCase() + choice.text.slice(1);
+    element.append(caption);
+  }
 }
 
 function buttonFor(choice, label = choice.text) {

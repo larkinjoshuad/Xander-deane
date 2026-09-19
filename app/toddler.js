@@ -12,7 +12,16 @@ function drawSymbol(element, symbol) {
     const shape = document.createElement('span');
     shape.className = `matching-shape shape-${visual.shape} size-${visual.size}`;
     shape.setAttribute('aria-hidden', 'true');
-    element.append(shape);
+    if (mode === 'shapes') {
+      element.classList.add('named-shape');
+      const picture = document.createElement('span');
+      picture.className = 'shape-picture';
+      picture.append(shape);
+      const caption = document.createElement('span');
+      caption.className = 'shape-name';
+      caption.textContent = visual.label[0].toUpperCase() + visual.label.slice(1);
+      element.append(picture, caption);
+    } else element.append(shape);
   } else element.textContent = symbol;
   return visual.label;
 }
