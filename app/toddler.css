@@ -1,0 +1,21 @@
+.toddler-shell { align-items: stretch; }
+.matching-modes { display: flex; align-self: center; gap: 8px; }
+.matching-modes button[aria-pressed="true"] { background: #245eac; color: #fff; }
+.toddler-shell h1 { text-align: center; font-size: 26px; margin: 28px 0 8px; }
+#matching-feedback { text-align: center; min-height: 48px; margin: 0; color: #52615a; }
+#matching-board { display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 20px 0; }
+.matching-targets { display: grid; grid-template-columns: repeat(2, minmax(0, 160px)); gap: 28px; width: 100%; justify-content: center; }
+.touch-learning .matching-target { height: 160px; width: 100%; padding: 8px; border: 3px dashed #63766c; background: #f0f4f1; font-size: 64px; color: #596960; }
+.touch-learning .matching-target.is-matched { border-style: solid; background: #d9eadf; color: #24523c; }
+.touch-learning .matching-target.is-over { outline: 3px solid #245eac; outline-offset: 4px; }
+.matching-piece-slot { height: 140px; display: grid; place-items: center; }
+.touch-learning .matching-piece { width: 132px; height: 132px; padding: 8px; font-size: 64px; background: #f7d578; border: 2px solid #99731e; color: #382a0c; touch-action: none; user-select: none; }
+.matching-piece[aria-pressed="true"] { outline: 3px solid #245eac; outline-offset: 4px; }
+.matching-piece.is-moving { position: relative; z-index: 30; pointer-events: none; }
+.matching-complete { font-size: 60px; color: #24634e; }
+.touch-learning button:disabled { opacity: .5; cursor: default; }
+@media (max-width: 600px) {
+  .matching-targets { grid-template-columns: repeat(2, minmax(0, 132px)); gap: 24px; }
+  .touch-learning .matching-target { height: 140px; }
+  #matching-board { gap: 28px; }
+}

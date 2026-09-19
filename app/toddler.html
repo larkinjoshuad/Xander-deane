@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Toddler Play</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./touch.css" />
+    <link rel="stylesheet" href="./toddler.css" />
+  </head>
+  <body class="touch-learning">
+    <main class="learn-shell toddler-shell">
+      <header class="lesson-header">
+        <span class="lesson-label">Toddler play <small>Synthetic demo</small></span>
+        <details class="activity-menu">
+          <summary aria-label="Activity menu">&#8943;</summary>
+          <nav aria-label="Activity options">
+            <a href="./learn.html">Practice</a>
+            <a href="./parent.html">Family overview</a>
+          </nav>
+        </details>
+      </header>
+      <div class="matching-modes" role="group" aria-label="Matching activity">
+        <button type="button" data-mode="letters" aria-pressed="true">Letters</button>
+        <button type="button" data-mode="numbers" aria-pressed="false">Numbers</button>
+      </div>
+      <h1 id="matching-title">Match the letters</h1>
+      <p id="matching-feedback" role="status" aria-live="polite">Find the same one.</p>
+      <section id="matching-board" aria-label="Matching board"></section>
+      <footer class="problem-actions" aria-label="Play actions">
+        <button id="matching-reset" type="button">Again</button>
+        <button id="matching-next" type="button" class="primary" disabled>Next</button>
+      </footer>
+    </main>
+    <script type="module" src="./toddler.js"></script>
+  </body>
+</html>
