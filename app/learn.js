@@ -14,7 +14,8 @@ import {
   rehydrateLearningSession,
 } from '../src/app/session-persistence.js';
 import { equalGroupsRenderer } from './renderers/equal-groups-renderer.js';
-import { classificationSortRenderer } from './renderers/classification-sort-renderer.js';
+import { touchSortRenderer } from './renderers/touch-sort-renderer.js';
+import { touchFeedback } from './touch-feedback.js';
 import { tokenSelectionRenderer } from './renderers/token-selection-renderer.js';
 import { createSkillMasteryForSession, updateSkillMasteryForSession } from './learner-insights.js';
 
@@ -29,7 +30,7 @@ const DEMOS = Object.freeze({
 const workspaceRenderers = Object.freeze({
   EqualGroupsWorkspace: equalGroupsRenderer,
   TokenSelectionWorkspace: tokenSelectionRenderer,
-  ClassificationSortWorkspace: classificationSortRenderer,
+  ClassificationSortWorkspace: touchSortRenderer,
 });
 
 const elements = {
@@ -115,7 +116,7 @@ function commitSession(nextSession, { speak: shouldSpeak = false } = {}) {
 
 function render() {
   renderSubjectSwitcher();
-  elements.tutorMessage.textContent = session.tutorResponse.messageText;
+  elements.tutorMessage.textContent = touchFeedback(session);
   elements.problemPrompt.textContent = session.problem.prompt;
   renderWorkspaceHost({
     session,
@@ -134,7 +135,7 @@ function renderSubjectSwitcher() {
 }
 
 function currentSpeech() {
-  return session.tutorResponse.speechText;
+  return touchFeedback(session);
 }
 
 function speak(text) {
