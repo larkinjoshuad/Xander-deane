@@ -2,6 +2,13 @@
   "contractVersion": "0.1.0",
   "schemas": [
     {
+      "name": "activity-set",
+      "schemaId": "https://xander-deane.dev/schemas/activity-set.schema.json",
+      "schemaPath": "schemas/activity-set.schema.json",
+      "fixtureSuffix": ".activity-set.json",
+      "stability": "prototype"
+    },
+    {
       "name": "account-ledger-entry",
       "schemaId": "https://xander-deane.dev/schemas/account-ledger-entry.schema.json",
       "schemaPath": "schemas/account-ledger-entry.schema.json",

@@ -1,4 +1,5 @@
 body.touch-learning { background: #fafbf9; color: #24332f; }
+.together-link { display: block; text-align: center; padding: 12px 0; color: #245e68; }
 .touch-learning * { letter-spacing: 0; }
 .touch-learning .learn-shell { display: flex; flex-direction: column; max-width: 1080px; min-height: 100dvh; padding: 0 28px 108px; }
 .lesson-header { display: flex; align-items: center; justify-content: space-between; min-height: 76px; }

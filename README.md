@@ -20,6 +20,25 @@ and Safari verification remain outstanding. All activities remain synthetic.
 
 ### Activity coverage
 
+The new `/app/library.html` adds 241 problems across 24 activity sets, separate
+from the existing hands-on demos and toddler rounds below:
+
+| Area | Activity sets | Problems | Topics |
+| --- | ---: | ---: | --- |
+| Toddlers | 6 | 33 | Colors, shapes, quantities 1-3, patterns, size sequences, shuffled picture memory |
+| Math | 6 | 123 | Addition, subtraction, equal groups, comparison, number order, skip counting |
+| Language | 6 | 46 | Verbs, describing words, nouns, plurals, rhymes, sentence building |
+| Science | 6 | 39 | Habitats, materials, states of matter, senses, growing sequences, space |
+
+Three interaction types are used: choice, sequencing, and memory pairs. These
+counts describe practice problems, not 241 distinct games or a complete K-12
+curriculum. Math uses deterministic variations; language and science use
+authored sets. Content is schema-validated and synthetic-only, with educator
+review still required. No learner profiles, responses, or mastery records are
+saved by the library; refreshing starts the selected activity at its first round.
+Subject/activity links are shareable, and previous/next controls permit free
+exploration. Existing lessons remain available:
+
 - Math: one equal-groups problem (3 groups of 4; answer 12).
 - Language: one verb-identification problem (answer "runs").
 - Science: one four-animal classification problem (duck and eagle have feathers).

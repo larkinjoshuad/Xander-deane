@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Activity Library</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./touch.css" />
+  <link rel="stylesheet" href="./toddler.css" />
+  <link rel="stylesheet" href="./library.css" />
+</head>
+<body class="touch-learning library">
+  <main class="learn-shell">
+    <header class="lesson-header">
+      <span class="lesson-label">Explore <small>Synthetic demo</small></span>
+      <details class="activity-menu">
+        <summary aria-label="Activity menu">&#8943;</summary>
+        <nav aria-label="Activity options">
+          <button id="read-aloud">Read aloud</button>
+          <a href="./toddler.html">Toddler matching</a>
+          <a href="./play-together.html">Play Together</a>
+          <a href="./learn.html">Hands-on practice</a>
+          <a href="./parent.html">Family overview</a>
+        </nav>
+      </details>
+    </header>
+    <div class="library-subjects" role="group" aria-label="Subject">
+      <button data-subject="toddler">Toddlers</button>
+      <button data-subject="math">Math</button>
+      <button data-subject="language">Language</button>
+      <button data-subject="science">Science</button>
+    </div>
+    <div class="library-picker">
+      <label for="activity">Activity</label>
+      <select id="activity"></select>
+      <span id="coverage"></span>
+    </div>
+    <div class="round-navigation">
+      <button id="previous" aria-label="Previous problem">&#8592;</button>
+      <span id="round-position"></span>
+      <button id="next" aria-label="Next problem">&#8594;</button>
+    </div>
+    <h1 id="library-prompt"></h1>
+    <p id="library-feedback" role="status" aria-live="polite"></p>
+    <section id="library-board" aria-label="Activity board"></section>
+    <footer class="problem-actions" aria-label="Activity actions">
+      <button id="hint">Hint</button>
+      <button id="undo" hidden>Undo</button>
+      <button id="check" class="primary" hidden>Check</button>
+      <button id="again">Again</button>
+    </footer>
+  </main>
+  <script type="module" src="./library.js"></script>
+</body>
+</html>
