@@ -18,6 +18,19 @@ explicit hints retain the existing hint ladder. Animal pictures use native emoji
 and vary by platform. Touch emulation is covered in Chromium; physical-device
 and Safari verification remain outstanding. All activities remain synthetic.
 
+### Activity coverage
+
+- Math: one equal-groups problem (3 groups of 4; answer 12).
+- Language: one verb-identification problem (answer "runs").
+- Science: one four-animal classification problem (duck and eagle have feathers).
+- Toddler play (`app/toddler.html`): uppercase A-Z and numbers 1-10, split
+  into 13 letter rounds and 5 number rounds, with two shape matches per round.
+  Dragging, tap placement, and keyboard placement are supported. No scores,
+  timers, saved child profiles, or live AI. This is a caregiver-accompanied
+  prototype for the requested 2-3 age group, not a validated toddler curriculum.
+  Letters match identical uppercase shapes; numbers match written symbols,
+  not quantities. Rounds repeat after the last pair.
+
 This repository now contains the first implementation slice for the platform foundation:
 
 - Portable JSON Schema contracts for cross-language implementations, indexed by a schema registry.
