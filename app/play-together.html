@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Play Together</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./touch.css" />
+  <link rel="stylesheet" href="./play-together.css" />
+</head>
+<body class="touch-learning together">
+  <main class="learn-shell">
+    <header class="lesson-header">
+      <span class="lesson-label">Play Together <small>Synthetic demo</small></span>
+      <details class="activity-menu">
+        <summary aria-label="Activity menu">&#8943;</summary>
+        <nav aria-label="Activity options">
+          <label class="sound-option"><input id="sound" type="checkbox" /> Sound &amp; voice</label>
+          <a href="./toddler.html">Letters, numbers, shapes &amp; sizes</a>
+          <a href="./parent.html">Family overview</a>
+        </nav>
+      </details>
+    </header>
+    <div class="play-modes" role="group" aria-label="Choose a game">
+      <button data-game="picnic" aria-pressed="true">Picnic</button>
+      <button data-game="hide" aria-pressed="false">Hide &amp; seek</button>
+      <button data-game="pack" aria-pressed="false">Pack a bag</button>
+    </div>
+    <h1 id="play-prompt"></h1>
+    <p id="play-feedback" role="status" aria-live="polite"></p>
+    <div id="play-world" aria-label="Play scene"></div>
+    <section id="offline-play" aria-labelledby="offline-title" hidden>
+      <h2 id="offline-title">Now, together</h2>
+      <p id="offline-idea"></p>
+    </section>
+    <footer class="problem-actions" aria-label="Play actions">
+      <button id="again">Again</button>
+      <button id="together">Away we play</button>
+      <button id="next" class="primary" disabled>Next</button>
+    </footer>
+  </main>
+  <script type="module" src="./play-together.js"></script>
+</body>
+</html>
