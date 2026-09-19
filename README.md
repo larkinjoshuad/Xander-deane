@@ -11,6 +11,13 @@ family overview are in the activity menu. This route uses deterministic
 synthetic tutor messages only, even if a tutor API was previously configured.
 The older diagnostic shell remains at `app/prototype.html` for development.
 
+Science touch practice uses visual animal tiles with direct dragging between
+groups, tap-then-place and keyboard alternatives, and neutral placement styling.
+Incorrect checks prompt another observation rather than naming the answer;
+explicit hints retain the existing hint ladder. Animal pictures use native emoji
+and vary by platform. Touch emulation is covered in Chromium; physical-device
+and Safari verification remain outstanding. All activities remain synthetic.
+
 This repository now contains the first implementation slice for the platform foundation:
 
 - Portable JSON Schema contracts for cross-language implementations, indexed by a schema registry.

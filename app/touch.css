@@ -56,3 +56,27 @@ body.touch-learning { background: #fafbf9; color: #24332f; }
   .touch-learning .problem-actions button { min-width: 0; width: 100%; max-width: 130px; }
 }
 @media (prefers-reduced-motion: reduce) { .touch-learning * { animation: none; transition: none; } }
+
+.visual-sort { gap: 24px; }
+.animal-bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
+.touch-learning .animal-tile, .animal-tile.drag-preview { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; width: 116px; height: 116px; min-width: 0; padding: 8px; border: 2px solid #b3c0b8; border-radius: 8px; background: #fff; color: #24332f; font-size: 16px; font-weight: 500; touch-action: none; user-select: none; }
+.animal-picture { font: 54px/1 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif; pointer-events: none; }
+.touch-learning .animal-tile[aria-pressed="true"] { border-color: #245eac; outline: 2px solid #245eac; outline-offset: 2px; background: #edf4fc; }
+.animal-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.animal-zone { position: relative; min-height: 310px; padding: 20px; border: 2px dashed #9fac9f; border-radius: 8px; background: #f3f5f2; }
+.animal-zone h2 { position: relative; pointer-events: none; margin: 0 0 24px; font-size: 18px; font-weight: 600; }
+.touch-learning .animal-destination { position: absolute; inset: 0; width: 100%; height: 100%; background: transparent; border: 0; padding: 0; }
+.animal-zone-items { position: relative; display: flex; flex-wrap: wrap; gap: 12px; pointer-events: none; }
+.animal-zone-items > button { pointer-events: auto; }
+.animal-zone.is-drop-target { border-style: solid; border-color: #245eac; background: #edf4fc; }
+.animal-tile.is-dragging { opacity: 0.35; }
+.animal-tile.drag-preview { position: fixed; z-index: 100; pointer-events: none; transform: translate(-50%, -50%); box-shadow: 0 8px 24px #24332f30; }
+@media (max-width: 600px) {
+  .animal-bank { gap: 10px; }
+  .touch-learning .animal-tile { width: 88px; height: 100px; font-size: 14px; }
+  .animal-picture { font-size: 44px; }
+  .animal-groups { gap: 12px; }
+  .animal-zone { padding: 12px; min-height: 285px; }
+  .animal-zone h2 { font-size: 16px; }
+  .animal-zone-items { justify-content: center; }
+}
