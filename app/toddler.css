@@ -1,5 +1,6 @@
 .toddler-shell { align-items: stretch; }
-.matching-modes { display: flex; align-self: center; gap: 8px; }
+.matching-modes { display: flex; flex-wrap: wrap; justify-content: center; align-self: center; gap: 8px; }
+.touch-learning .matching-modes button { padding: 12px; }
 .matching-modes button[aria-pressed="true"] { background: #245eac; color: #fff; }
 .toddler-shell h1 { text-align: center; font-size: 26px; margin: 28px 0 8px; }
 #matching-feedback { text-align: center; min-height: 48px; margin: 0; color: #52615a; }
@@ -14,6 +15,14 @@
 .matching-piece.is-moving { position: relative; z-index: 30; pointer-events: none; }
 .matching-complete { font-size: 60px; color: #24634e; }
 .touch-learning button:disabled { opacity: .5; cursor: default; }
+.touch-learning :is(.matching-target, .matching-piece) { display: grid; place-items: center; }
+.matching-shape { display: block; width: 88px; height: 88px; background: #245eac; pointer-events: none; }
+.matching-shape.size-small { width: 40px; height: 40px; }
+.shape-circle { border-radius: 50%; }
+.shape-oval { border-radius: 50%; height: 56px; }
+.shape-triangle { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.shape-star { clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 94%, 50% 72%, 21% 94%, 32% 57%, 2% 35%, 39% 35%); }
+.shape-heart { clip-path: polygon(50% 20%, 65% 5%, 85% 5%, 100% 22%, 100% 42%, 50% 95%, 0 42%, 0 22%, 15% 5%, 35% 5%); }
 @media (max-width: 600px) {
   .matching-targets { grid-template-columns: repeat(2, minmax(0, 132px)); gap: 24px; }
   .touch-learning .matching-target { height: 140px; }
