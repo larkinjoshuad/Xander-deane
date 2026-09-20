@@ -1,0 +1,38 @@
+{
+  "observedAt": "2026-09-19T03:40:17.872Z",
+  "syntheticOnly": true,
+  "smallestAnswerShortcut": {
+    "total": 72,
+    "smallestIsCorrect": 72
+  },
+  "repeatedCheck": {
+    "attempts": 5,
+    "level": "mastered",
+    "confidence": "high",
+    "distinctProblems": 1
+  },
+  "deniedContextProviderCalls": 1,
+  "untrustedPromptForwarded": true,
+  "unauthenticatedTutor": {
+    "status": 200,
+    "cors": "*",
+    "gatewayCalls": 1
+  },
+  "tabletBrowser": "webkit",
+  "staticExposure": {
+    "/.git/HEAD": 404,
+    "/package.json": 200,
+    "/app/prototype.html": 200
+  },
+  "responseHeaders": {
+    "content-length": "2223",
+    "content-type": "text/html",
+    "date": "Sat, 19 Sep 2026 03:40:18 GMT",
+    "last-modified": "Sat, 19 Sep 2026 02:54:02 GMT",
+    "server": "SimpleHTTP/0.6 Python/3.12.14"
+  },
+  "focusAfterAnswer": "BODY",
+  "positionAfterReload": "1 of 8",
+  "remoteOriginsDuringSampledFlows": [],
+  "storageFailure": "Something went wrong loading the lesson: Synthetic audit: quota exceeded"
+}

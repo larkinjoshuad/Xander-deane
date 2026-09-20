@@ -79,8 +79,7 @@ export function createSessionPersistenceService({
     async appendInteractionEvent(sessionId, event, options = {}) {
       const operationConsentRecord = options.consentRecord ?? consentRecord;
       const operationSafetyPolicy = options.safetyPolicy ?? safetyPolicy;
-      const record = await requireRecord(recordStore, sessionId);
-      assertExpectedRecordVersion(record, options.expectedRecordVersion, sessionId);
+      const record = await requireRecord(recordStore, sessionId, options.expectedRecordVersion);
       const existingIds = new Set(record.events.map((existingEvent) => existingEvent.id));
       const events = existingIds.has(event.id) ? record.events : [...record.events, cloneJson(event)];
       const updatedRecord = normalizeRecord({
@@ -99,8 +98,7 @@ export function createSessionPersistenceService({
     async appendWorkspaceSnapshot(sessionId, workspaceSnapshot, options = {}) {
       const operationConsentRecord = options.consentRecord ?? consentRecord;
       const operationSafetyPolicy = options.safetyPolicy ?? safetyPolicy;
-      const record = await requireRecord(recordStore, sessionId);
-      assertExpectedRecordVersion(record, options.expectedRecordVersion, sessionId);
+      const record = await requireRecord(recordStore, sessionId, options.expectedRecordVersion);
       const currentWorkspaceSnapshot = cloneJson(workspaceSnapshot);
       const previousSnapshot = record.snapshotHistory.at(-1);
       const snapshotHistory = previousSnapshot && JSON.stringify(previousSnapshot) === JSON.stringify(currentWorkspaceSnapshot)
@@ -356,8 +354,10 @@ function assertAppendOnlyRecordEvent(event, lineNumber) {
   }
 }
 
-async function requireRecord(recordStore, sessionId) {
+async function requireRecord(recordStore, sessionId, expectedRecordVersion) {
   const record = await recordStore.loadRecord(sessionId);
+  // A deleted record cannot satisfy an update's version precondition.
+  assertExpectedRecordVersion(record, expectedRecordVersion, sessionId);
   if (!record) {
     throw new RangeError(`session record ${sessionId} was not found`);
   }

@@ -1,5 +1,12 @@
 name: Quality Gates
 
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   pull_request:
   push:
@@ -11,6 +18,7 @@ jobs:
   contract-runtime:
     name: Contracts, runtime, device, and DOM smoke tests
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -18,7 +26,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -45,6 +53,7 @@ jobs:
   browser-e2e:
     name: Real-browser learner shell tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     container:
       image: mcr.microsoft.com/playwright:v1.60.0-noble
     env:
@@ -56,7 +65,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -64,6 +73,9 @@ jobs:
 
       - name: List Playwright test matrix
         run: npm run test:e2e -- --list
+
+      - name: Build and verify public release boundary in browsers
+        run: npm run test:public
 
       - name: Run Playwright browser tests
         run: npm run test:e2e

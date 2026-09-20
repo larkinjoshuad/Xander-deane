@@ -4,6 +4,34 @@
   "mode": "synthetic_architecture_prototype",
   "records": [
     {
+      "contractName": "activity-progress",
+      "schemaPath": "schemas/activity-progress.schema.json",
+      "classification": "restricted",
+      "piiRisk": "medium",
+      "realDataAllowed": false,
+      "recordTypes": ["session_state", "learner_work"],
+      "requiresConsentScopes": ["progress_tracking"],
+      "retentionPolicyRequired": true,
+      "exportRequired": false,
+      "deletionRequired": true,
+      "productionRequirements": ["privacy and retention review before real learner use", "active consent or authority before real progress tracking", "review shared-device behavior and parent controls"],
+      "notes": "Synthetic demo resume state only. Browser-local answer IDs and memory layout; no identity, timestamps, analytics or network sync. Clear saved progress removes this namespace only."
+    },
+    {
+      "contractName": "activity-set",
+      "schemaPath": "schemas/activity-set.schema.json",
+      "classification": "synthetic_safe",
+      "piiRisk": "none",
+      "realDataAllowed": false,
+      "recordTypes": ["curriculum"],
+      "requiresConsentScopes": [],
+      "retentionPolicyRequired": false,
+      "exportRequired": false,
+      "deletionRequired": false,
+      "productionRequirements": ["educator review of content, answers, accessibility and age suitability"],
+      "notes": "Authored synthetic activities only. No learner responses or profiles in this contract."
+    },
+    {
       "contractName": "account-ledger-entry",
       "schemaPath": "schemas/account-ledger-entry.schema.json",
       "classification": "prohibited_until_review",

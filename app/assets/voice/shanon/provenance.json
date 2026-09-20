@@ -1,0 +1,58 @@
+{
+  "provider": "HeyGen",
+  "voice": "Shanon - Warm & Friendly",
+  "voiceId": "57e4c49b43be4517b7c6a1d59a56659e",
+  "speed": 0.9,
+  "syntheticOnly": true,
+  "reviewStatus": "Voice selected by owner; individual clips pending listening review.",
+  "clips": [
+    {
+      "text": "Which word rhymes with cat?",
+      "file": "rhyme-cat.mp3",
+      "duration": 1.9591836734693877,
+      "source": "https://resource2.heygen.ai/text_to_speech/8c9cd47c0c3349b5ad1f24415e3749a9/57e4c49b43be4517b7c6a1d59a56659e/id=fab92c0a-e78b-490b-80e2-ad474e9e331b.wav"
+    },
+    {
+      "text": "Which word rhymes with sun?",
+      "file": "rhyme-sun.mp3",
+      "duration": 1.8285714285714285,
+      "source": "https://resource2.heygen.ai/text_to_speech/8c9cd47c0c3349b5ad1f24415e3749a9/57e4c49b43be4517b7c6a1d59a56659e/id=c2774da4-781b-42d9-8bcd-1f2a8f9c68e1.wav"
+    },
+    {
+      "text": "Which word rhymes with boat?",
+      "file": "rhyme-boat.mp3",
+      "duration": 2.0375510204081633,
+      "source": "https://resource2.heygen.ai/text_to_speech/8c9cd47c0c3349b5ad1f24415e3749a9/57e4c49b43be4517b7c6a1d59a56659e/id=791ba756-65d1-4e27-9441-23a32b4401a9.wav"
+    },
+    {
+      "text": "Which word rhymes with bee?",
+      "file": "rhyme-bee.mp3",
+      "duration": 1.8546938775510204,
+      "source": "https://resource2.heygen.ai/text_to_speech/8c9cd47c0c3349b5ad1f24415e3749a9/57e4c49b43be4517b7c6a1d59a56659e/id=e9266eee-d368-4a7a-9906-091373781342.wav"
+    },
+    {
+      "text": "Which word rhymes with frog?",
+      "file": "rhyme-frog.mp3",
+      "duration": 2.0114285714285716,
+      "source": "https://resource2.heygen.ai/text_to_speech/8c9cd47c0c3349b5ad1f24415e3749a9/57e4c49b43be4517b7c6a1d59a56659e/id=fa0569b7-8014-4cd7-860d-59f3ea2d0850.wav"
+    },
+    {
+      "text": "Which word rhymes with light?",
+      "file": "rhyme-light.mp3",
+      "duration": 1.9591836734693877,
+      "source": "https://resource2.heygen.ai/text_to_speech/8c9cd47c0c3349b5ad1f24415e3749a9/57e4c49b43be4517b7c6a1d59a56659e/id=a3eb63f0-dad6-4a39-86c6-e08b97c2a99e.wav"
+    },
+    {
+      "text": "Which word rhymes with cake?",
+      "file": "rhyme-cake.mp3",
+      "duration": 1.906938775510204,
+      "source": "https://resource2.heygen.ai/text_to_speech/8c9cd47c0c3349b5ad1f24415e3749a9/57e4c49b43be4517b7c6a1d59a56659e/id=2e7f6e2f-bff5-47bb-860e-27f201ac3281.wav"
+    },
+    {
+      "text": "Which word rhymes with chair?",
+      "file": "rhyme-chair.mp3",
+      "duration": 2.0114285714285716,
+      "source": "https://resource2.heygen.ai/text_to_speech/8c9cd47c0c3349b5ad1f24415e3749a9/57e4c49b43be4517b7c6a1d59a56659e/id=bc3cf2c4-7c21-4278-bc5f-1acb9b9a3305.wav"
+    }
+  ]
+}

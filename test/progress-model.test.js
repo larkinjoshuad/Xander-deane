@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { checkWorkspaceAnswer, createInitialLearningSession } from '../src/app/learning-session.js';
+import { checkWorkspaceAnswer, createInitialLearningSession, selectToken, requestHint } from '../src/app/learning-session.js';
 import {
   createInitialSkillMastery,
   createSkillMastery,
@@ -48,6 +48,50 @@ test('updates mastery from learning-session evaluations', () => {
   assert.equal(updatedMastery.correctCount, 0);
   assert.equal(updatedMastery.masteryLevel, 'emerging');
   assert.equal(updatedMastery.evidence[0].evaluationResultId, checkedSession.evaluation.id);
+});
+
+test('repeated unchanged checks do not manufacture practice evidence or mastery, including after reload', () => {
+  const objective = readJson('examples/language/objective.learning-objective.json');
+  const problem = readJson('examples/language/problem.problem.json');
+  let session = selectToken(createInitialLearningSession({ objective, problem, now: fixedNow }), 2, fixedNow);
+  let mastery = createInitialSkillMastery({ objective, now: fixedNow });
+  for (let i = 0; i < 10; i++) {
+    session = checkWorkspaceAnswer(session, fixedNow);
+    mastery = updateSkillMasteryFromEvaluation(JSON.parse(JSON.stringify(mastery)), { session, evaluation: session.evaluation, now: fixedNow });
+  }
+  assert.equal(mastery.attemptCount, 1);
+  assert.equal(mastery.correctCount, 1);
+  assert.equal(mastery.evidence.length, 1);
+  assert.equal(mastery.confidence, 'low');
+  assert.equal(summarizeSkillMastery(mastery).readyToAdvance, false);
+  assert.equal(mastery.metadata.assessment, 'practice_only');
+  assert.equal(updateSkillMasteryFromEvaluation(mastery, { session, evaluation: session.evaluation }), mastery);
+  session = checkWorkspaceAnswer(selectToken(session, 0, fixedNow), fixedNow);
+  mastery = updateSkillMasteryFromEvaluation(mastery, { session, evaluation: session.evaluation, now: fixedNow });
+  assert.equal(mastery.attemptCount, 2);
+  session = requestHint(session, fixedNow);
+  session = checkWorkspaceAnswer(selectToken(session, 2, fixedNow), fixedNow);
+  mastery = updateSkillMasteryFromEvaluation(mastery, { session, evaluation: session.evaluation, now: fixedNow });
+  assert.equal(mastery.attemptCount, 3);
+  assert.equal(mastery.correctCount, 2);
+  assert.equal(mastery.evidence.at(-1).metadata.assistance, 'hint_used');
+  assert.equal(mastery.confidence, 'low');
+  assert.deepEqual(validateJsonSchema(mastery, skillMasterySchema), []);
+});
+
+test('success across repeated sessions remains practice, not validated mastery', () => {
+  const objective = readJson('examples/language/objective.learning-objective.json');
+  const problem = readJson('examples/language/problem.problem.json');
+  let mastery = createInitialSkillMastery({ objective, now: fixedNow });
+  for (let i = 0; i < 6; i++) {
+    const session = checkWorkspaceAnswer(selectToken(createInitialLearningSession({ sessionId: `practice_${i}`, objective, problem, now: fixedNow }), 2, fixedNow), fixedNow);
+    mastery = updateSkillMasteryFromEvaluation(mastery, { session, evaluation: session.evaluation, now: fixedNow });
+  }
+  assert.equal(mastery.attemptCount, 6);
+  assert.equal(mastery.correctCount, 6);
+  assert.equal(mastery.masteryLevel, 'developing');
+  assert.equal(mastery.confidence, 'low');
+  assert.equal(summarizeSkillMastery(mastery).readyToAdvance, false);
 });
 
 test('summarizes mastery for parent and educator dashboards', () => {

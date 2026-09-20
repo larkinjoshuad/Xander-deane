@@ -11,6 +11,7 @@ import {
 } from '../src/app/device-profile.js';
 import {
   createBrowserSessionStore,
+  BROWSER_SESSION_LIMITS,
   rehydrateLearningSession,
 } from '../src/app/session-persistence.js';
 import { equalGroupsRenderer } from './renderers/equal-groups-renderer.js';
@@ -18,6 +19,7 @@ import { touchSortRenderer } from './renderers/touch-sort-renderer.js';
 import { touchFeedback } from './touch-feedback.js';
 import { tokenSelectionRenderer } from './renderers/token-selection-renderer.js';
 import { createSkillMasteryForSession, updateSkillMasteryForSession } from './learner-insights.js';
+import { createSkillMastery } from '../src/app/progress-model.js';
 
 // Synthetic touch practice keeps progress available only in the family view.
 
@@ -42,6 +44,7 @@ const elements = {
   checkButton: document.querySelector('#check-button'),
   resetButton: document.querySelector('#reset-button'),
   hintButton: document.querySelector('#hint-button'),
+  saveStatus: document.querySelector('#save-status'),
   subjectButtons: Array.from(document.querySelectorAll('[data-subject]')),
 };
 
@@ -52,6 +55,8 @@ let activeSessionRecord = null;
 const requestedSubject = new URLSearchParams(window.location.search).get('subject');
 let selectedDemo = Object.hasOwn(DEMOS, requestedSubject) ? requestedSubject : 'math';
 let audioUnlocked = false;
+let recoveredSave = false;
+let progressPersistent = true;
 
 bootstrap().catch((error) => {
   elements.tutorMessage.textContent = `Something went wrong loading the lesson: ${error.message}`;
@@ -103,12 +108,16 @@ async function loadDemo(demoId) {
   const initialSession = createInitialLearningSession({ objective, problem });
   skillMasteryByObjectiveId.set(getObjectiveId(initialSession), loadSkillMastery(initialSession));
   const storedRecord = sessionStore.loadSession(initialSession.sessionId);
-  session = storedRecord ? rehydrateLearningSession(initialSession, storedRecord) : initialSession;
+  session = initialSession;
+  if (storedRecord) {
+    try { session = rehydrateLearningSession(initialSession, storedRecord); }
+    catch { recoveredSave = true; }
+  }
   commitSession(session, { speak: audioUnlocked });
 }
 
 function commitSession(nextSession, { speak: shouldSpeak = false } = {}) {
-  session = nextSession;
+  session = Object.freeze({ ...nextSession, events: Object.freeze(nextSession.events.slice(-BROWSER_SESSION_LIMITS.events)) });
   activeSessionRecord = sessionStore.saveSession(session);
   render();
   if (shouldSpeak) speak(currentSpeech());
@@ -116,6 +125,10 @@ function commitSession(nextSession, { speak: shouldSpeak = false } = {}) {
 
 function render() {
   renderSubjectSwitcher();
+  elements.saveStatus.textContent = !sessionStore.persistent || !progressPersistent
+    ? 'Saving is unavailable. You can keep playing, but this work may be lost when you leave.'
+    : recoveredSave || sessionStore.recovered ? 'A saved lesson could not be restored. A fresh activity is ready.' : '';
+  elements.saveStatus.hidden = !elements.saveStatus.textContent;
   elements.tutorMessage.textContent = touchFeedback(session);
   elements.problemPrompt.textContent = session.problem.prompt;
   renderWorkspaceHost({
@@ -165,9 +178,14 @@ function loadSkillMastery(currentSession) {
   const objectiveId = getObjectiveId(currentSession);
   try {
     const raw = window.localStorage?.getItem(progressKey(objectiveId));
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      if (raw.length > BROWSER_SESSION_LIMITS.characters) throw new TypeError('Oversized progress');
+      const saved = createSkillMastery(JSON.parse(raw));
+      if (saved.objectiveId !== objectiveId || saved.learnerId !== currentSession.learnerId) throw new TypeError('Incompatible progress');
+      return saved;
+    }
   } catch {
-    // ignore storage errors
+    recoveredSave = true;
   }
   return createSkillMasteryForSession(currentSession);
 }
@@ -176,7 +194,7 @@ function saveSkillMastery(skillMastery) {
   try {
     window.localStorage?.setItem(progressKey(skillMastery.objectiveId), JSON.stringify(skillMastery));
   } catch {
-    // ignore storage errors
+    progressPersistent = false;
   }
 }
 

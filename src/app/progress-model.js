@@ -105,6 +105,14 @@ export function updateSkillMasteryFromEvaluation(skillMastery, {
     throw new RangeError('evaluation objective does not match skill mastery objective');
   }
 
+  const practiceAnswer = JSON.stringify(evaluation.submittedAnswer);
+  const latest = skillMastery.evidence.at(-1);
+  if (skillMastery.evidence.some(entry => entry.sessionId === session.sessionId && entry.problemId === session.problem.id && entry.evaluationResultId === evaluation.id)
+      || (practiceAnswer !== undefined && latest?.sessionId === session.sessionId
+        && latest.problemId === session.problem.id && latest.metadata?.practiceAnswer === practiceAnswer)) {
+    return skillMastery;
+  }
+
   const attemptCount = skillMastery.attemptCount + 1;
   const correctCount = skillMastery.correctCount + (evaluation.isCorrect ? 1 : 0);
   const evidenceEntry = {
@@ -114,7 +122,12 @@ export function updateSkillMasteryFromEvaluation(skillMastery, {
     isCorrect: evaluation.isCorrect,
     feedbackCode: evaluation.feedbackCode ?? '',
     attemptedAt: evaluation.evaluatedAt,
-    metadata: summarizeEvaluationDiagnostics(evaluation),
+    metadata: {
+      ...summarizeEvaluationDiagnostics(evaluation),
+      ...(practiceAnswer !== undefined ? { practiceAnswer } : {}),
+      assistance: session.events?.some(event => event.type === 'hint_requested') ? 'hint_used'
+        : session.events?.[0]?.type === 'problem_presented' ? 'no_hint_recorded' : 'unknown',
+    },
   };
 
   return createSkillMastery({
@@ -122,13 +135,14 @@ export function updateSkillMasteryFromEvaluation(skillMastery, {
     attemptCount,
     correctCount,
     masteryEstimate: undefined,
-    masteryLevel: undefined,
-    confidence: undefined,
+    // Authored practice is not a validated mastery assessment, regardless of repetition.
+    masteryLevel: correctCount / attemptCount >= 0.4 ? 'developing' : 'emerging',
+    confidence: 'low',
     lastAttemptAt: evaluation.evaluatedAt,
     lastUpdatedAt: now(),
-    evidence: [...skillMastery.evidence, evidenceEntry],
+    evidence: [...skillMastery.evidence, evidenceEntry].slice(-200),
     recommendedNextObjectiveIds,
-    metadata,
+    metadata: { ...metadata, assessment: 'practice_only' },
   });
 }
 

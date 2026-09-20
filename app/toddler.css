@@ -1,4 +1,5 @@
 .toddler-shell { align-items: stretch; }
+.toddler-links { display: flex; justify-content: center; gap: 24px; }
 .together-link { align-self: center; text-align: center; padding: 12px 0 20px; color: #245e68; font-size: 17px; line-height: 1.5; }
 .matching-modes { display: flex; flex-wrap: wrap; justify-content: center; align-self: center; gap: 8px; }
 .touch-learning .matching-modes button { padding: 12px; }
@@ -24,6 +25,9 @@
 .shape-triangle { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
 .shape-star { clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 94%, 50% 72%, 21% 94%, 32% 57%, 2% 35%, 39% 35%); }
 .shape-heart { clip-path: polygon(50% 20%, 65% 5%, 85% 5%, 100% 22%, 100% 42%, 50% 95%, 0 42%, 0 22%, 15% 5%, 35% 5%); }
+.touch-learning .named-shape { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; }
+.shape-picture { height: 88px; display: grid; place-items: center; pointer-events: none; }
+.shape-name { font-size: 16px; line-height: 20px; font-weight: 600; color: #24332f; pointer-events: none; }
 @media (max-width: 600px) {
   .matching-targets { grid-template-columns: repeat(2, minmax(0, 132px)); gap: 24px; }
   .touch-learning .matching-target { height: 140px; }

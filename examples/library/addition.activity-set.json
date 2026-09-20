@@ -1,0 +1,12 @@
+{
+  "contractVersion": "0.1.0",
+  "syntheticOnly": true,
+  "id": "addition-example",
+  "subject": "math",
+  "title": "Addition example",
+  "kind": "choice",
+  "hint": "Count on from one.",
+  "rounds": [
+    { "prompt": "1 + 1 = ?", "choices": [{ "id": "2", "text": "2" }, { "id": "3", "text": "3" }], "answer": ["2"] }
+  ]
+}

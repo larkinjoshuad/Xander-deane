@@ -1,0 +1,97 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { validateJsonSchema } from '../scripts/validate-fixtures.js';
+import { ACTIVITY_LIBRARY, getActivity, libraryCounts, checkLibraryAnswer, displayChoices, memoryDeck } from '../src/app/activity-library.js';
+
+test('all activity sets validate, have distinct choices and reachable answers', () => {
+  const schema = JSON.parse(readFileSync('schemas/activity-set.schema.json', 'utf8'));
+  assert.equal(new Set(ACTIVITY_LIBRARY.map(item => item.id)).size, ACTIVITY_LIBRARY.length);
+  for (const activity of ACTIVITY_LIBRARY) {
+    assert.deepEqual(validateJsonSchema(activity, schema), [], activity.id);
+    activity.rounds.forEach((round, index) => {
+      assert.equal(new Set(round.choices.map(item => item.id)).size, round.choices.length);
+      assert.ok(round.answer.every(id => round.choices.some(item => item.id === id)));
+      assert.equal(checkLibraryAnswer(activity, index, round.answer), true);
+      assert.equal(checkLibraryAnswer(activity, index, []), false);
+      assert.equal(checkLibraryAnswer(activity, index, ['invalid']), false);
+      assert.deepEqual(new Set(displayChoices(round, index).map(item => item.id)), new Set(round.choices.map(item => item.id)));
+      if (activity.kind === 'choice') assert.equal(round.answer.length, 1);
+      else assert.equal(round.answer.length, round.choices.length);
+    });
+  }
+  assert.equal(getActivity('unknown'), null);
+});
+test('catalog counts are exact, not estimated', () => {
+  assert.deepEqual(libraryCounts(), {
+    toddler: { activities: 7, problems: 41 }, math: { activities: 6, problems: 123 },
+    language: { activities: 6, problems: 46 }, science: { activities: 6, problems: 39 },
+  });
+});
+test('memory shuffle preserves exactly two of every picture and varies positions', () => {
+  const round = getActivity('picture-memory').rounds[0];
+  const first = memoryDeck(round, () => 0).map(item => item.id);
+  const second = memoryDeck(round, () => .99).map(item => item.id);
+  assert.notDeepEqual(first, second);
+  for (const choice of round.choices) assert.equal(first.filter(id => id === choice.id).length, 2);
+});
+test('word match pairs each familiar object with its word in both directions', () => {
+  const rounds = getActivity('word-match').rounds;
+  assert.equal(rounds.length, 8);
+  for (let index = 0; index < rounds.length; index += 2) {
+    const [pictureToWord, wordToPicture] = rounds.slice(index, index + 2);
+    const word = pictureToWord.answer[0];
+    assert.deepEqual(pictureToWord.preview, [`object:${word}`]);
+    assert.ok(pictureToWord.choices.every(choice => !choice.visual));
+    assert.deepEqual(wordToPicture.answer, [word]);
+    assert.ok(wordToPicture.prompt.endsWith(word));
+    assert.equal(wordToPicture.choices.find(choice => choice.id === word).visual, `object:${word}`);
+  }
+});
+test('arithmetic answers are independently recomputed for every generated question', () => {
+  for (const id of ['add', 'subtract', 'multiply']) getActivity(id).rounds.forEach(round => {
+    const [a, b] = round.prompt.match(/\d+/g).map(Number);
+    const expected = id === 'add' ? a + b : id === 'subtract' ? a - b : a * b;
+    assert.equal(Number(round.answer[0]), expected);
+    assert.equal(round.choices.filter(choice => Number(choice.id) === expected).length, 1);
+  });
+  getActivity('compare').rounds.forEach(round => assert.equal(Number(round.answer[0]), Math.max(...round.choices.map(item => Number(item.id)))));
+  for (const id of ['number-order','skip-count']) getActivity(id).rounds.forEach(round => {
+    const values = round.answer.map(Number);
+    assert.deepEqual(values, [...values].sort((a,b) => a-b));
+    assert.equal(values[1] - values[0], values[2] - values[1]);
+  });
+});
+
+test('arithmetic answers vary in numerical rank and visible position without invalid alternatives', () => {
+  for (const id of ['add', 'subtract', 'multiply']) {
+    const ranks = [0, 0, 0], positions = [0, 0, 0];
+    getActivity(id).rounds.forEach((round, index) => {
+      const correct = Number(round.answer[0]);
+      const values = round.choices.map(choice => Number(choice.id));
+      assert.ok(values.every(value => Number.isSafeInteger(value) && value >= 0), `${id}: ${round.prompt}`);
+      assert.equal(new Set(values).size, 3);
+      ranks[[...values].sort((a, b) => a - b).indexOf(correct)]++;
+      positions[displayChoices(round, index).findIndex(choice => choice.id === round.answer[0])]++;
+      for (const wrong of round.choices.filter(choice => choice.id !== round.answer[0])) {
+        assert.equal(checkLibraryAnswer(getActivity(id), index, [wrong.id]), false);
+      }
+    });
+    // No smallest/largest or fixed-position strategy should dominate a set.
+    for (const counts of [ranks, positions]) {
+      assert.ok(counts.every(count => count >= 4 && count <= 14), `${id}: distribution ${counts}`);
+    }
+  }
+});
+
+test('choice layouts are repeatable across retries and never mutate the content', () => {
+  for (const activity of ACTIVITY_LIBRARY) activity.rounds.forEach((round, index) => {
+    const original = structuredClone(round.choices);
+    const first = displayChoices(round, index);
+    assert.deepEqual(displayChoices(round, index), first);
+    assert.deepEqual(round.choices, original);
+    assert.deepEqual(new Set(first.map(choice => choice.id)), new Set(original.map(choice => choice.id)));
+  });
+  assert.deepEqual(displayChoices({ prompt: 'Empty', choices: [] }), []);
+  assert.deepEqual(displayChoices({ prompt: 'One', choices: [{ id: '1' }] }), [{ id: '1' }]);
+});

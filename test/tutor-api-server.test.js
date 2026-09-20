@@ -24,6 +24,17 @@ const SAMPLE_TEACHING = Object.freeze({
   confidence: 'medium',
 });
 
+test('default API ignores environment provider keys and remains synthetic', t => {
+  const original = process.env.ANTHROPIC_API_KEY;
+  process.env.ANTHROPIC_API_KEY = 'synthetic-test-not-a-real-key';
+  t.after(() => {
+    if (original === undefined) delete process.env.ANTHROPIC_API_KEY;
+    else process.env.ANTHROPIC_API_KEY = original;
+  });
+  const { gateway } = createTutorApiServer({ learnerProfile, consentRecord, safetyPolicy });
+  assert.equal(gateway.mode, 'synthetic_only');
+});
+
 test('handleTutorRespond turns a posted session into a schema-valid tutor response', async () => {
   const { handleTutorRespond } = createServerForTest();
   const payload = await handleTutorRespond({ session: buildSession() });

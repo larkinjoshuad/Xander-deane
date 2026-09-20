@@ -15,10 +15,41 @@ Science touch practice uses visual animal tiles with direct dragging between
 groups, tap-then-place and keyboard alternatives, and neutral placement styling.
 Incorrect checks prompt another observation rather than naming the answer;
 explicit hints retain the existing hint ladder. Animal pictures use native emoji
-and vary by platform. Touch emulation is covered in Chromium; physical-device
-and Safari verification remain outstanding. All activities remain synthetic.
+and vary by platform. Drag emulation is covered in Chromium; the isolated public
+build also has WebKit browser coverage. Physical-device and actual Safari
+verification remain outstanding. All activities remain synthetic.
 
 ### Activity coverage
+
+The new `/app/library.html` adds 249 problems across 25 activity sets, separate
+from the existing hands-on demos and toddler rounds below:
+
+| Area | Activity sets | Problems | Topics |
+| --- | ---: | ---: | --- |
+| Toddlers | 7 | 41 | Colors, shapes, quantities 1-3, patterns, size sequences, shuffled picture memory, Word Match |
+| Math | 6 | 123 | Addition, subtraction, equal groups, comparison, number order, skip counting |
+| Language | 6 | 46 | Verbs, describing words, nouns, plurals, rhymes, sentence building |
+| Science | 6 | 39 | Habitats, materials, states of matter, senses, growing sequences, space |
+
+Three interaction types are used: choice, sequencing, and memory pairs. These
+counts describe practice problems, not 249 distinct games or a complete K-12
+curriculum. Math uses deterministic variations; language and science use
+authored sets. Content is schema-validated and synthetic-only, with educator
+review still required. The library saves bounded, synthetic practice state in
+this browser, including the current round and visited answers. It does not
+create learner profiles or claim mastery, and does not sync to a server.
+Subject/activity links are shareable, and previous/next controls permit free
+exploration. Existing lessons remain available:
+
+The original practice screens recover from unavailable or damaged browser
+storage and show a save warning when needed. Browser session history retains
+the most recent 200 events and 40 snapshots, with at most 50 indexed sessions;
+server record creation remains append-oriented. Unchanged answer checks do not
+add practice evidence, and new practice updates do not award mastery or high
+confidence. Historical prototype records are not validated assessments.
+Original-lesson browser saves now carry a storage version and exact lesson
+definition. Unversioned prototype saves start fresh with a recovery notice;
+this does not migrate or modify server records.
 
 - Math: one equal-groups problem (3 groups of 4; answer 12).
 - Language: one verb-identification problem (answer "runs").
@@ -129,6 +160,18 @@ Read `docs/base-layer-architecture.md` for the platform plan, service boundaries
 This repository is currently a synthetic-data architecture/portfolio prototype. Do not use real minor PII, real guardian/school records, real voucher/ESA funds, real payment credentials, or live child-facing AI output until regulatory assumptions, production consent/authority, retention/export/delete, safety operations, voucher/payment compliance, and provider-adapter decisions are reviewed.
 
 ## Development
+
+The activity library now keeps browser-local synthetic progress across refreshes
+and game switching. See `docs/activity-progress.md` for reset, deletion, storage
+failure behavior, and the shared-device limitations.
+
+Use Node 24 LTS. The isolated synthetic public-build preview is documented in
+`docs/public-build-boundary.md`: `npm run build:public`, then
+`npm run preview:public` at port 4174. `npm run test:public` tests the built
+artifact, including its excluded routes and network restrictions. This is a
+release-boundary milestone, not public child-use approval. Never publish the
+repository-root development server below. The development tutor launcher is
+loopback-only and ignores provider keys; live child-facing AI remains blocked.
 
 Install dependencies with `npm ci` before running tests or validation.
 Fixture validation uses Ajv's JSON Schema draft 2020-12 implementation and
