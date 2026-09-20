@@ -31,6 +31,8 @@ export default defineConfig({
       name: 'tablet-chromium',
       use: {
         ...devices['iPad (gen 7)'],
+        // The iPad preset defaults to WebKit; touch helpers in this matrix use CDP.
+        browserName: 'chromium',
         viewport: { width: 820, height: 1180 },
       },
     },

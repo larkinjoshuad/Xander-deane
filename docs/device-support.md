@@ -34,6 +34,8 @@ npm run test:device
 
 The gate validates four viewport/device presets, confirms the expected `DeviceProfile` and layout policy for each class, and checks that the HTML/CSS hooks needed by the adaptive shell remain present. It does not replace real browser or physical-device QA; it prevents regressions while the product is still dependency-light.
 
+The Playwright desktop, tablet, phone, and glance projects run in Chromium. The tablet project borrows the iPad viewport and touch settings but explicitly overrides the preset's WebKit default because the drag/cancel tests use Chromium's touch-event protocol. Configuration regression tests keep the engine and tablet touch settings aligned. This matrix does not certify Safari or iPadOS support; separate browser and physical-device qualification is still required before release.
+
 ## Next Steps
 
 1. Keep Playwright browser automation running for desktop, tablet, phone, and smart-glasses viewport presets.
