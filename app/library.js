@@ -1,5 +1,6 @@
 import { ACTIVITY_LIBRARY, getActivity, libraryCounts, checkLibraryAnswer, displayChoices, memoryDeck } from '../src/app/activity-library.js';
 import { createRecordedVoice, SHANON_CLIPS } from './recorded-voice.js';
+import { createActivityProgressStore } from '../src/app/activity-progress.js';
 
 const recordedVoice = createRecordedVoice();
 const readAloud = document.querySelector('#read-aloud');
@@ -26,7 +27,17 @@ let activity = getActivity(params.get('activity')) ?? ACTIVITY_LIBRARY.find(item
 let index = 0, answer = [], complete = false, exposed = [], matched = [];
 let cards = [];
 const counts = libraryCounts();
+const progressStore = createActivityProgressStore();
+let progressRounds = new Map(), checked = false;
 const colors = { red: '#cf414b', blue: '#2867b2', yellow: '#f5ce4d', green: '#3c8a5c', pink: '#e89cbc', orange: '#ed963b' };
+
+function rememberProgress() {
+  progressRounds.set(index, { index, answer: [...answer], checked, deck: cards.map(card => card.id), exposed: [...exposed], matched: [...matched] });
+  progressStore.save(activity.id, index, [...progressRounds.values()]);
+  const status = document.querySelector('#save-status');
+  status.hidden = progressStore.persistent;
+  status.textContent = progressStore.persistent ? '' : 'Progress is temporary on this device.';
+}
 
 function picture(code) {
   const element = document.createElement('span');
@@ -164,6 +175,7 @@ function render() {
     choices.append(button);
   });
   board.append(choices);
+  rememberProgress();
   // Rebuilding the board must not leave keyboard users at the document body.
   if (focused) {
     const previous = [...choices.children].find(button => focusCard !== undefined ? button.dataset.card === focusCard : button.dataset.choice === focusChoice);
@@ -174,10 +186,26 @@ function render() {
   }
 }
 
-function reset() { stopNarration(); answer = []; complete = false; exposed = []; matched = []; cards = memoryDeck(activity.rounds[index]); feedback.textContent = ''; render(); }
+function reset() { stopNarration(); answer = []; checked = false; complete = false; exposed = []; matched = []; cards = activity.kind === 'memory' ? memoryDeck(activity.rounds[index]) : []; feedback.textContent = ''; render(); }
+function restoreRound() {
+  const saved = progressRounds.get(index);
+  if (!saved) { reset(); return; }
+  stopNarration();
+  answer = [...saved.answer]; checked = saved.checked; exposed = [...saved.exposed]; matched = [...saved.matched];
+  const round = activity.rounds[index];
+  cards = saved.deck.map(id => round.choices.find(choice => choice.id === id));
+  complete = activity.kind === 'memory' ? matched.length === round.choices.length
+    : (activity.kind === 'choice' || checked) && checkLibraryAnswer(activity, index, answer);
+  if (activity.kind === 'memory') feedback.textContent = complete ? 'All the pairs! Nicely found.' : exposed.length === 2 ? 'Two different pictures. Have another look.' : exposed.length ? 'Where is its partner?' : matched.length ? 'A pair!' : '';
+  else if (activity.kind === 'choice') feedback.textContent = complete ? 'You found it!' : answer.length ? 'Take another look. You can try again.' : '';
+  else feedback.textContent = complete ? 'That order works!' : checked ? 'Take another look. You can change the order.' : '';
+  render();
+}
 function choose(id) {
   activity = getActivity(id);
-  index = 0;
+  const saved = progressStore.load(id);
+  progressRounds = new Map(saved?.rounds.map(state => [state.index, state]) ?? []);
+  index = saved?.currentRound ?? 0;
   const options = ACTIVITY_LIBRARY.filter(item => item.subject === activity.subject);
   picker.replaceChildren(...options.map(item => { const option = document.createElement('option'); option.value = item.id; option.textContent = `${item.title} (${item.rounds.length})`; return option; }));
   picker.value = activity.id;
@@ -185,21 +213,22 @@ function choose(id) {
   document.querySelector('#coverage').textContent = `${count.activities} activities / ${count.problems} problems`;
   document.querySelectorAll('[data-subject]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.subject === activity.subject)));
   history.replaceState(null, '', `?subject=${activity.subject}&activity=${activity.id}`);
-  reset();
+  restoreRound();
 }
 document.querySelectorAll('[data-subject]').forEach(button => button.addEventListener('click', () => choose(ACTIVITY_LIBRARY.find(item => item.subject === button.dataset.subject).id)));
 picker.addEventListener('change', () => choose(picker.value));
-document.querySelector('#previous').addEventListener('click', () => { if (index > 0) { index--; reset(); } });
-document.querySelector('#next').addEventListener('click', () => { if (index < activity.rounds.length - 1) { index++; reset(); } });
+document.querySelector('#previous').addEventListener('click', () => { if (index > 0) { index--; restoreRound(); } });
+document.querySelector('#next').addEventListener('click', () => { if (index < activity.rounds.length - 1) { index++; restoreRound(); } });
 document.querySelector('#continue').addEventListener('click', () => {
   if (!complete || index >= activity.rounds.length - 1) return;
-  index++; reset();
+  index++; restoreRound();
   document.querySelector('#library-prompt').focus({ preventScroll: true });
 });
 document.querySelector('#again').addEventListener('click', reset);
 document.querySelector('#hint').addEventListener('click', () => { feedback.textContent = activity.hint; feedback.classList.remove('is-complete'); });
-document.querySelector('#undo').addEventListener('click', () => { answer.pop(); feedback.textContent = ''; render(); });
+document.querySelector('#undo').addEventListener('click', () => { answer.pop(); checked = false; feedback.textContent = ''; render(); });
 document.querySelector('#check').addEventListener('click', () => {
+  checked = true;
   complete = checkLibraryAnswer(activity, index, answer);
   feedback.textContent = complete ? 'That order works!' : 'Take another look. You can change the order.';
   render();
@@ -230,6 +259,18 @@ readAloud.addEventListener('click', async () => {
   window.speechSynthesis.speak(utterance);
 });
 const menu = document.querySelector('.activity-menu');
+document.querySelector('#clear-progress').addEventListener('click', () => {
+  if (!window.confirm('Clear saved progress for all library activities on this browser?')) return;
+  const cleared = progressStore.clearAll();
+  menu.open = false;
+  choose(activity.id);
+  document.querySelector('#library-prompt').focus({ preventScroll: true });
+  if (!cleared) {
+    const status = document.querySelector('#save-status');
+    status.hidden = false;
+    status.textContent = 'Saved progress could not be fully cleared on this device.';
+  }
+});
 document.addEventListener('pointerdown', event => { if (!menu.contains(event.target)) menu.open = false; });
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && menu.open) { menu.open = false; menu.querySelector('summary').focus(); }

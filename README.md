@@ -149,6 +149,10 @@ This repository is currently a synthetic-data architecture/portfolio prototype. 
 
 ## Development
 
+The activity library now keeps browser-local synthetic progress across refreshes
+and game switching. See `docs/activity-progress.md` for reset, deletion, storage
+failure behavior, and the shared-device limitations.
+
 Use Node 24 LTS. The isolated synthetic public-build preview is documented in
 `docs/public-build-boundary.md`: `npm run build:public`, then
 `npm run preview:public` at port 4174. `npm run test:public` tests the built

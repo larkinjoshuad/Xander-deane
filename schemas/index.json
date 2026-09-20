@@ -2,6 +2,13 @@
   "contractVersion": "0.1.0",
   "schemas": [
     {
+      "name": "activity-progress",
+      "schemaId": "https://xander-deane.dev/schemas/activity-progress.schema.json",
+      "schemaPath": "schemas/activity-progress.schema.json",
+      "fixtureSuffix": ".activity-progress.json",
+      "stability": "prototype"
+    },
+    {
       "name": "activity-set",
       "schemaId": "https://xander-deane.dev/schemas/activity-set.schema.json",
       "schemaPath": "schemas/activity-set.schema.json",

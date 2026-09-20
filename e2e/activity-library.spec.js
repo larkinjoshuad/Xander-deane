@@ -76,5 +76,7 @@ test('keyboard and invalid links have safe defaults', async ({ page }) => {
   await expect(page.getByRole('status')).toHaveText('You found it!');
   await page.reload();
   await expect(page.locator('#activity')).toHaveValue('add');
+  await expect(page.getByRole('status')).toHaveText('You found it!');
+  await page.getByRole('button', { name: 'Again', exact: true }).click();
   await expect(page.getByRole('status')).toBeEmpty();
 });

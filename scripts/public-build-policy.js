@@ -10,6 +10,7 @@ export const PUBLIC_MODULES = Object.freeze([...PUBLIC_ENTRIES,
   'src/core/domain.js', 'src/core/subject-pack.js', 'src/app/learning-session.js',
   'src/app/workspace-host.js', 'src/app/device-profile.js', 'src/app/session-persistence.js',
   'src/app/progress-model.js', 'src/app/activity-library.js', 'src/app/toddler-matching.js',
+  'src/app/activity-progress.js',
   'src/app/play-together.js',
 ]);
 export const PUBLIC_STATIC = Object.freeze([

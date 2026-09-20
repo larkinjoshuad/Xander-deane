@@ -75,6 +75,7 @@ body.library { background: #fff; color: #283d46; font-family: Nunito, 'Segoe UI'
 .memory-back { font-size: 45px; font-weight: 900; color: #806126; }
 #library-feedback { display: flex; justify-content: center; align-items: center; gap: 10px; text-align: center; min-height: 40px; max-width: 650px; line-height: 1.4; font-size: 17px; font-weight: 700; color: #526e79; margin: 24px auto 0; }
 #library-feedback.is-complete { color: #286641; }
+#save-status { max-width: 650px; margin: 16px auto 0; text-align: center; font-size: 14px; color: #715017; }
 #library-feedback.is-complete::before { content: ''; flex-shrink: 0; width: 24px; height: 24px; background: url('./assets/icons/circle-check.svg') center / contain no-repeat; }
 .library .problem-actions { position: sticky; bottom: 0; display: flex; flex-wrap: wrap; align-items: center; min-height: 90px; gap: 14px; padding: 16px 20px max(16px, env(safe-area-inset-bottom)); border-color: #deedf1; background: #fff; }
 .library .problem-actions button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-width: 52px; width: auto; height: 52px; min-height: 52px; padding: 12px 20px; color: #52616a; background: #f0f5f7; font-size: 16px; border: 1px solid #e0e9ed; }
