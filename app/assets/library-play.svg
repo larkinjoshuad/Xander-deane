@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+  <symbol id="blocks" viewBox="0 0 80 80">
+    <path d="M8 45h29v27H8z" fill="#ef7670"/><path d="M8 66h29v6H8z" fill="#d95454"/>
+    <circle cx="57" cy="55" r="18" fill="#efc655"/><path d="M43 66a18 18 0 0 0 28-2" fill="none" stroke="#d9aa33" stroke-width="5"/>
+    <path d="M38 7 60 39H16Z" fill="#64b6ce"/><path d="M16 39h44l-4-6H20z" fill="#388ea9"/>
+    <path d="M17 51h10" stroke="#fff" stroke-opacity=".6" stroke-width="4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="numbers" viewBox="0 0 80 80">
+    <g transform="rotate(-9 25 40)"><rect x="6" y="15" width="36" height="49" rx="5" fill="#72bdcf"/><path d="M20 32 27 27v23m-7 0h15" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <g transform="rotate(9 56 46)"><rect x="36" y="27" width="36" height="46" rx="5" fill="#efc655"/><path d="M47 41c1-9 18-9 16 1-1 5-16 11-16 17h17" fill="none" stroke="#705a23" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+  </symbol>
+  <symbol id="book" viewBox="0 0 80 80">
+    <path d="M7 20c11-4 22-2 33 5 11-7 22-9 33-5v47c-12-4-23-2-33 4-10-6-21-8-33-4Z" fill="#dd626b"/>
+    <path d="M12 15c10-2 19 1 28 6 9-5 18-8 28-6v46c-10-1-19 1-28 6-9-5-18-7-28-6Z" fill="#fff6de"/>
+    <path d="M40 22v44" stroke="#e5cdb2" stroke-width="2"/>
+    <path d="m19 31 13 4m-13 7 13 4m16-11 13-4m-13 15 13-4" stroke="#d3b69b" stroke-width="3" stroke-linecap="round"/>
+    <path d="M55 14v20l5-4 5 2V15" fill="#65ad9a"/>
+  </symbol>
+  <symbol id="plant" viewBox="0 0 80 80">
+    <path d="M40 61V29" fill="none" stroke="#3d8968" stroke-width="5" stroke-linecap="round"/>
+    <path d="M40 41C18 44 10 31 12 16c17-1 31 9 28 25Z" fill="#7fb89b"/>
+    <path d="M41 30C42 10 56 6 69 10c-2 17-11 26-28 20Z" fill="#439878"/>
+    <path d="m24 28 15 12m4-13 13-8" stroke="#c2dfbb" stroke-width="2" stroke-linecap="round"/>
+    <path d="M24 53h33l-5 20H29Z" fill="#e89a77"/><rect x="20" y="50" width="41" height="8" rx="3" fill="#f5b28d"/>
+  </symbol>
+  <symbol id="paint" viewBox="0 0 100 100">
+    <path d="M22 14C35 4 66 8 81 24s15 43 2 58S41 99 22 85 5 29 22 14Z" fill="currentColor"/>
+    <path d="M21 71c12 19 42 21 60 4" fill="none" stroke="#000" stroke-opacity=".09" stroke-width="8" stroke-linecap="round"/>
+    <path d="M24 36c2-9 10-14 19-14" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="7" stroke-linecap="round"/>
+  </symbol>
+</svg>

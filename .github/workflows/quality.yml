@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -56,7 +56,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -64,6 +64,9 @@ jobs:
 
       - name: List Playwright test matrix
         run: npm run test:e2e -- --list
+
+      - name: Build and verify public release boundary in browsers
+        run: npm run test:public
 
       - name: Run Playwright browser tests
         run: npm run test:e2e

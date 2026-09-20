@@ -62,3 +62,36 @@ test('arithmetic answers are independently recomputed for every generated questi
     assert.equal(values[1] - values[0], values[2] - values[1]);
   });
 });
+
+test('arithmetic answers vary in numerical rank and visible position without invalid alternatives', () => {
+  for (const id of ['add', 'subtract', 'multiply']) {
+    const ranks = [0, 0, 0], positions = [0, 0, 0];
+    getActivity(id).rounds.forEach((round, index) => {
+      const correct = Number(round.answer[0]);
+      const values = round.choices.map(choice => Number(choice.id));
+      assert.ok(values.every(value => Number.isSafeInteger(value) && value >= 0), `${id}: ${round.prompt}`);
+      assert.equal(new Set(values).size, 3);
+      ranks[[...values].sort((a, b) => a - b).indexOf(correct)]++;
+      positions[displayChoices(round, index).findIndex(choice => choice.id === round.answer[0])]++;
+      for (const wrong of round.choices.filter(choice => choice.id !== round.answer[0])) {
+        assert.equal(checkLibraryAnswer(getActivity(id), index, [wrong.id]), false);
+      }
+    });
+    // No smallest/largest or fixed-position strategy should dominate a set.
+    for (const counts of [ranks, positions]) {
+      assert.ok(counts.every(count => count >= 4 && count <= 14), `${id}: distribution ${counts}`);
+    }
+  }
+});
+
+test('choice layouts are repeatable across retries and never mutate the content', () => {
+  for (const activity of ACTIVITY_LIBRARY) activity.rounds.forEach((round, index) => {
+    const original = structuredClone(round.choices);
+    const first = displayChoices(round, index);
+    assert.deepEqual(displayChoices(round, index), first);
+    assert.deepEqual(round.choices, original);
+    assert.deepEqual(new Set(first.map(choice => choice.id)), new Set(original.map(choice => choice.id)));
+  });
+  assert.deepEqual(displayChoices({ prompt: 'Empty', choices: [] }), []);
+  assert.deepEqual(displayChoices({ prompt: 'One', choices: [{ id: '1' }] }), [{ id: '1' }]);
+});

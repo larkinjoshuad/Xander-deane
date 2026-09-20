@@ -6,12 +6,25 @@ const family = (id, subject, title, kind, hint, rounds) => ({ contractVersion: '
 const library = [];
 const add = (...args) => library.push(family(...args));
 
+// Stable content-derived variation keeps answer positions unchanged during retries.
+function contentSeed(value) {
+  let seed = 2166136261;
+  for (const character of value) seed = Math.imul(seed ^ character.charCodeAt(0), 16777619) >>> 0;
+  return seed;
+}
+
+function arithmeticQuestion(prompt, answer) {
+  const rank = Math.min(answer, contentSeed(prompt) % 3);
+  const alternatives = Array.from({ length: 3 }, (_, position) => answer + position - rank).filter(value => value !== answer);
+  return question(prompt, answer, alternatives);
+}
+
 add('add', 'math', 'Addition kitchen', 'choice', 'Start with the first number and count on.',
-  Array.from({ length: 24 }, (_, i) => { const a = i % 8 + 1, b = Math.floor(i / 8) + 1; return question(`${a} + ${b} = ?`, a + b, [a + b + 1, a + b + 2]); }));
+  Array.from({ length: 24 }, (_, i) => { const a = i % 8 + 1, b = Math.floor(i / 8) + 1; return arithmeticQuestion(`${a} + ${b} = ?`, a + b); }));
 add('subtract', 'math', 'Take-away trail', 'choice', 'Start with the larger number. Take away one at a time.',
-  Array.from({ length: 24 }, (_, i) => { const b = i % 4 + 1, a = Math.floor(i / 4) + b + 1; return question(`${a} - ${b} = ?`, a - b, [a - b + 1, a - b + 2]); }));
+  Array.from({ length: 24 }, (_, i) => { const b = i % 4 + 1, a = Math.floor(i / 4) + b + 1; return arithmeticQuestion(`${a} - ${b} = ?`, a - b); }));
 add('multiply', 'math', 'Equal-group puzzles', 'choice', 'Add the same group size once for each group.',
-  Array.from({ length: 24 }, (_, i) => { const groups = i % 4 + 2, size = Math.floor(i / 4) + 1; return question(`${groups} groups of ${size}. How many altogether?`, groups * size, [groups * size + 1, groups * size + 2]); }));
+  Array.from({ length: 24 }, (_, i) => { const groups = i % 4 + 2, size = Math.floor(i / 4) + 1; return arithmeticQuestion(`${groups} groups of ${size}. How many altogether?`, groups * size); }));
 add('compare', 'math', 'Number mountain', 'choice', 'Compare tens first, then ones.',
   Array.from({ length: 24 }, (_, i) => { const a = i * 3 + 2; return question('Which number is greatest?', a + 4, [a, a + 2]); }));
 add('number-order', 'math', 'Number stepping stones', 'order', 'Find the smallest number first. Then find the next smallest.',
@@ -116,8 +129,13 @@ export function checkLibraryAnswer(activity, roundIndex, answer) {
 }
 export function displayChoices(round, index = 0) {
   const choices = [...round.choices];
-  const offset = index % Math.max(1, choices.length - 1) + 1;
-  return [...choices.slice(offset), ...choices.slice(0, offset)];
+  let seed = contentSeed(`${round.prompt}:choices:${index}`);
+  for (let position = choices.length - 1; position > 0; position--) {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    const other = Math.floor((seed / 4294967296) * (position + 1));
+    [choices[position], choices[other]] = [choices[other], choices[position]];
+  }
+  return choices;
 }
 export function memoryDeck(round, random = Math.random) {
   const cards = [...round.choices, ...round.choices];

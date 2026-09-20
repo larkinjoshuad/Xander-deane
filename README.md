@@ -149,6 +149,14 @@ This repository is currently a synthetic-data architecture/portfolio prototype. 
 
 ## Development
 
+Use Node 24 LTS. The isolated synthetic public-build preview is documented in
+`docs/public-build-boundary.md`: `npm run build:public`, then
+`npm run preview:public` at port 4174. `npm run test:public` tests the built
+artifact, including its excluded routes and network restrictions. This is a
+release-boundary milestone, not public child-use approval. Never publish the
+repository-root development server below. The development tutor launcher is
+loopback-only and ignores provider keys; live child-facing AI remains blocked.
+
 Install dependencies with `npm ci` before running tests or validation.
 Fixture validation uses Ajv's JSON Schema draft 2020-12 implementation and
 `ajv-formats`, including referenced definitions, numeric bounds, and date-time

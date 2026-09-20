@@ -1,7 +1,7 @@
 import { createServer } from 'node:http';
 import { summarizeHintLadder } from './learning-session.js';
 import { createTutorContext } from './tutor-context.js';
-import { createTutorGateway } from './model-gateway-claude.js';
+import { createSyntheticModelGateway } from './model-gateway.js';
 
 /**
  * Minimal server-side endpoint for the live tutor.
@@ -10,15 +10,15 @@ import { createTutorGateway } from './model-gateway-claude.js';
  * tutor context (using server-held synthetic learner/consent/safety fixtures),
  * calls the tutor gateway, and returns the tutor response. The API key lives
  * only here — it never reaches the browser. The gateway falls back to the
- * deterministic synthetic tutor when no key is configured, so the endpoint is
- * always safe to run.
+ * deterministic synthetic tutor by default, regardless of environment keys.
+ * This development endpoint must not be deployed as a public service.
  *
  * Routes:
  *   GET  /healthz        -> { status, mode }
  *   POST /tutor/respond  -> { mode, tutorResponse }   body: { session }
  */
 export function createTutorApiServer({
-  gateway = createTutorGateway(),
+  gateway = createSyntheticModelGateway(),
   learnerProfile,
   consentRecord,
   safetyPolicy,

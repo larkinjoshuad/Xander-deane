@@ -12,42 +12,49 @@
 <body class="touch-learning library">
   <main class="learn-shell">
     <header class="lesson-header">
-      <span class="lesson-label">Explore <small>Synthetic demo</small></span>
+      <span class="lesson-label"><svg class="brand-mark" aria-hidden="true"><use href="./assets/library-play.svg#blocks"></use></svg>Xander<span class="brand-divider"></span><span class="section-name">Explore</span></span>
+      <small class="demo-label">Synthetic demo</small>
       <details class="activity-menu">
-        <summary aria-label="Activity menu">&#8943;</summary>
+        <summary aria-label="Activity menu" title="Activity menu"><img src="./assets/icons/ellipsis.svg" alt="" /></summary>
         <nav aria-label="Activity options">
           <button id="read-aloud">Read aloud</button>
           <a href="./toddler.html">Toddler matching</a>
           <a href="./play-together.html">Play Together</a>
           <a href="./learn.html">Hands-on practice</a>
           <a href="./parent.html">Family overview</a>
+          <span id="coverage"></span>
         </nav>
       </details>
     </header>
     <div class="library-subjects" role="group" aria-label="Subject">
-      <button data-subject="toddler">Toddlers</button>
-      <button data-subject="math">Math</button>
-      <button data-subject="language">Language</button>
-      <button data-subject="science">Science</button>
+      <button data-subject="toddler"><svg aria-hidden="true"><use href="./assets/library-play.svg#blocks"></use></svg><span>Toddlers</span></button>
+      <button data-subject="math"><svg aria-hidden="true"><use href="./assets/library-play.svg#numbers"></use></svg><span>Math</span></button>
+      <button data-subject="language"><svg aria-hidden="true"><use href="./assets/library-play.svg#book"></use></svg><span>Language</span></button>
+      <button data-subject="science"><svg aria-hidden="true"><use href="./assets/library-play.svg#plant"></use></svg><span>Science</span></button>
     </div>
     <div class="library-picker">
       <label for="activity">Activity</label>
       <select id="activity"></select>
-      <span id="coverage"></span>
     </div>
-    <div class="round-navigation">
-      <button id="previous" aria-label="Previous problem">&#8592;</button>
-      <span id="round-position"></span>
-      <button id="next" aria-label="Next problem">&#8594;</button>
-    </div>
-    <h1 id="library-prompt"></h1>
-    <p id="library-feedback" role="status" aria-live="polite"></p>
-    <section id="library-board" aria-label="Activity board"></section>
+    <section class="play-space" aria-labelledby="library-prompt">
+      <div class="round-navigation">
+        <button id="previous" class="icon-button" aria-label="Previous problem" title="Previous problem"><img src="./assets/icons/arrow-left.svg" alt="" /></button>
+        <div class="round-progress"><span id="round-position"></span><progress id="round-progress" aria-label="Problem position" max="1" value="1"></progress></div>
+        <button id="next" class="icon-button" aria-label="Next problem" title="Next problem"><img src="./assets/icons/arrow-right.svg" alt="" /></button>
+      </div>
+      <div class="prompt-row">
+        <h1 id="library-prompt" tabindex="-1"></h1>
+        <button id="listen" class="icon-button" aria-label="Read question aloud" title="Read question aloud"><img src="./assets/icons/volume-2.svg" alt="" /></button>
+      </div>
+      <section id="library-board" aria-label="Activity board"></section>
+      <p id="library-feedback" role="status" aria-live="polite"></p>
+    </section>
     <footer class="problem-actions" aria-label="Activity actions">
-      <button id="hint">Hint</button>
-      <button id="undo" hidden>Undo</button>
-      <button id="check" class="primary" hidden>Check</button>
-      <button id="again">Again</button>
+      <button id="hint" title="Hint"><img src="./assets/icons/lightbulb.svg" alt="" /><span>Hint</span></button>
+      <button id="undo" aria-label="Undo" title="Undo" hidden><img src="./assets/icons/undo-2.svg" alt="" /></button>
+      <button id="check" class="primary" hidden><img src="./assets/icons/check.svg" alt="" /><span>Check</span></button>
+      <button id="again" aria-label="Again" title="Start this problem again"><img src="./assets/icons/rotate-ccw.svg" alt="" /></button>
+      <button id="continue" class="primary" hidden><span>Next</span><img src="./assets/icons/arrow-right.svg" alt="" /></button>
     </footer>
   </main>
   <script type="module" src="./library.js"></script>
