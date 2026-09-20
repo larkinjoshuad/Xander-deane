@@ -95,7 +95,7 @@ npm run test:public
 ```
 
 The public browser runner rebuilds first, starts a fresh loopback server on an
-available port, runs desktop/phone Chromium against that artifact, and closes
+available port, runs desktop/phone Chromium and tablet WebKit against that artifact, and closes
 the test server. It never reuses the repository-root development server.
 
 Tests cover deterministic outputs, stale-file exclusion, forbidden imports,
@@ -105,7 +105,10 @@ all learning-page shells, representative answers, family evidence, local audio,
 and no unexpected requests or CSP violations in the sampled flows. Screenshots
 are retained under test-results. CI uses Node 24 and runs this boundary suite.
 
-This does not repair the audit's educational shortcuts, mastery, storage
-recovery, mobile menu, or full WebKit/physical-device gaps. The public tests close
-the menu before continuing; the earlier phone menu finding is not marked fixed.
-Do not represent these Chromium checks as App Store/Play Store certification.
+Subsequent hardening adds arithmetic shortcut checks, library focus and progress
+recovery, original-lesson storage fallback/validation, bounded browser histories,
+and duplicate-check suppression. New practice updates cannot award mastery or
+high confidence. These changes do not validate historical prototype assessments,
+educational effectiveness, or a complete curriculum. The public tests close the
+menu before continuing; the earlier phone menu finding is not marked fixed.
+Do not represent browser automation as physical-device or store certification.

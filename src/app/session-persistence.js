@@ -1,17 +1,29 @@
 import { CONTRACT_VERSION } from '../core/domain.js';
 
 const DEFAULT_NAMESPACE = 'xander-deane.learning-session';
+export const BROWSER_SESSION_LIMITS = Object.freeze({ events: 200, snapshots: 40, sessions: 50, characters: 500000 });
 
 export function createSessionRecord(session, {
   previousRecord = null,
   now = () => new Date().toISOString(),
+  limits = null,
 } = {}) {
   const previousEvents = previousRecord?.events ?? [];
   const previousSnapshotHistory = previousRecord?.snapshotHistory ?? [];
   const currentWorkspaceSnapshot = cloneJson(session.workspaceSnapshot);
-  const snapshotHistory = shouldAppendSnapshot(previousSnapshotHistory, currentWorkspaceSnapshot)
+  let snapshotHistory = shouldAppendSnapshot(previousSnapshotHistory, currentWorkspaceSnapshot)
     ? [...previousSnapshotHistory, currentWorkspaceSnapshot]
     : previousSnapshotHistory;
+  let events = mergeEvents(previousEvents, session.events);
+  const previousIds = new Set(previousEvents.map(event => event.id));
+  const hintCount = (previousRecord?.metadata?.totalHintCount ?? previousEvents.filter(event => event.type === 'hint_requested').length)
+    + session.events.filter(event => event.type === 'hint_requested' && !previousIds.has(event.id)).length;
+  const truncated = previousRecord?.metadata?.historyTruncated === true || (limits
+    && (events.length > limits.events || snapshotHistory.length > limits.snapshots));
+  if (limits) {
+    events = events.slice(-limits.events);
+    snapshotHistory = snapshotHistory.slice(-limits.snapshots);
+  }
 
   return freezeJson({
     contractVersion: CONTRACT_VERSION,
@@ -23,14 +35,16 @@ export function createSessionRecord(session, {
     workspaceKind: session.workspaceSnapshot.kind,
     currentWorkspaceSnapshot,
     snapshotHistory,
-    events: mergeEvents(previousEvents, session.events),
+    events,
     tutorResponse: session.tutorResponse,
     evaluation: session.evaluation,
     updatedAt: now(),
     metadata: {
       source: 'session-persistence',
-      eventCount: mergeEvents(previousEvents, session.events).length,
+      eventCount: events.length,
       snapshotCount: snapshotHistory.length,
+      ...(truncated ? { historyTruncated: true } : {}),
+      ...(limits ? { totalHintCount: hintCount, storageVersion: 1, contentKey: JSON.stringify(session.problem) } : {}),
     },
   });
 }
@@ -75,31 +89,86 @@ export function createBrowserSessionStore({
   storage = getBrowserStorage(),
   now = () => new Date().toISOString(),
 } = {}) {
-  if (!storage) {
-    return createInMemorySessionStore({ now });
-  }
+  const memory = new Map();
+  let persistent = Boolean(storage);
+  let recovered = false;
+  let indexReadable = true;
+  const remember = (id, record) => {
+    memory.delete(id);
+    memory.set(id, record);
+    if (memory.size > BROWSER_SESSION_LIMITS.sessions) memory.delete(memory.keys().next().value);
+  };
+  const readIndex = () => {
+    let raw;
+    try { raw = storage?.getItem(indexKey(namespace)); }
+    catch { persistent = false; indexReadable = false; return []; }
+    indexReadable = true;
+    try {
+      if (!raw) return [];
+      if (raw.length > 20000) throw new TypeError('Oversized session index');
+      const ids = JSON.parse(raw);
+      if (!Array.isArray(ids) || ids.length > BROWSER_SESSION_LIMITS.sessions || !ids.every(validId)) {
+        throw new TypeError('Invalid session index');
+      }
+      return [...new Set(ids)];
+    } catch {
+      recovered = true;
+      return [];
+    }
+  };
 
   return Object.freeze({
+    get persistent() { return persistent; },
+    get recovered() { return recovered; },
     saveSession(session) {
-      const previousRecord = this.loadSession(session.sessionId);
-      const record = createSessionRecord(session, { previousRecord, now });
-      storage.setItem(recordKey(namespace, session.sessionId), JSON.stringify(record));
-      writeSessionIndex({ namespace, storage, sessionId: session.sessionId });
+      const loaded = this.loadSession(session.sessionId);
+      const previousRecord = loaded?.metadata?.contentKey === JSON.stringify(session.problem) ? loaded : null;
+      const record = createSessionRecord(session, { previousRecord, now, limits: BROWSER_SESSION_LIMITS });
+      remember(session.sessionId, record);
+      try {
+        const raw = JSON.stringify(record);
+        if (raw.length > BROWSER_SESSION_LIMITS.characters) throw new RangeError('Session too large');
+        const ids = readIndex().filter(id => id !== session.sessionId);
+        if (!indexReadable) throw new Error('Cannot safely update an unreadable index');
+        if (ids.length >= BROWSER_SESSION_LIMITS.sessions) throw new RangeError('Session storage is full');
+        storage?.setItem(recordKey(namespace, session.sessionId), raw);
+        storage?.setItem(indexKey(namespace), JSON.stringify([...ids, session.sessionId]));
+      } catch { persistent = false; }
       return record;
     },
     loadSession(sessionId) {
-      const rawRecord = storage.getItem(recordKey(namespace, sessionId));
-      return rawRecord ? freezeJson(JSON.parse(rawRecord)) : null;
+      if (!validId(sessionId)) return null;
+      if (memory.has(sessionId)) return memory.get(sessionId);
+      let record = null;
+      try {
+        const raw = storage?.getItem(recordKey(namespace, sessionId));
+        if (raw) {
+          try {
+            if (raw.length > BROWSER_SESSION_LIMITS.characters) throw new TypeError('Oversized save');
+            const parsed = JSON.parse(raw);
+            if (!validStoredRecord(parsed, sessionId) || parsed.metadata?.storageVersion !== 1
+                || typeof parsed.metadata?.contentKey !== 'string') throw new TypeError('Invalid or unversioned save');
+            record = freezeJson(parsed);
+          } catch { recovered = true; }
+        }
+      } catch { persistent = false; }
+      remember(sessionId, record);
+      return record;
     },
     listSessions() {
-      return Object.freeze(readSessionIndex({ namespace, storage })
-        .map((sessionId) => this.loadSession(sessionId))
-        .filter(Boolean));
+      const ids = [...new Set([...readIndex(), ...memory.keys()])];
+      return Object.freeze(ids.map(id => this.loadSession(id)).filter(Boolean));
     },
     clearSession(sessionId) {
-      storage.removeItem(recordKey(namespace, sessionId));
-      const remainingSessionIds = readSessionIndex({ namespace, storage }).filter((id) => id !== sessionId);
-      storage.setItem(indexKey(namespace), JSON.stringify(remainingSessionIds));
+      if (!validId(sessionId)) return false;
+      remember(sessionId, null);
+      try {
+        const ids = readIndex();
+        if (!indexReadable) throw new Error('Cannot safely update an unreadable index');
+        storage?.removeItem(recordKey(namespace, sessionId));
+        storage?.setItem(indexKey(namespace), JSON.stringify(ids.filter(id => id !== sessionId)));
+        return Boolean(storage);
+      } catch { persistent = false; return false; }
     },
   });
 }
@@ -117,6 +186,51 @@ function assertCompatibleSessionRecord(session, sessionRecord) {
   if (session.workspaceSnapshot.kind !== sessionRecord.workspaceKind) {
     throw new RangeError(`sessionRecord workspace ${sessionRecord.workspaceKind} does not match ${session.workspaceSnapshot.kind}`);
   }
+  if (!validStoredRecord(sessionRecord, session.sessionId)
+      || (sessionRecord.metadata?.contentKey !== undefined && sessionRecord.metadata.contentKey !== JSON.stringify(session.problem))
+      || !workspaceMatchesContent(sessionRecord.currentWorkspaceSnapshot, session.workspaceSnapshot)) {
+    throw new RangeError('sessionRecord is damaged or belongs to an incompatible content version');
+  }
+}
+
+const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+const validId = value => typeof value === 'string' && value.length > 0 && value.length <= 200;
+const validDate = value => typeof value === 'string' && Number.isFinite(Date.parse(value));
+const same = (left, right) => JSON.stringify(left) === JSON.stringify(right);
+
+function validStoredRecord(record, sessionId) {
+  if (!isObject(record) || record.contractVersion !== CONTRACT_VERSION || record.sessionId !== sessionId
+      || !validId(record.problemId) || !validDate(record.updatedAt) || !isObject(record.tutorResponse)
+      || typeof record.tutorResponse.messageText !== 'string'
+      || !Array.isArray(record.events) || !Array.isArray(record.snapshotHistory)) return false;
+  if (record.evaluation !== null && (!isObject(record.evaluation) || typeof record.evaluation.isCorrect !== 'boolean')) return false;
+  if (record.metadata?.totalHintCount !== undefined
+      && (!Number.isSafeInteger(record.metadata.totalHintCount) || record.metadata.totalHintCount < 0)) return false;
+  const snapshot = record.currentWorkspaceSnapshot;
+  if (!isObject(snapshot) || snapshot.contractVersion !== CONTRACT_VERSION || snapshot.sessionId !== sessionId
+      || snapshot.problemId !== record.problemId || snapshot.kind !== record.workspaceKind
+      || !Number.isSafeInteger(snapshot.version) || snapshot.version < 1 || !isObject(snapshot.state)) return false;
+  return record.events.every(event => isObject(event) && validId(event.id) && typeof event.type === 'string'
+    && event.sessionId === sessionId && event.problemId === record.problemId && isObject(event.payload))
+    && record.snapshotHistory.every(value => isObject(value) && value.sessionId === sessionId && isObject(value.state));
+}
+
+function workspaceMatchesContent(snapshot, initial) {
+  const state = snapshot.state, expected = initial.state;
+  if (snapshot.kind === 'token-selection') {
+    return same(state.tokens, expected.tokens) && same(state.selectableTokenIndexes, expected.selectableTokenIndexes)
+      && (state.selectedTokenIndex === null || expected.selectableTokenIndexes.includes(state.selectedTokenIndex));
+  }
+  const field = snapshot.kind === 'equal-groups' ? 'counters' : snapshot.kind === 'classification-sort' ? 'items' : null;
+  if (!field || !Array.isArray(state[field]) || !Array.isArray(state.groups)) return false;
+  if (!state[field].every(isObject) || !state.groups.every(group => isObject(group) && Array.isArray(group.items))) return false;
+  if (!same(state[field].map(item => item.id), expected[field].map(item => item.id))
+      || !same(state.groups.map(group => group.id), expected.groups.map(group => group.id))) return false;
+  const assigned = state.groups.flatMap(group => group.items);
+  if (new Set(assigned).size !== assigned.length || assigned.some(id => !state[field].some(item => item.id === id))) return false;
+  if (!state[field].every(item => item.groupId === null ? !assigned.includes(item.id)
+    : state.groups.some(group => group.id === item.groupId && group.items.includes(item.id)))) return false;
+  return field !== 'items' || state.selectedItemId === null || state.items.some(item => item.id === state.selectedItemId);
 }
 
 function mergeEvents(previousEvents, nextEvents) {
@@ -134,20 +248,6 @@ function shouldAppendSnapshot(snapshotHistory, currentWorkspaceSnapshot) {
   return !previousSnapshot || JSON.stringify(previousSnapshot) !== JSON.stringify(currentWorkspaceSnapshot);
 }
 
-function writeSessionIndex({ namespace, storage, sessionId }) {
-  const sessionIds = readSessionIndex({ namespace, storage });
-  if (!sessionIds.includes(sessionId)) {
-    storage.setItem(indexKey(namespace), JSON.stringify([...sessionIds, sessionId].sort()));
-  }
-}
-
-function readSessionIndex({ namespace, storage }) {
-  const rawIndex = storage.getItem(indexKey(namespace));
-  if (!rawIndex) return [];
-  const parsed = JSON.parse(rawIndex);
-  return Array.isArray(parsed) ? parsed.filter((sessionId) => typeof sessionId === 'string') : [];
-}
-
 function recordKey(namespace, sessionId) {
   return `${namespace}:record:${sessionId}`;
 }
@@ -157,7 +257,7 @@ function indexKey(namespace) {
 }
 
 function getBrowserStorage() {
-  return globalThis.window?.localStorage ?? globalThis.localStorage ?? null;
+  try { return globalThis.window?.localStorage ?? globalThis.localStorage ?? null; } catch { return null; }
 }
 
 function cloneJson(value) {

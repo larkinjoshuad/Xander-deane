@@ -37,16 +37,24 @@ function buildSubjectCard({ subject, sessionStore, masteryLookup, now }) {
   const initialSession = createInitialLearningSession({ objective, problem, now });
   const objectiveId = initialSession.subjectPack.objectives[0].id;
 
-  const record = sessionStore.loadSession(initialSession.sessionId) ?? null;
-  const session = record ? rehydrateLearningSession(initialSession, record) : initialSession;
-  const skillMastery = masteryLookup(objectiveId) ?? createSkillMasteryForSession(session, { now });
-  const progress = createLearnerProgressView({ session, sessionRecord: record, skillMastery });
+  let record = sessionStore.loadSession(initialSession.sessionId) ?? null;
+  let session = initialSession;
+  try { if (record) session = rehydrateLearningSession(initialSession, record); }
+  catch { record = null; }
+  let progress;
+  try {
+    const skillMastery = masteryLookup(objectiveId) ?? createSkillMasteryForSession(session, { now });
+    progress = createLearnerProgressView({ session, sessionRecord: record, skillMastery });
+  } catch {
+    progress = createLearnerProgressView({ session, sessionRecord: record, skillMastery: createSkillMasteryForSession(session, { now }) });
+  }
 
   const events = session.events ?? [];
-  const hintsUsed = events.filter((event) => event.type === 'hint_requested').length;
+  const hintsUsed = Number.isSafeInteger(record?.metadata?.totalHintCount)
+    ? record.metadata.totalHintCount : events.filter((event) => event.type === 'hint_requested').length;
   const started = progress.attempts > 0 || events.length > 1;
   // The playbook's north-star signal: getting it right without leaning on hints.
-  const unaidedSuccess = progress.correct > 0 && hintsUsed === 0;
+  const unaidedSuccess = progress.correct > 0 && hintsUsed === 0 && record?.metadata?.historyTruncated !== true;
 
   return freeze({
     id,

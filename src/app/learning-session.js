@@ -175,7 +175,7 @@ export function placeSelectedCounter(session, groupId, now = () => new Date().to
   const movedCounterId = session.selectedCounterId;
   const workspaceSnapshot = moveCounterToGroup(session.workspaceSnapshot, movedCounterId, groupId, now);
   const interactionEvent = createInteractionEvent({
-    id: createEventId('evt_user_dragged', session.events.length + 1),
+    id: createEventId('evt_user_dragged', nextEventNumber(session)),
     sessionId: session.sessionId,
     learnerId: session.learnerId,
     problemId: session.problem.id,
@@ -200,7 +200,7 @@ export function selectToken(session, tokenIndex, now = () => new Date().toISOStr
   const workspaceSnapshot = selectTokenInSnapshot(session.workspaceSnapshot, tokenIndex, now);
   const selectedToken = workspaceSnapshot.state.tokens[tokenIndex];
   const interactionEvent = createInteractionEvent({
-    id: createEventId('evt_user_selected', session.events.length + 1),
+    id: createEventId('evt_user_selected', nextEventNumber(session)),
     sessionId: session.sessionId,
     learnerId: session.learnerId,
     problemId: session.problem.id,
@@ -237,7 +237,7 @@ export function placeSelectedSortItem(session, groupId, now = () => new Date().t
 
   const workspaceSnapshot = moveSortItemToGroup(session.workspaceSnapshot, selectedItemId, groupId, now);
   const interactionEvent = createInteractionEvent({
-    id: createEventId('evt_user_dragged', session.events.length + 1),
+    id: createEventId('evt_user_dragged', nextEventNumber(session)),
     sessionId: session.sessionId,
     learnerId: session.learnerId,
     problemId: session.problem.id,
@@ -261,7 +261,7 @@ export function resetWorkspace(session, now = () => new Date().toISOString()) {
     now,
   });
   const resetEvent = createInteractionEvent({
-    id: createEventId('evt_workspace_reset', session.events.length + 1),
+    id: createEventId('evt_workspace_reset', nextEventNumber(session)),
     sessionId: session.sessionId,
     learnerId: session.learnerId,
     problemId: session.problem.id,
@@ -277,7 +277,7 @@ export function resetWorkspace(session, now = () => new Date().toISOString()) {
     workspaceSnapshot,
     evaluation: null,
     tutorResponse: createTutorResponse({
-      id: createEventId('msg_reset', session.events.length + 1),
+      id: createEventId('msg_reset', nextEventNumber(session)),
       sessionId: session.sessionId,
       problemId: session.problem.id,
       feedbackType: 'encouragement',
@@ -296,14 +296,14 @@ export function checkWorkspaceAnswer(session, now = () => new Date().toISOString
     workspaceSnapshot: session.workspaceSnapshot,
   });
   const evaluation = createEvaluationResult({
-    id: createEventId('eval_answer_checked', session.events.length + 1),
+    id: createEventId('eval_answer_checked', nextEventNumber(session)),
     session,
     rawEvaluation,
     answer,
     evaluatedAt,
   });
   const answerEvent = createInteractionEvent({
-    id: createEventId('evt_answer_checked', session.events.length + 1),
+    id: createEventId('evt_answer_checked', nextEventNumber(session)),
     sessionId: session.sessionId,
     learnerId: session.learnerId,
     problemId: session.problem.id,
@@ -313,7 +313,7 @@ export function checkWorkspaceAnswer(session, now = () => new Date().toISOString
     payload: createAnswerCheckedPayload(evaluation),
   });
   const tutorResponse = createTutorResponse({
-    id: createEventId('msg_feedback', session.events.length + 1),
+    id: createEventId('msg_feedback', nextEventNumber(session)),
     sessionId: session.sessionId,
     problemId: session.problem.id,
     feedbackType: evaluation.isCorrect ? 'summary' : 'hint',
@@ -384,7 +384,7 @@ export function requestHint(session, now = () => new Date().toISOString()) {
   const messageText = gatedByEffort ? `Give it a try first, then I can show you more. ${hintBody}` : hintBody;
 
   const hintEvent = createInteractionEvent({
-    id: createEventId('evt_hint_requested', session.events.length + 1),
+    id: createEventId('evt_hint_requested', nextEventNumber(session)),
     sessionId: session.sessionId,
     learnerId: session.learnerId,
     problemId: session.problem.id,
@@ -397,7 +397,7 @@ export function requestHint(session, now = () => new Date().toISOString()) {
   return freezeSession({
     ...session,
     tutorResponse: createTutorResponse({
-      id: createEventId('msg_hint', session.events.length + 1),
+      id: createEventId('msg_hint', nextEventNumber(session)),
       sessionId: session.sessionId,
       problemId: session.problem.id,
       feedbackType: 'hint',
@@ -857,6 +857,14 @@ function normalizeAnswer(value) {
 
 function createEventId(prefix, index) {
   return `${prefix}_${String(index).padStart(3, '0')}`;
+}
+
+function nextEventNumber(session) {
+  // Persisted browser histories may be compacted; length is not a unique sequence.
+  return session.events.reduce((latest, event) => {
+    const suffix = Number(event.id.split('_').at(-1));
+    return Number.isSafeInteger(suffix) ? Math.max(latest, suffix) : latest;
+  }, session.events.length) + 1;
 }
 
 function freezeSession(session) {

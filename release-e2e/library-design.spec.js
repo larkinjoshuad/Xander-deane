@@ -2,16 +2,21 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 import { ACTIVITY_LIBRARY } from '../src/app/activity-library.js';
 
-test('color play keeps focus, celebrates success, and advances without skipping', async ({ page }, info) => {
+async function activateWithKeyboard(locator) {
+  await locator.focus();
+  await locator.press('Enter');
+}
+
+test('keyboard color play keeps focus, celebrates success, and advances without skipping', async ({ page }, info) => {
   await page.goto('/app/library.html?activity=color-hunt');
   await page.evaluate(() => document.fonts.ready);
   expect(await page.evaluate(() => document.fonts.check('800 24px Nunito'))).toBe(true);
   await expect(page.locator('#continue')).toBeHidden();
   await page.screenshot({ path: info.outputPath('color-hunt.png'), fullPage: true });
-  await page.getByRole('button', { name: 'blue', exact: true }).click();
+  await activateWithKeyboard(page.getByRole('button', { name: 'blue', exact: true }));
   await expect(page.getByRole('button', { name: 'blue', exact: true })).toBeFocused();
   await expect(page.locator('#library-feedback')).toContainText('try again');
-  await page.getByRole('button', { name: 'red', exact: true }).click();
+  await activateWithKeyboard(page.getByRole('button', { name: 'red', exact: true }));
   await expect(page.locator('#continue')).toBeFocused();
   await expect(page.locator('#library-feedback')).toHaveClass('is-complete');
   await page.locator('#continue').click();
@@ -20,7 +25,7 @@ test('color play keeps focus, celebrates success, and advances without skipping'
   await expect(page.locator('#round-progress')).toHaveAttribute('value', '2');
   await expect(page.locator('#continue')).toBeHidden();
   for (const color of ['blue', 'yellow', 'green', 'pink', 'orange']) {
-    await page.getByRole('button', { name: color, exact: true }).click();
+    await activateWithKeyboard(page.getByRole('button', { name: color, exact: true }));
     if (color !== 'orange') await page.locator('#continue').click();
   }
   await expect(page.locator('#next')).toBeDisabled();
@@ -60,7 +65,7 @@ test('all activity layouts fit and the main variants remain accessible', async (
 
 test('ordering, memory, menus and visible audio controls remain usable', async ({ page }) => {
   await page.goto('/app/library.html?activity=number-order');
-  for (const name of ['1', '2', '3']) await page.getByRole('button', { name, exact: true }).click();
+  for (const name of ['1', '2', '3']) await activateWithKeyboard(page.getByRole('button', { name, exact: true }));
   await expect(page.locator('#check')).toBeFocused();
   await page.locator('#check').click();
   await expect(page.locator('#continue')).toBeFocused();
@@ -71,7 +76,7 @@ test('ordering, memory, menus and visible audio controls remain usable', async (
   await page.goto('/app/library.html?activity=picture-memory');
   const pairs = await page.locator('[data-card]').evaluateAll(buttons => buttons.map(button => ({ card: button.dataset.card, choice: button.dataset.choice })));
   for (const choice of new Set(pairs.map(pair => pair.choice))) {
-    for (const pair of pairs.filter(pair => pair.choice === choice)) await page.locator(`[data-card="${pair.card}"]`).click();
+    for (const pair of pairs.filter(pair => pair.choice === choice)) await activateWithKeyboard(page.locator(`[data-card="${pair.card}"]`));
   }
   await expect(page.locator('#library-feedback')).toHaveText('All the pairs! Nicely found.');
   await expect(page.locator('#continue')).toBeFocused();

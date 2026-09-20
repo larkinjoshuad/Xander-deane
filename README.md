@@ -15,8 +15,9 @@ Science touch practice uses visual animal tiles with direct dragging between
 groups, tap-then-place and keyboard alternatives, and neutral placement styling.
 Incorrect checks prompt another observation rather than naming the answer;
 explicit hints retain the existing hint ladder. Animal pictures use native emoji
-and vary by platform. Touch emulation is covered in Chromium; physical-device
-and Safari verification remain outstanding. All activities remain synthetic.
+and vary by platform. Drag emulation is covered in Chromium; the isolated public
+build also has WebKit browser coverage. Physical-device and actual Safari
+verification remain outstanding. All activities remain synthetic.
 
 ### Activity coverage
 
@@ -34,10 +35,21 @@ Three interaction types are used: choice, sequencing, and memory pairs. These
 counts describe practice problems, not 249 distinct games or a complete K-12
 curriculum. Math uses deterministic variations; language and science use
 authored sets. Content is schema-validated and synthetic-only, with educator
-review still required. No learner profiles, responses, or mastery records are
-saved by the library; refreshing starts the selected activity at its first round.
+review still required. The library saves bounded, synthetic practice state in
+this browser, including the current round and visited answers. It does not
+create learner profiles or claim mastery, and does not sync to a server.
 Subject/activity links are shareable, and previous/next controls permit free
 exploration. Existing lessons remain available:
+
+The original practice screens recover from unavailable or damaged browser
+storage and show a save warning when needed. Browser session history retains
+the most recent 200 events and 40 snapshots, with at most 50 indexed sessions;
+server record creation remains append-oriented. Unchanged answer checks do not
+add practice evidence, and new practice updates do not award mastery or high
+confidence. Historical prototype records are not validated assessments.
+Original-lesson browser saves now carry a storage version and exact lesson
+definition. Unversioned prototype saves start fresh with a recovery notice;
+this does not migrate or modify server records.
 
 - Math: one equal-groups problem (3 groups of 4; answer 12).
 - Language: one verb-identification problem (answer "runs").

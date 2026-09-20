@@ -176,6 +176,11 @@ For a later native security assessment, use the relevant OWASP MASVS storage, ne
 
 ## Decisions Still Needed
 
+The requested English-language commercial shortlist is recorded in
+`english-market-shortlist.md` (September 20, 2026). It recommends 12 countries,
+with six prioritized for preparation; it is not owner approval of launch
+territories, permission to accept payments, or local legal clearance.
+
 - Final product name, legal publisher, domain, support owner, and developer-account status.
 - Exact age bands, initial countries and languages within the confirmed international-first strategy; local privacy, accessibility, support and content obligations.
 - Free initial release versus paid launch; no payment implementation is authorized by this plan.
