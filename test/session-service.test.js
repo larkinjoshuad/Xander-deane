@@ -14,6 +14,7 @@ import {
   createFileSessionRecordStore,
   createInMemorySessionRecordStore,
   createSessionPersistenceService,
+  SessionRecordVersionConflictError,
 } from '../src/app/session-service.js';
 import { createConsentRecord, createSafetyPolicy, revokeConsent } from '../src/app/consent-safety.js';
 import { validateJsonSchema } from '../scripts/validate-fixtures.js';
@@ -44,6 +45,21 @@ function createMathSession(sessionId = 'ses_service_math_001') {
     now: fixedNow,
   });
 }
+
+test('conditional appends report a version conflict when deletion wins before their read', async () => {
+  const service = createSessionPersistenceService({ now: fixedNow });
+  const session = createMathSession('ses_delete_before_append');
+  const record = await service.saveSession(session);
+  await service.deleteSessionRecord(session.sessionId, { expectedRecordVersion: 1 });
+  for (const operation of [
+    options => service.appendInteractionEvent(session.sessionId, record.events[0], options),
+    options => service.appendWorkspaceSnapshot(session.sessionId, session.workspaceSnapshot, options),
+  ]) {
+    await assert.rejects(() => operation({ expectedRecordVersion: 1 }), SessionRecordVersionConflictError);
+    await assert.rejects(() => operation({}), /was not found/);
+  }
+  assert.equal(await service.loadSessionRecord(session.sessionId), null);
+});
 
 test('service saves sessions as schema-compatible records and filters them', async () => {
   const service = createSessionPersistenceService({ now: fixedNow });

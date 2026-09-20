@@ -33,13 +33,23 @@ No public deployment, real child data, payments or live tutor AI was enabled.
   Chromium's existing native-event drag/cancel tests remain enabled.
 - CI has read-only repository permissions, job time limits and cancellation of
   superseded runs. Dependency advisory scanning is point-in-time evidence only.
+- CI exposed a delete/update race in the development persistence service:
+  a conditional append could report not-found before checking its version
+  precondition. A deterministic regression test reproduces that ordering;
+  conditional event/snapshot appends now consistently report a version conflict
+  when deletion wins. The service remains excluded from the public artifact.
 - The English-market recommendation is recorded in
   `../english-market-shortlist.md`. No country has been approved for release.
 
 Reproduce with `npm test`, `npm run validate:fixtures`,
 `npm run validate:data-inventory`, `npm run test:public`, and `npm run test:e2e`.
 Install the locked dependencies and both browser engines first. CI is the full
-Linux/SQLite/browser reference; local SQLite prerequisites may be unavailable.
+Linux/SQLite/browser reference. Local verification with SQLite 3.53.4 passed all
+259 runtime tests without skips, plus ten consecutive store-contract runs to
+exercise competing writes and deletes. The official Windows SQLite tools archive
+was verified against its published SHA3-256 checksum before execution. Browser
+verification passed 87 public checks across the three projects; the final lesson
+recovery recheck passed all 27 cases.
 
 ## Remaining Gates
 

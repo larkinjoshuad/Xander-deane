@@ -53,7 +53,8 @@ export function runSessionRecordStoreContractTests({
           second.deleteSessionRecord(session.sessionId, { expectedRecordVersion: 3 }),
         ]);
         assert.equal(race.filter((r) => r.status === 'fulfilled').length, 1);
-        assert.ok(race.find((r) => r.status === 'rejected').reason instanceof SessionRecordVersionConflictError);
+        const rejected = race.find((r) => r.status === 'rejected');
+        assert.ok(rejected.reason instanceof SessionRecordVersionConflictError, rejected.reason?.stack);
 
         // Adapter-level create-only preconditions must also be atomic.
         const candidate = { ...initial, sessionId: 'ses_create_race' };
